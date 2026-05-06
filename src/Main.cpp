@@ -1,12 +1,26 @@
-#include <type/Int.hpp>
-#include <type/Float.hpp>
-#include <container/Span.hpp>
+#include "system/CxxABI.hpp"
+#include "system/EntryExit.hpp"
+#include "system/SysCalls.hpp"
 
-int main(const int, const char**)
+struct Demo
 {
-    // A temporary entry-point for testing out functionality.
+    Demo()  { cmn::system::write("ctor\n"); }
+    ~Demo() { cmn::system::write("dtor\n"); }
+} demo;
 
-    // Containers:
 
+int main()
+{
+    Demo _demo = Demo();
+    cmn::system::write("main\n");
     return 0;
+}
+
+extern "C" void _start()
+{
+    cmn::system::create_global_ctors();
+    int _exitCode = main();
+    cmn::system::__cxa_finalize(nullptr);
+    cmn::system::delete_global_dtors();
+    cmn::system::exit(_exitCode);
 }

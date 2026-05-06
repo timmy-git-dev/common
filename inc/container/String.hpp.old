@@ -1,6 +1,6 @@
 #pragma once
-#include <generic/Debug.hpp>
-#include <container/Array.hpp>
+#include "generic/Debug.hpp"
+#include "container/Array.hpp"
 
 namespace cmn::container
 {

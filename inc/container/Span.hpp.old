@@ -1,7 +1,7 @@
 #pragma once
-#include <generic/Debug.hpp>
-#include <type/Int.hpp>
-#include <type/Trait.hpp>
+#include "generic/Debug.hpp"
+#include "type/Int.hpp"
+#include "type/Trait.hpp"
 
 namespace cmn::container
 {

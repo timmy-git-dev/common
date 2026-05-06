@@ -6,13 +6,12 @@ PATH_SRC="$PATH_PWD/src"
 PATH_INC="$PATH_PWD/inc"
 PATH_BIN="$PATH_PWD/bin"
 PATH_OBJ="$PATH_BIN/obj"
-PATH_EXE="$PATH_BIN/timmy-compiler"
+PATH_EXE="$PATH_BIN/common"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
-# COMPILE_FLAGS="-O3 -DNDEBUG -flto -fomit-frame-pointer -funroll-loops"
-COMPILE_FLAGS="-g -O0 -fsanitize=address -fno-inline -fno-omit-frame-pointer"
-COMPILE_LIBRARIES="-ldl"
+COMPILE_FLAGS="-g -O3 -s -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
+COMPILE_LIBRARIES=""
 
 # Re-create the object directory.
 rm -rf $PATH_OBJ
@@ -23,11 +22,21 @@ cat <<EOF > ${PATH_PWD}/.clangd
 CompileFlags:
     Add:
         - -std=c++23
-        - -I${PATH_INC}
-        - -lpthread
+        - -I/home/timmy/code/common/inc
         - -Wall
         - -Wextra
         - -Wpedantic
+        - -ffreestanding
+        - -fno-exceptions
+        - -fno-rtti
+        - -fno-stack-protector
+        - -fno-asynchronous-unwind-tables
+        - -fno-unwind-tables
+        - -nostdlib
+        - -nostartfiles
+        - -nodefaultlibs
+        - -static
+        - -no-pie
 
 Documentation:
   CommentFormat: Doxygen
@@ -48,3 +57,5 @@ done
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
 g++ $COMPILE_VERSION $COMPILE_FLAGS $COMPILE_LIBRARIES $PATHS_O -o $PATH_EXE
+
+$PATH_EXE
