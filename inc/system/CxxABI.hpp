@@ -13,20 +13,20 @@ namespace cmn::system
 
         struct AtExitDtor
         {
-            func  function;
-            void* argument;
-            void* sharedObj;
-            bool  valid;
+            void (*function)(void*);
+            void  *argument;
+            void  *sharedObj;
+            bool   valid;
         };
 
-        extern void* __dso_handle;
+        extern void *__dso_handle;
 
-        int  __cxa_atexit  (func _function, void* _argument, void* _sharedObj);
-        void __cxa_finalize(void* _sharedObj);
+        int  __cxa_atexit  (func _function, void *_argument, void *_sharedObj);
+        void __cxa_finalize(void *_sharedObj);
 
-        int  __cxa_guard_acquire(unsigned long long* _guard);
-        void __cxa_guard_release(unsigned long long* _guard);
-        void __cxa_guard_abort  (unsigned long long* _guard);
+        int  __cxa_guard_acquire(unsigned long long *_guard);
+        void __cxa_guard_release(unsigned long long *_guard);
+        void __cxa_guard_abort  (unsigned long long *_guard);
 
         void __cxa_pure_virtual();
     }

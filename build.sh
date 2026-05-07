@@ -1,4 +1,5 @@
 # A simple build script to compile the project.
+set -e
 
 # Set project directories.
 PATH_PWD="$PWD"

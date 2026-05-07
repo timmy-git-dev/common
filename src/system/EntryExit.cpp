@@ -3,14 +3,14 @@
 
 namespace cmn::system
 {
-    void create_global_ctors()
+    void run_global_ctors()
     {
         for (void (**_instance)() = __init_array_start; _instance != __init_array_end; ++_instance)
         {
             (*_instance)();
         }
     }
-    void delete_global_dtors()
+    void run_global_dtors()
     {
         for (void (**_instance)() = __fini_array_end; _instance != __fini_array_start; )
         {
