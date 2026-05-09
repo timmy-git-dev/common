@@ -1,6 +1,5 @@
-========================================================
 = The IDGAF License v1.0 =
-========================================================
+===
 
 THE AUTHOR OF THIS LICENSE DECLARES HIS/HER INCOMPETENCE
 AS A LAWYER AND STATES THAT ANY USE AND DISTRIBUTION OF

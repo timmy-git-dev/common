@@ -1,62 +1,22 @@
 #include "system/CxxABI.hpp"
 #include "system/EntryExit.hpp"
 #include "system/SysCalls.hpp"
+#include "type/Alias.hpp"
+// #include "container/Span.hpp"
 
-struct Demo
+// Temp print func:
+void print(const char* _text)
 {
-      Demo() { cmn::system::write(1, "ctor\n", 5); }
-     ~Demo() { cmn::system::write(1, "dtor\n", 5); }
-} demo;
+    s64 _length = 0;
+    while (_text[_length] != '\0') ++_length;
+    cmn::system::write(1, _text, _length);
+}
 
 
 int main()
 {
-    // write: stdout
-    const char msg[] = "hello\n";
-    cmn::system::write(1, msg, 6);
-
-    // read: stdin
-    char buf[64];
-    long n = cmn::system::read(0, buf, sizeof(buf));
-    cmn::system::write(1, buf, n);
-
-    // openat: open file (cwd = AT_FDCWD = -100)
-    int fd = cmn::system::openat(-100, "file.txt", /*O_RDONLY*/2, 0);
-    n = cmn::system::read(fd, buf, sizeof(buf));
-    cmn::system::write(1, buf, n);
-    // lseek: rewind to start
-    cmn::system::lseek(fd, 3, /*SEEK_SET*/0);
-    cmn::system::write(fd, "nope\n", 5);
-
-    // close
-    cmn::system::close(fd);
-
-
-    // stat
-    struct stat {
-        unsigned long dev;
-        unsigned long ino;
-        unsigned long nlink;
-        unsigned int  mode;
-        unsigned int  uid;
-        unsigned int  gid;
-        unsigned int  __pad0;
-        unsigned long rdev;
-        long          size;
-        long          blksize;
-        long          blocks;
-        long          atime;
-        unsigned long atime_nsec;
-        long          mtime;
-        unsigned long mtime_nsec;
-        long          ctime;
-        unsigned long ctime_nsec;
-        long          __unused[3];
-    } st;
-    n = cmn::system::stat("file.txt", &st);
-    // cmn::system::write(1, st.size, 144);
-
-
+    // cmn::container::Span<float, 4> _span = cmn::container::Span<float, 4>(0.0f, 1.0f, 2.0f, 3.0f);
+    // _span[3] = 9.0f;
 
     return 0;
 }
