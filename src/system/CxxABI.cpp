@@ -1,5 +1,5 @@
 #include "system/CxxABI.hpp"
-#include "system/SysCalls.hpp"
+#include "system/Syscall.hpp"
 
 namespace cmn::system
 {
@@ -16,14 +16,15 @@ namespace cmn::system
             {
                 return -1;
             }
-            atExitDtors[atExitDtorCount++] = {_function, _argument, _sharedObj, true};
+            atExitDtors[atExitDtorCount] = {_function, _argument, _sharedObj, true};
+            atExitDtorCount++;
             return 0;
         }
         void __cxa_finalize(void *_sharedObj)
         {
             for (long _i = atExitDtorCount - 1; _i >= 0; --_i)
             {
-                AtExitDtor& _destructor = atExitDtors[_i];
+                AtExitDtor &_destructor = atExitDtors[_i];
                 if (_destructor.valid && (_sharedObj == nullptr || _sharedObj == _destructor.sharedObj))
                 {
                     _destructor.valid = false;
@@ -52,7 +53,7 @@ namespace cmn::system
 
         void __cxa_pure_virtual()
         {
-            exit(127);
+            cmn::system::exit(127);
         }
     }
 }

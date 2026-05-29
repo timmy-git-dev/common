@@ -14,8 +14,8 @@ namespace cmn::system
         struct AtExitDtor
         {
             void (*function)(void*);
-            void  *argument;
-            void  *sharedObj;
+            void * argument;
+            void * sharedObj;
             bool   valid;
         };
 

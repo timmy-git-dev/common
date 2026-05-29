@@ -38,11 +38,11 @@ Author simply doesn't care about what you do with it. Ever
 wonder what IDGAF stands for, anyways? Well, wonder no
 more:
 
-* I
-* Don't
-* Give
-* A
-* Fuck
+ * I
+ * Don't
+ * Give
+ * A
+ * Fuck
 
 Basically, as long as you mention the Original author and
 send a beer/cookie his/her way, we'll all be fine. If you

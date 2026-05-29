@@ -24,11 +24,7 @@ using u32 = unsigned int;
 using u64 = unsigned long;
 
 /// An 8-bit character used to represent the 0-255 ASCII set.
-using c08 = char8_t;
-/// An 16-bit character used to represent the 0-65535 UNICODE set.
-using c16 = char16_t;
-/// An 32-bit character used to represent the 0-4294967295 UNICODE set.
-using c32 = char16_t;
+using c08 = char;
 
 /// An 8-bit boolean used to represent a true/false condition.
 using b08 = bool;

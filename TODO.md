@@ -30,3 +30,7 @@
     - clock
     - duration
     - timer
+  - terminal
+    - write
+    - read
+    - clear

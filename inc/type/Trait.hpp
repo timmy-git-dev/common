@@ -35,12 +35,12 @@ namespace cmn::type
     };
 
     /// Preserves the value category of a type when passing it as a parameter to avoid copies.
-    template<typename _TYPE> constexpr _TYPE&& forward(typename remove_reference<_TYPE>::type& _type) noexcept
+    template<typename _TYPE> constexpr _TYPE &&forward(typename remove_reference<_TYPE>::type &_type) noexcept
     {
         return static_cast<_TYPE&&>(_type);
     }
     ///@desc Preserves the value category of a type when passing it as a parameter to avoid copies.
-    template<typename _TYPE> constexpr _TYPE&& forward(typename remove_reference<_TYPE>::type&& _type) noexcept
+    template<typename _TYPE> constexpr _TYPE &&forward(typename remove_reference<_TYPE>::type &&_type) noexcept
     {
         static_assert(!is_lvalue_reference<_TYPE>::value, "Bad forward of an lvalue.");
 
