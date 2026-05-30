@@ -4,6 +4,13 @@
 #include "type/Alias.hpp"
 #include <asm-generic/mman-common.h>
 
+inline void* operator new(s64, void* _memory) noexcept
+{
+    return _memory;
+}
+inline void operator delete(void*, void*) noexcept
+{ }
+
 namespace cmn::container
 {
     template<typename TYPE_>
@@ -12,8 +19,6 @@ namespace cmn::container
 public:
         Array();
         Array(const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement);
-        // template<typename... _TYPE>
-        // Array(const s64 _capacity, _TYPE&&... _elements);
 
         ~Array          ();
         Array           (const Array  &_copied) = delete;
@@ -31,16 +36,16 @@ public:
         bool operator> (const Array &_other) const;
         bool operator>=(const Array &_other) const;
 
-        void add_copy   (const TYPE_  &_copiedElement);
-        void add_move   (      TYPE_ &&_movedElement );
+        void append_copy(const TYPE_  &_copiedElement);
+        void append_move(      TYPE_ &&_movedElement );
         void insert_copy(const TYPE_  &_copiedElement, const s64 _index);
         void insert_move(      TYPE_ &&_movedElement , const s64 _index);
+        void fill_copy  (const TYPE_ & _copiedElement, const s64 _startIndex, const s64 _stopIndex);
+        void fill_move  (      TYPE_ &&_movedElement , const s64 _startIndex, const s64 _stopIndex);
         void remove     (                );
         void remove     (const s64 _index);
 
         void reserve(const s64 _capacity);
-        void resize (const s64 _length, const TYPE_ &_copiedElement);
-        void fill   (const TYPE_ &_copiedElement, const s64 _startIndex, const s64 _stopIndex);
 
         s64  count   (const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex);
         bool contains(const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex);
@@ -62,26 +67,19 @@ private:
         TYPE_ *data_;
     };
 
-#define TEMPLATE template<typename TYPE_>
-#define ARRAY Array<TYPE_>
-
-    TEMPLATE ARRAY::Array():
+    template<typename TYPE_> Array<TYPE_>::Array():
         capacity_(0),
         length_  (0),
         data_    (nullptr)
     { }
-    TEMPLATE ARRAY::Array(const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement):
+    template<typename TYPE_> Array<TYPE_>::Array(const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement):
         capacity_(_capacity),
         length_  (_length),
         data_    (nullptr)
     {
-        RUNTIME_ASSERT(_capacity >= _length, "The capacity of an array must exceed or equal it's length.");
+        RUNTIME_ASSERT(capacity_ >= length_, "The capacity of an array must exceed or equal it's length.");
 
-        data_ = (s64)cmn::system::mmap((u64)nullptr, sizeof(TYPE_) * capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        // c08 _buffer[2];
-        // _buffer[0] = '0' + (c08)data_;
-        // _buffer[1] = '\n';
-        // cmn::system::write(1, _buffer, 2);
+        data_ = (TYPE_*)cmn::system::mmap((u64)nullptr, sizeof(TYPE_) * capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         RUNTIME_ASSERT((u64)data_ < (u64)-4095, "Failed syscall: mmap.");
 
         for(s64 _i = 0; _i < length_; ++_i)
@@ -89,114 +87,224 @@ private:
             new(&data_[_i]) TYPE_(_copiedElement);
         }
     }
-    // TEMPLATE template<typename... _TYPE>
-    // ARRAY::Array(const s64 _capacity, _TYPE&&... _elements)
-    // {
 
-    // }
-
-    TEMPLATE ARRAY::~Array          ()
+    template<typename TYPE_> Array<TYPE_>::~Array          ()
     {
         for(s64 _i = 0; _i < length_; ++_i)
         {
             data_[_i].~TYPE_();
         }
-
-        const s64 Bytes = sizeof(TYPE_) * capacity_;
-
-        system::munmap((u64)data_, Bytes);
+        system::munmap((u64)data_, sizeof(TYPE_) * capacity_);
     }
 
-    TEMPLATE const TYPE_ &ARRAY::operator[](s64 _index) const { return data_[_index]; }
-    TEMPLATE       TYPE_ &ARRAY::operator[](s64 _index)       { return data_[_index]; }
+    template<typename TYPE_> const TYPE_ &Array<TYPE_>::operator[](s64 _index) const {return data_[_index];}
+    template<typename TYPE_>       TYPE_ &Array<TYPE_>::operator[](s64 _index)       {return data_[_index];}
 
-    TEMPLATE bool ARRAY::operator==(const Array &_other) const
+    template<typename TYPE_> bool Array<TYPE_>::operator==(const Array &_other) const
     {
+        if (length_ != _other.length_) {return false;}
 
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] != _other.data_[_i]) return false;
+        }
+        return true;
     }
-    TEMPLATE bool ARRAY::operator!=(const Array &_other) const
+    template<typename TYPE_> bool Array<TYPE_>::operator!=(const Array &_other) const
     {
+        if (length_ != _other.length_) {return true;}
 
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] != _other.data_[_i]) return true;
+        }
+        return false;
     }
-    TEMPLATE bool ARRAY::operator< (const Array &_other) const
+    template<typename TYPE_> bool Array<TYPE_>::operator< (const Array &_other) const
     {
+        s64 _length = length_ < _other.length_ ? length_ : _other.length_;
 
+        for (s64 _i = 0; _i < _length; ++_i)
+        {
+            if (data_[_i] < _other.data_[_i]) return true;
+            if (data_[_i] > _other.data_[_i]) return false;
+        }
+        return length_ < _other.length_;
     }
-    TEMPLATE bool ARRAY::operator<=(const Array &_other) const
+    template<typename TYPE_> bool Array<TYPE_>::operator<=(const Array &_other) const
     {
+        s64 _length = length_ < _other.length_ ? length_ : _other.length_;
 
+        for (s64 _i = 0; _i < _length; ++_i)
+        {
+            if (data_[_i] < _other.data_[_i]) return true;
+            if (data_[_i] > _other.data_[_i]) return false;
+        }
+        return length_ <= _other.length_;
     }
-    TEMPLATE bool ARRAY::operator> (const Array &_other) const
+    template<typename TYPE_> bool Array<TYPE_>::operator> (const Array &_other) const
     {
+        s64 _length = length_ < _other.length_ ? length_ : _other.length_;
 
+        for (s64 _i = 0; _i < _length; ++_i)
+        {
+            if (data_[_i] > _other.data_[_i]) return true;
+            if (data_[_i] < _other.data_[_i]) return false;
+        }
+        return length_ > _other.length_;
     }
-    TEMPLATE bool ARRAY::operator>=(const Array &_other) const
+    template<typename TYPE_> bool Array<TYPE_>::operator>=(const Array &_other) const
     {
+        s64 _length = length_ < _other.length_ ? length_ : _other.length_;
 
+        for (s64 _i = 0; _i < _length; ++_i)
+        {
+            if (data_[_i] > _other.data_[_i]) return true;
+            if (data_[_i] < _other.data_[_i]) return false;
+        }
+        return length_ >= _other.length_;
     }
 
-    TEMPLATE void ARRAY::add_copy   (const TYPE_  &_copiedElement)
+    template<typename TYPE_> void Array<TYPE_>::append_copy(const TYPE_  &_copiedElement)
     {
+        RUNTIME_ASSERT(length_ < capacity_, "No memory to append extra element.");
 
+        new(&data_[length_]) TYPE_(_copiedElement);
+        length_++;
     }
-    TEMPLATE void ARRAY::add_move   (      TYPE_ &&_movedElement )
+    template<typename TYPE_> void Array<TYPE_>::append_move(      TYPE_ &&_movedElement )
     {
+        RUNTIME_ASSERT(length_ < capacity_, "No memory to append extra element.");
 
+        new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(_movedElement));
+        length_++;
     }
-    TEMPLATE void ARRAY::insert_copy(const TYPE_  &_copiedElement, const s64 _index)
+    template<typename TYPE_> void Array<TYPE_>::insert_copy(const TYPE_  &_copiedElement, const s64 _index)
     {
+        RUNTIME_ASSERT(length_ < capacity_, "No memory to insert extra element.");
 
+        new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(data_[length_ - 1]));
+
+        for(s64 _i = length_ - 1; _i > _index; --_i)
+        {
+            data_[_i] = static_cast<TYPE_&&>(data_[_i - 1]);
+        }
+
+        data_[_index] = _copiedElement;
+        ++length_;
     }
-    TEMPLATE void ARRAY::insert_move(      TYPE_ &&_movedElement , const s64 _index)
+    template<typename TYPE_> void Array<TYPE_>::insert_move(      TYPE_ &&_movedElement , const s64 _index)
     {
+        RUNTIME_ASSERT(length_ < capacity_, "No memory to insert extra element.");
 
+        new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(data_[length_ - 1]));
+
+        for(s64 _i = length_ - 1; _i > _index; --_i)
+        {
+            data_[_i] = static_cast<TYPE_&&>(data_[_i - 1]);
+        }
+
+        data_[_index] = static_cast<TYPE_&&>(_movedElement); // move
+        ++length_;
     }
-    TEMPLATE void ARRAY::remove     (                )
+    template<typename TYPE_> void Array<TYPE_>::fill_copy  (const TYPE_ & _copiedElement, const s64 _startIndex, const s64 _stopIndex)
     {
-
+        for(s64 _i = _startIndex; _i < _stopIndex; ++_i)
+        {
+            data_[_i] = TYPE_(_copiedElement);
+        }
     }
-    TEMPLATE void ARRAY::remove     (const s64 _index)
+    template<typename TYPE_> void Array<TYPE_>::fill_move  (      TYPE_ &&_movedElement, const s64 _startIndex, const s64 _stopIndex)
     {
-
+        for(s64 _i = _startIndex; _i < _stopIndex; ++_i)
+        {
+            data_[_i] = static_cast<TYPE_&&>(_movedElement);
+        }
     }
-
-    TEMPLATE void ARRAY::reserve(const s64 _capacity)
+    template<typename TYPE_> void Array<TYPE_>::remove     (                )
     {
+        RUNTIME_ASSERT(length_ > 0, "No element to remove.");
 
+        data_[--length_].~TYPE_();
     }
-    TEMPLATE void ARRAY::resize (const s64 _length, const TYPE_ &_copiedElement)
+    template<typename TYPE_> void Array<TYPE_>::remove     (const s64 _index)
     {
-
+        data_[_index].~TYPE_();
+        --length_;
+        for(s64 _i = _index; _i < length_; ++_i)
+        {
+            data_[_i] = static_cast<TYPE_&&>(data_[_i + 1]);
+        }
     }
-    TEMPLATE void ARRAY::fill   (const TYPE_ &_copiedElement, const s64 _startIndex, const s64 _stopIndex)
+
+    template<typename TYPE_> void Array<TYPE_>::reserve(const s64 _capacity)
     {
+        RUNTIME_ASSERT(_capacity != capacity_, "Specified array capacity unchanged, function will unecessarily reserve new array.");
+        RUNTIME_ASSERT(_capacity >=  length_ , "Specified array capacity must be able to contain the previous data.");
 
+        TYPE_ *_data = system::mmap((u64)nullptr, sizeof(TYPE_) * _capacity, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        RUNTIME_ASSERT((u64)_data < (u64)-4095, "Failed syscall: mmap.");
+
+        for(s64 _i = 0; _i < length_; ++_i)
+        {
+            new(&_data[_i]) TYPE_(static_cast<TYPE_&&>(data_[_i]));
+        }
+
+        for(s64 _i = 0; _i < length_; ++_i)
+        {
+            data_[_i].~TYPE_();
+        }
+        system::munmap((u64)data_, sizeof(TYPE_) * capacity_);
+
+        data_ = _data;
+        capacity_ = _capacity;
     }
 
-    TEMPLATE s64  ARRAY::count   (const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
+    template<typename TYPE_> s64  Array<TYPE_>::count   (const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
     {
+        s64 _count = 0;
+        for (s64 _i = _startIndex; _i < _stopIndex; ++_i)
+        {
+            if (data_[_i] == _element) {_count++;}
+        }
 
+        return _count;
     }
-    TEMPLATE bool ARRAY::contains(const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
+    template<typename TYPE_> bool Array<TYPE_>::contains(const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
     {
+        for (s64 _i = _startIndex; _i < _stopIndex; ++_i)
+        {
+            if (data_[_i] == _element) {return true;}
+        }
 
+        return false;
     }
-    TEMPLATE s64  ARRAY::first_of(const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
+    template<typename TYPE_> s64  Array<TYPE_>::first_of(const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
     {
+        for (s64 _i = _startIndex; _i < _stopIndex; ++_i)
+        {
+            if (data_[_i] == _element) {return _i;}
+        }
 
+        return s64(-1);
     }
-    TEMPLATE s64  ARRAY::last_of (const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
+    template<typename TYPE_> s64  Array<TYPE_>::last_of (const TYPE_ &_element, const s64 _startIndex, const s64 _stopIndex)
     {
+        for (s64 _i = _stopIndex; _i-- > _startIndex;)
+        {
+            if (data_[_i] == _element) {return _i;}
+        }
 
+        return s64(-1);
     }
 
-    TEMPLATE const TYPE_ *ARRAY::begin() const {return data_;}
-    TEMPLATE       TYPE_ *ARRAY::begin()       {return data_;}
-    TEMPLATE const TYPE_ *ARRAY::end  () const {return data_;}
-    TEMPLATE       TYPE_ *ARRAY::end  ()       {return data_;}
+    template<typename TYPE_> const TYPE_ *Array<TYPE_>::begin() const {return data_;          }
+    template<typename TYPE_>       TYPE_ *Array<TYPE_>::begin()       {return data_;          }
+    template<typename TYPE_> const TYPE_ *Array<TYPE_>::end  () const {return data_ + length_;}
+    template<typename TYPE_>       TYPE_ *Array<TYPE_>::end  ()       {return data_ + length_;}
 
-    TEMPLATE       s64    ARRAY::capacity() const {}
-    TEMPLATE       s64    ARRAY::length  () const {}
-    TEMPLATE const TYPE_ *ARRAY::data    () const {}
-    TEMPLATE       TYPE_ *ARRAY::data    ()       {}
+    template<typename TYPE_>       s64    Array<TYPE_>::capacity() const {return capacity_;}
+    template<typename TYPE_>       s64    Array<TYPE_>::length  () const {return length_;  }
+    template<typename TYPE_> const TYPE_ *Array<TYPE_>::data    () const {return data_;    }
+    template<typename TYPE_>       TYPE_ *Array<TYPE_>::data    ()       {return data_;    }
 }

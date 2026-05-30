@@ -1,4 +1,5 @@
 #include "system/CxxABI.hpp"
+#include "generic/Assert.hpp"
 #include "system/Syscall.hpp"
 
 namespace cmn::system
@@ -53,7 +54,7 @@ namespace cmn::system
 
         void __cxa_pure_virtual()
         {
-            cmn::system::exit(127);
+            ABORT("Attempted to construct a pure virtual-object.");
         }
     }
 }

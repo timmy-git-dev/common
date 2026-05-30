@@ -10,33 +10,52 @@ namespace cmn::generic
         inline void print_(const char *_text) // TODO: Replace with proper print function.
         {
             s64 _length = 0;
+            while (_text[_length] != '\0') {_length++;}
             cmn::system::write(1, _text, _length);
-            cmn::system::write(1, "ASSERT:\n  ", 10);
         };
         inline void assert_(const char *_expression, const char *_message, bool _value, const char *_file, const int, const char *_function)
         {
             if (_value) {return;}
 
-            cmn::system::write(1, "ASSERT:\n  "    , 10);
-            cmn::system::write(1, "\n MESSAGE:    ", 14);
+            print_("ASSERT:");
+            print_("\n MESSAGE:    ");
             print_(_message);
-            cmn::system::write(1, "\n EXPRESSION: ", 14);
+            print_("\n EXPRESSION: ");
             print_(_expression);
-            cmn::system::write(1, "\n FILE:       ", 14);
+            print_("\n FILE:       ");
             print_(_file);
+            print_("\n FUNC:       ");
+            print_(_function);
             // cmn::syscall::write(1, "\n LINE:       ", 14);
             // print_(_line);
-            cmn::system::write(1, "\n FUNC:       ", 14);
-            print_(_function);
-            cmn::system::write(1, "\n", 1);
-            __builtin_trap();
-            while (true) { }
+            print_("\n");
+
+            system::exit_group(1);
         }
 
         #define RUNTIME_ASSERT(_expression, _message) \
-            cmn::generic::assert_(#_expression, _message, _expression, __FILE__, __LINE__, __func__);
+            cmn::generic::assert_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
     #else
         #define RUNTIME_ASSERT(_expression, _message) \
             void(0)
     #endif
+
+    inline void abort_(const char *_message, const char *_file, const int, const char *_function)
+    {
+        print_("ABORT:");
+        print_("\n MESSAGE:    ");
+        print_(_message);
+        print_("\n FILE:       ");
+        print_(_file);
+        print_("\n FUNC:       ");
+        print_(_function);
+        // cmn::syscall::write(1, "\n LINE:       ", 14);
+        // print_(_line);
+        print_("\n");
+
+        system::exit_group(1);
+    }
+
+    #define ABORT(_message) \
+        cmn::generic::abort_(_message, __FILE__, __LINE__, __func__)
 }
