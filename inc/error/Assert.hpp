@@ -2,7 +2,7 @@
 #include "system/Syscall.hpp"
 #include "type/Alias.hpp"
 
-namespace cmn::generic
+namespace cmn::error
 {
     #define COMPILER_ASSERT static_assert
 
@@ -26,7 +26,7 @@ namespace cmn::generic
             print_(_file);
             print_("\n FUNC:       ");
             print_(_function);
-            // cmn::syscall::write(1, "\n LINE:       ", 14);
+            // print_("\n LINE:       ");
             // print_(_line);
             print_("\n");
 
@@ -34,28 +34,9 @@ namespace cmn::generic
         }
 
         #define RUNTIME_ASSERT(_expression, _message) \
-            cmn::generic::assert_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
+            cmn::error::assert_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
     #else
         #define RUNTIME_ASSERT(_expression, _message) \
             void(0)
     #endif
-
-    inline void abort_(const char *_message, const char *_file, const int, const char *_function)
-    {
-        print_("ABORT:");
-        print_("\n MESSAGE:    ");
-        print_(_message);
-        print_("\n FILE:       ");
-        print_(_file);
-        print_("\n FUNC:       ");
-        print_(_function);
-        // cmn::syscall::write(1, "\n LINE:       ", 14);
-        // print_(_line);
-        print_("\n");
-
-        system::exit_group(1);
-    }
-
-    #define ABORT(_message) \
-        cmn::generic::abort_(_message, __FILE__, __LINE__, __func__)
 }

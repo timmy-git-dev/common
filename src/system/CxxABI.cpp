@@ -1,6 +1,5 @@
 #include "system/CxxABI.hpp"
-#include "generic/Assert.hpp"
-#include "system/Syscall.hpp"
+#include "error/Abort.hpp"
 
 namespace cmn::system
 {

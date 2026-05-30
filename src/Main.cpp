@@ -26,20 +26,16 @@ i08 main()
     }
     print("\n");
 
-    cmn::container::Array<u32> _array = cmn::container::Array<u32>(10, 5, 2);
-    _array.append_copy(0);
-    _array.append_copy(3);
-    _array.append_copy(19);
-    _array.append_copy(4);
-    _array.remove(3);
-    _array.remove();
-    _array.insert_copy(9, 1);
-    _array.insert_copy(6, 1);
-    _array.insert_copy(1, 1);
+    cmn::container::Array<u32> _array = cmn::container::Array<u32>(1);
+    _array.reserve(95);
+    for (s64 _i = 0; _i < 95; _i++)
+    {
+        _array.append_copy(_i);
+    }
     print("Array: ");
     for (s64 _i = 0; _i < _array.length(); ++_i)
     {
-        _buffer[0] = '0' + c08((_array.data() + _i)[0]);
+        _buffer[0] = ' ' + c08((_array.data() + _i)[0]);
         print(_buffer);
     }
     print("\n");
@@ -65,6 +61,7 @@ void _start()
 }
 extern "C"
 [[gnu::used]]
+[[noreturn]]
 void _program()
 {
     cmn::system::run_global_ctors();
@@ -72,4 +69,5 @@ void _program()
     cmn::system::__cxa_finalize(nullptr);
     cmn::system::run_global_dtors();
     cmn::system::exit_group(_exitCode);
+    __builtin_unreachable();
 }

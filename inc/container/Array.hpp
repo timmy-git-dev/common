@@ -1,8 +1,7 @@
 #pragma once
-#include "generic/Assert.hpp"
+#include "error/Assert.hpp"
 #include "system/Syscall.hpp"
 #include "type/Alias.hpp"
-#include <asm-generic/mman-common.h>
 
 inline void* operator new(s64, void* _memory) noexcept
 {
@@ -17,7 +16,7 @@ namespace cmn::container
     struct Array
     {
 public:
-        Array();
+        Array(const s64 _capacity);
         Array(const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement);
 
         ~Array          ();
@@ -67,19 +66,23 @@ private:
         TYPE_ *data_;
     };
 
-    template<typename TYPE_> Array<TYPE_>::Array():
-        capacity_(0),
+    template<typename TYPE_> Array<TYPE_>::Array(const s64 _capacity):
+        capacity_(_capacity),
         length_  (0),
         data_    (nullptr)
-    { }
+    {
+        data_ = reinterpret_cast<TYPE_*>(cmn::system::mmap((u64)nullptr, sizeof(TYPE_) * capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+        RUNTIME_ASSERT((u64)data_ < (u64)-4095, "Failed syscall: mmap.");
+    }
     template<typename TYPE_> Array<TYPE_>::Array(const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement):
         capacity_(_capacity),
         length_  (_length),
         data_    (nullptr)
     {
+        RUNTIME_ASSERT(capacity_ > 0, "The capacity of an array cannot be empty.");
         RUNTIME_ASSERT(capacity_ >= length_, "The capacity of an array must exceed or equal it's length.");
 
-        data_ = (TYPE_*)cmn::system::mmap((u64)nullptr, sizeof(TYPE_) * capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        data_ = reinterpret_cast<TYPE_*>(cmn::system::mmap((u64)nullptr, sizeof(TYPE_) * capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
         RUNTIME_ASSERT((u64)data_ < (u64)-4095, "Failed syscall: mmap.");
 
         for(s64 _i = 0; _i < length_; ++_i)
@@ -242,7 +245,7 @@ private:
         RUNTIME_ASSERT(_capacity != capacity_, "Specified array capacity unchanged, function will unecessarily reserve new array.");
         RUNTIME_ASSERT(_capacity >=  length_ , "Specified array capacity must be able to contain the previous data.");
 
-        TYPE_ *_data = system::mmap((u64)nullptr, sizeof(TYPE_) * _capacity, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        TYPE_ *_data = reinterpret_cast<TYPE_*>(system::mmap((u64)nullptr, sizeof(TYPE_) * _capacity, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
         RUNTIME_ASSERT((u64)_data < (u64)-4095, "Failed syscall: mmap.");
 
         for(s64 _i = 0; _i < length_; ++_i)

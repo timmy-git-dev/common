@@ -1,5 +1,5 @@
 #pragma once
-#include "generic/Assert.hpp"
+#include "error/Assert.hpp"
 #include "type/Alias.hpp"
 
 namespace cmn::container
