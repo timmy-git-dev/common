@@ -39,7 +39,7 @@ public:
         void append_move(      TYPE_ &&_movedElement );
         void insert_copy(const TYPE_  &_copiedElement, const s64 _index);
         void insert_move(      TYPE_ &&_movedElement , const s64 _index);
-        void fill_copy  (const TYPE_ & _copiedElement, const s64 _startIndex, const s64 _stopIndex);
+        void fill_copy  (const TYPE_  &_copiedElement, const s64 _startIndex, const s64 _stopIndex);
         void fill_move  (      TYPE_ &&_movedElement , const s64 _startIndex, const s64 _stopIndex);
         void remove     (                );
         void remove     (const s64 _index);
@@ -87,6 +87,7 @@ private:
 
         for(s64 _i = 0; _i < length_; ++_i)
         {
+            ((TYPE_*)&data_[_i])->TYPE_::TYPE_(_copiedElement);
             new(&data_[_i]) TYPE_(_copiedElement);
         }
     }
