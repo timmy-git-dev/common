@@ -35,12 +35,11 @@ public:
         bool operator> (const Array &_other) const;
         bool operator>=(const Array &_other) const;
 
-        void append_copy(const TYPE_  &_copiedElement);
-        void append_move(      TYPE_ &&_movedElement );
-        void insert_copy(const TYPE_  &_copiedElement, const s64 _index);
-        void insert_move(      TYPE_ &&_movedElement , const s64 _index);
-        void fill_copy  (const TYPE_  &_copiedElement, const s64 _startIndex, const s64 _stopIndex);
-        void fill_move  (      TYPE_ &&_movedElement , const s64 _startIndex, const s64 _stopIndex);
+        void append_copy(const TYPE_  &_element);
+        void append_move(      TYPE_ &&_element);
+        void insert_copy(const TYPE_  &_element, const s64 _index);
+        void insert_move(      TYPE_ &&_element, const s64 _index);
+        void fill       (const TYPE_  &_element, const s64 _startIndex, const s64 _stopIndex);
         void remove     (                );
         void remove     (const s64 _index);
 
@@ -169,21 +168,21 @@ private:
         return length_ >= _other.length_;
     }
 
-    template<typename TYPE_> void Array<TYPE_>::append_copy(const TYPE_  &_copiedElement)
+    template<typename TYPE_> void Array<TYPE_>::append_copy(const TYPE_  &_element)
     {
         RUNTIME_ASSERT(length_ < capacity_, "No memory to append extra element.");
 
-        new(&data_[length_]) TYPE_(_copiedElement);
+        new(&data_[length_]) TYPE_(_element);
         length_++;
     }
-    template<typename TYPE_> void Array<TYPE_>::append_move(      TYPE_ &&_movedElement )
+    template<typename TYPE_> void Array<TYPE_>::append_move(      TYPE_ &&_element)
     {
         RUNTIME_ASSERT(length_ < capacity_, "No memory to append extra element.");
 
-        new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(_movedElement));
+        new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(_element));
         length_++;
     }
-    template<typename TYPE_> void Array<TYPE_>::insert_copy(const TYPE_  &_copiedElement, const s64 _index)
+    template<typename TYPE_> void Array<TYPE_>::insert_copy(const TYPE_  &_element, const s64 _index)
     {
         RUNTIME_ASSERT(length_ < capacity_, "No memory to insert extra element.");
 
@@ -194,10 +193,10 @@ private:
             data_[_i] = static_cast<TYPE_&&>(data_[_i - 1]);
         }
 
-        data_[_index] = _copiedElement;
+        data_[_index] = _element;
         ++length_;
     }
-    template<typename TYPE_> void Array<TYPE_>::insert_move(      TYPE_ &&_movedElement , const s64 _index)
+    template<typename TYPE_> void Array<TYPE_>::insert_move(      TYPE_ &&_element, const s64 _index)
     {
         RUNTIME_ASSERT(length_ < capacity_, "No memory to insert extra element.");
 
@@ -208,21 +207,14 @@ private:
             data_[_i] = static_cast<TYPE_&&>(data_[_i - 1]);
         }
 
-        data_[_index] = static_cast<TYPE_&&>(_movedElement); // move
+        data_[_index] = static_cast<TYPE_&&>(_element); // move
         ++length_;
     }
-    template<typename TYPE_> void Array<TYPE_>::fill_copy  (const TYPE_ & _copiedElement, const s64 _startIndex, const s64 _stopIndex)
+    template<typename TYPE_> void Array<TYPE_>::fill  (const TYPE_ & _element, const s64 _startIndex, const s64 _stopIndex)
     {
         for(s64 _i = _startIndex; _i < _stopIndex; ++_i)
         {
-            data_[_i] = TYPE_(_copiedElement);
-        }
-    }
-    template<typename TYPE_> void Array<TYPE_>::fill_move  (      TYPE_ &&_movedElement, const s64 _startIndex, const s64 _stopIndex)
-    {
-        for(s64 _i = _startIndex; _i < _stopIndex; ++_i)
-        {
-            data_[_i] = static_cast<TYPE_&&>(_movedElement);
+            data_[_i] = TYPE_(_element);
         }
     }
     template<typename TYPE_> void Array<TYPE_>::remove     (                )

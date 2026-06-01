@@ -12,10 +12,7 @@ namespace cmn::system
 
         int __cxa_atexit(func _function, void *_argument, void *_sharedObj)
         {
-            if (atExitDtorCount >= 64)
-            {
-                return -1;
-            }
+            if (atExitDtorCount >= 64) {return -1;}
             atExitDtors[atExitDtorCount] = {_function, _argument, _sharedObj, true};
             atExitDtorCount++;
             return 0;
@@ -35,10 +32,7 @@ namespace cmn::system
 
         int __cxa_guard_acquire(unsigned long long *_guard)
         {
-            if (*_guard)
-            {
-                return 0;
-            }
+            if (*_guard) {return 0;}
             *_guard = 1;
             return 1;
         }
