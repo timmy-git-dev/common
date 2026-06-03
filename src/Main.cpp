@@ -129,11 +129,11 @@ i08 main()
     print("\n count [0]: ");
     print(to_string(_array.count   (0u, 0ul, _array.length()), _buffer + 32));
 
-    print("\n first_of [0]: ");
-    print(to_string(_array.first_of(0u, 0ul, _array.length()), _buffer + 32));
+    print("\n index_first [0]: ");
+    print(to_string(_array.index_first(0u, 0ul, _array.length()), _buffer + 32));
 
-    print("\n last_of [0]: ");
-    print(to_string(_array.last_of (0u, 0ul, _array.length()), _buffer + 32));
+    print("\n index_last [0]: ");
+    print(to_string(_array.index_last (0u, 0ul, _array.length()), _buffer + 32));
 
     print("\n");
 
@@ -168,11 +168,11 @@ i08 main()
     print("\n count [0]: ");
     print(to_string(_span.count   (0u, 0ul, _span.length()), _buffer + 32));
 
-    print("\n first_of [0]: ");
-    print(to_string(_span.first_of(0u, 0ul, _span.length()), _buffer + 32));
+    print("\n index_first [0]: ");
+    print(to_string(_span.index_first(0u, 0ul, _span.length()), _buffer + 32));
 
-    print("\n last_of [0]: ");
-    print(to_string(_span.last_of (0u, 0ul, _span.length()), _buffer + 32));
+    print("\n index_last [0]: ");
+    print(to_string(_span.index_last (0u, 0ul, _span.length()), _buffer + 32));
 
     print("\n");
 

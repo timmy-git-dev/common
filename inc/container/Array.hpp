@@ -1,6 +1,7 @@
 #pragma once
-#include "container/Resizable.hpp"
-#include "container/Unordered.hpp"
+#include "container/type/Common.hpp"
+#include "container/type/Resizable.hpp"
+#include "container/type/Unordered.hpp"
 #include "error/Syscall.hpp"
 
 inline void* operator new(s64, void* _memory) noexcept
@@ -14,10 +15,13 @@ namespace cmn::container
 {
     template<typename TYPE_>
     struct Array:
-        public Unordered<Array<TYPE_>, TYPE_>
+        public type::Common   <Array<TYPE_>, TYPE_>,
+        public type::Resizable<Array<TYPE_>, TYPE_>,
+        public type::Unordered<Array<TYPE_>, TYPE_>
     {
-        friend struct Unordered<Array<TYPE_>, TYPE_>;
-        friend struct Resizable<Array<TYPE_>, TYPE_>;
+        friend struct type::Common   <Array<TYPE_>, TYPE_>;
+        friend struct type::Resizable<Array<TYPE_>, TYPE_>;
+        friend struct type::Unordered<Array<TYPE_>, TYPE_>;
 public:
         Array(const s64 _capacity);
         Array(const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement);
@@ -42,10 +46,10 @@ private:
         TYPE_ *begin__();
         TYPE_ *end__  ();
 
-        bool contains__(const TYPE_ &_element, const s64 _start, const s64 _stop) const;
-        s64  count__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
-        s64  first_of__(const TYPE_ &_element, const s64 _start, const s64 _stop) const;
-        s64  last_of__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        bool contains__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        s64  count__      (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        s64  index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        s64  index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
 
         void fill__   (const TYPE_ &_element                     , const s64 _start, const s64 _stop);
         void replace__(const TYPE_ &_before , const TYPE_ &_after, const s64 _start, const s64 _stop);
@@ -154,6 +158,18 @@ private:
         return true;
     }
 
+    template<typename TYPE_> TYPE_ *Array<TYPE_>::begin__() {return data_;          }
+    template<typename TYPE_> TYPE_ *Array<TYPE_>::end__  () {return data_ + length_;}
+
+    template<typename TYPE_> bool Array<TYPE_>::contains__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    {
+        for (s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _element) {return true;}
+        }
+
+        return false;
+    }
     template<typename TYPE_> s64  Array<TYPE_>::count__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         s64 _count = 0;
@@ -164,16 +180,7 @@ private:
 
         return _count;
     }
-    template<typename TYPE_> bool Array<TYPE_>::contains__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
-    {
-        for (s64 _i = _start; _i < _stop; ++_i)
-        {
-            if (data_[_i] == _element) {return true;}
-        }
-
-        return false;
-    }
-    template<typename TYPE_> s64  Array<TYPE_>::first_of__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_> s64  Array<TYPE_>::index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _start; _i < _stop; ++_i)
         {
@@ -182,7 +189,7 @@ private:
 
         return s64(-1);
     }
-    template<typename TYPE_> s64  Array<TYPE_>::last_of__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_> s64  Array<TYPE_>::index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _stop; _i-- > _start;)
         {
@@ -257,9 +264,6 @@ private:
             data_[_i] = static_cast<TYPE_&&>(data_[_i + 1]);
         }
     }
-
-    template<typename TYPE_> TYPE_ *Array<TYPE_>::begin__() {return data_;          }
-    template<typename TYPE_> TYPE_ *Array<TYPE_>::end__  () {return data_ + length_;}
 
     template<typename TYPE_>       s64    Array<TYPE_>::capacity() const {return capacity_;}
     template<typename TYPE_>       s64    Array<TYPE_>::length  () const {return length_;  }

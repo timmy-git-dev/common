@@ -1,7 +1,7 @@
 #pragma once
 #include "type/Alias.hpp"
 
-namespace cmn::container
+namespace cmn::container::type
 {
     template<typename CONTAINER_, typename TYPE_>
     struct Resizable

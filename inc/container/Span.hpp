@@ -1,13 +1,16 @@
 #pragma once
-#include "container/Unordered.hpp"
+#include "container/type/Common.hpp"
+#include "container/type/Unordered.hpp"
 
 namespace cmn::container
 {
     template<typename TYPE_, s64 LENGTH_>
     struct Span:
-        public Unordered<Span<TYPE_, LENGTH_>, TYPE_>
+        public type::Common   <Span<TYPE_, LENGTH_>, TYPE_>,
+        public type::Unordered<Span<TYPE_, LENGTH_>, TYPE_>
     {
-        friend struct Unordered <Span<TYPE_, LENGTH_>, TYPE_>;
+        friend struct type::Common   <Span<TYPE_, LENGTH_>, TYPE_>;
+        friend struct type::Unordered<Span<TYPE_, LENGTH_>, TYPE_>;
 public:
         Span();
         Span(const TYPE_ &_element);
@@ -35,10 +38,10 @@ private:
         TYPE_ *begin__();
         TYPE_ *end__  ();
 
-        s64  count__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
-        bool contains__(const TYPE_ &_element, const s64 _start, const s64 _stop) const;
-        s64  first_of__(const TYPE_ &_element, const s64 _start, const s64 _stop) const;
-        s64  last_of__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        s64  count__      (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        bool contains__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        s64  index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const;
+        s64  index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
 
         void fill__   (const TYPE_ &_element                     , const s64 _start, const s64 _stop);
         void replace__(const TYPE_ &_before , const TYPE_ &_after, const s64 _start, const s64 _stop);
@@ -122,6 +125,43 @@ private:
         return true;
     }
 
+    template<typename TYPE_, s64 LENGTH_> TYPE_ *Span<TYPE_, LENGTH_>::begin__() {return data_;          }
+    template<typename TYPE_, s64 LENGTH_> TYPE_ *Span<TYPE_, LENGTH_>::end__  () {return data_ + LENGTH_;}
+
+    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::contains__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    {
+        for (s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _element) {return true;}
+        }
+        return false;
+    }
+    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::count__      (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    {
+        s64 _count = 0;
+        for (s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _element) {_count++;}
+        }
+        return _count;
+    }
+    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    {
+        for (s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _element) {return _i;}
+        }
+        return s64(-1);
+    }
+    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    {
+        for (s64 _i = _stop; _i-- > _start;)
+        {
+            if (data_[_i] == _element) {return _i;}
+        }
+        return s64(-1);
+    }
+
     template<typename TYPE_, s64 LENGTH_> void Span<TYPE_, LENGTH_>::fill__   (const TYPE_ &_element                    , const s64 _start, const s64 _stop)
     {
         for (s64 _i = _start; _i < _stop; ++_i)
@@ -136,43 +176,6 @@ private:
             if (data_[_i] == _before) {data_[_i] = _after;}
         }
     }
-
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::contains__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
-    {
-        for (s64 _i = _start; _i < _stop; ++_i)
-        {
-            if (data_[_i] == _element) {return true;}
-        }
-        return false;
-    }
-    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::count__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const
-    {
-        s64 _count = 0;
-        for (s64 _i = _start; _i < _stop; ++_i)
-        {
-            if (data_[_i] == _element) {_count++;}
-        }
-        return _count;
-    }
-    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::first_of__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
-    {
-        for (s64 _i = _start; _i < _stop; ++_i)
-        {
-            if (data_[_i] == _element) {return _i;}
-        }
-        return s64(-1);
-    }
-    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::last_of__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
-    {
-        for (s64 _i = _stop; _i-- > _start;)
-        {
-            if (data_[_i] == _element) {return _i;}
-        }
-        return s64(-1);
-    }
-
-    template<typename TYPE_, s64 LENGTH_> TYPE_ *Span<TYPE_, LENGTH_>::begin__() {return data_;          }
-    template<typename TYPE_, s64 LENGTH_> TYPE_ *Span<TYPE_, LENGTH_>::end__  () {return data_ + LENGTH_;}
 
     template<typename TYPE_, s64 LENGTH_>       s64    Span<TYPE_, LENGTH_>::length() const {return LENGTH_;}
     template<typename TYPE_, s64 LENGTH_> const TYPE_ *Span<TYPE_, LENGTH_>::data  () const {return data_;}
