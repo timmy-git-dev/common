@@ -31,3 +31,6 @@ using b08 = bool;
 
 /// Typically a 64-bit unsigned integer to represent a memory location.
 using s64 = __SIZE_TYPE__;
+
+/// Typically a 64-bit unsigned integer to represent a memory location for kernel/c addresses.
+#define NULL s64(0)

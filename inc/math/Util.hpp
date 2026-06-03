@@ -5,11 +5,11 @@ namespace cmn::math
     constexpr double PI = 3.1415926535897932384626433;
 
     template<typename _TYPE>
-    _TYPE min  (const _TYPE &_valueA, const _TYPE &_valueB);
+    _TYPE min  (const _TYPE &_valueA, const _TYPE &_valueB                ) {return _valueA < _valueB ? _valueA : _valueB;                 }
     template<typename _TYPE>
-    _TYPE max  (const _TYPE &_valueA, const _TYPE &_valueB);
+    _TYPE max  (const _TYPE &_valueA, const _TYPE &_valueB                ) {return _valueA > _valueB ? _valueA : _valueB;                 }
     template<typename _TYPE>
-    _TYPE clamp(const _TYPE &_value, const _TYPE &_min, const _TYPE &_max);
+    _TYPE clamp(const _TYPE &_value , const _TYPE &_min, const _TYPE &_max) {return _value < _min ? _min : (_value > _max ? _max : _value);}
 
     template<typename _TYPE>
     _TYPE lerp(const _TYPE &_valueA, const _TYPE &_valueB, const _TYPE &_delta);

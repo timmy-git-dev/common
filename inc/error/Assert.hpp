@@ -1,19 +1,20 @@
 #pragma once
 #include "system/Syscall.hpp"
 #include "type/Alias.hpp"
-
+// TODO: Needs much better organization.
 namespace cmn::error
 {
-    #define COMPILER_ASSERT static_assert
+    #define ASSERT_COMPILE(_expression, _message) \
+        static_assert(_expression, _message)
 
-    #ifndef RELEASE__
-        inline void print_(const char *_text) // TODO: Replace with proper print function.
+    #ifdef DEBUG__
+        inline void print_(const c08 *_text) // TODO: Replace with proper print function.
         {
             s64 _length = 0;
             while (_text[_length] != '\0') {_length++;}
             cmn::system::write(1, _text, _length);
         };
-        inline void assert_(const char *_expression, const char *_message, bool _value, const char *_file, const int, const char *_function)
+        inline void assert_runtime(const c08 *_expression, const c08 *_message, bool _value, const c08 *_file, const int, const c08 *_function)
         {
             if (_value) {return;}
 
@@ -33,10 +34,10 @@ namespace cmn::error
             system::exit_group(1);
         }
 
-        #define RUNTIME_ASSERT(_expression, _message) \
-            cmn::error::assert_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
+        #define ASSERT_RUNTIME(_expression, _message) \
+            cmn::error::assert_runtime_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
     #else
-        #define RUNTIME_ASSERT(_expression, _message) \
+        #define ASSERT_RUNTIME(_expression, _message) \
             void(0)
     #endif
 }

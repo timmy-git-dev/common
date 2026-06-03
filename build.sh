@@ -45,6 +45,7 @@ CompileFlags:
         - -static
         - -no-pie
         - -DARCH_X86__
+        - -DDEBUG__
 
 Documentation:
   CommentFormat: Doxygen
