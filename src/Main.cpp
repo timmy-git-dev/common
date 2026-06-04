@@ -1,3 +1,4 @@
+#include "allocator/Arena.hpp"
 #include "container/Array.hpp"
 #include "container/Span.hpp"
 #include "container/Array.hpp"
@@ -95,20 +96,44 @@ c08* to_fstring(f32 value, c08* end)
 i08 main()
 {
     c08 _buffer[32];
+    c08* _end = _buffer + 32;
+
+
+    cmn::allocator::Arena _arena = cmn::allocator::Arena(4096);
+    // cmn::allocator::Region _region = cmn::allocator::Region(4096);
+
+    i32* _memA = reinterpret_cast<i32*>(_arena.allocate(sizeof(i32), alignof(i32)));
+    _memA[0] = 4;
+    print("Arena:");
+    print("\n Before: ");
+    print(to_string(_memA[0], _end));
+    print(" @ ");
+    print(to_string(reinterpret_cast<i64>(_memA), _end));
+
+    i64* _memB = reinterpret_cast<i64*>(_arena.reallocate(reinterpret_cast<u08*>(_memA), sizeof(i32), sizeof(i64), alignof(i64)));
+    _memB[0] += 4;
+    print("\n After : ");
+    print(to_string(_memB[0], _end));
+    print(" @ ");
+    print(to_string(reinterpret_cast<i64>(_memB), _end));
+    print("\n");
+
+    _arena.rollback(0);
+
 
     cmn::container::Array<f32    > _array = cmn::container::Array<f32    >(32, 32, 6.9f);
     cmn::container::Span <i32, 32> _span  = cmn::container::Span <i32, 32>(0);
 
-    print("Array: ");
+    print("Array:");
     print("\n fill: ");
     _array.fill(69.0f, 7, 19);
     print("[");
     for (const f32& _x : _array)
     {
-        print(to_fstring(_x, _buffer + 32));
+        print(to_fstring(_x, _end));
         print(", ");
     }
-    if (_array.length() > 0) {print(to_fstring(_array[_array.length() - 1], _buffer + 32));}
+    if (_array.length() > 0) {print(to_fstring(_array[_array.length() - 1], _end));}
     print("]");
 
     print("\n replace: ");
@@ -116,10 +141,10 @@ i08 main()
     print("[");
     for (f32& _x : _array)
     {
-        print(to_fstring(_x, _buffer + 32));
+        print(to_fstring(_x, _end));
         print(", ");
     }
-    if (_array.length() > 0) {print(to_fstring(_array[_array.length() - 1], _buffer + 32));}
+    if (_array.length() > 0) {print(to_fstring(_array[_array.length() - 1], _end));}
     print("]");
 
 
@@ -127,27 +152,27 @@ i08 main()
     print(_array.contains          (0u, 0ul, _array.length()) ? "true" : "false");
 
     print("\n count [0]: ");
-    print(to_string(_array.count   (0u, 0ul, _array.length()), _buffer + 32));
+    print(to_string(_array.count   (0u, 0ul, _array.length()), _end));
 
     print("\n index_first [0]: ");
-    print(to_string(_array.index_first(0u, 0ul, _array.length()), _buffer + 32));
+    print(to_string(_array.index_first(0u, 0ul, _array.length()), _end));
 
     print("\n index_last [0]: ");
-    print(to_string(_array.index_last (0u, 0ul, _array.length()), _buffer + 32));
+    print(to_string(_array.index_last (0u, 0ul, _array.length()), _end));
 
     print("\n");
 
 
-    print("Span: ");
+    print("Span:");
     print("\n fill: ");
     _span.fill(69u, 7, 19);
     print("[");
     for (const i32& _x : _span)
     {
-        print(to_string(_x, _buffer + 32));
+        print(to_string(_x, _end));
         print(", ");
     }
-    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _buffer + 32));}
+    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _end));}
     print("]");
 
     print("\n replace: ");
@@ -155,10 +180,10 @@ i08 main()
     print("[");
     for (i32& _x : _span)
     {
-        print(to_string(_x, _buffer + 32));
+        print(to_string(_x, _end));
         print(", ");
     }
-    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _buffer + 32));}
+    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _end));}
     print("]");
 
 
@@ -166,13 +191,13 @@ i08 main()
     print(_span.contains          (0u, 0ul, _span.length()) ? "true" : "false");
 
     print("\n count [0]: ");
-    print(to_string(_span.count   (0u, 0ul, _span.length()), _buffer + 32));
+    print(to_string(_span.count   (0u, 0ul, _span.length()), _end));
 
     print("\n index_first [0]: ");
-    print(to_string(_span.index_first(0u, 0ul, _span.length()), _buffer + 32));
+    print(to_string(_span.index_first(0u, 0ul, _span.length()), _end));
 
     print("\n index_last [0]: ");
-    print(to_string(_span.index_last (0u, 0ul, _span.length()), _buffer + 32));
+    print(to_string(_span.index_last (0u, 0ul, _span.length()), _end));
 
     print("\n");
 

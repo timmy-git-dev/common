@@ -1,7 +1,5 @@
 // AUTO-GENERATED SCRIPT //
 #pragma once
-#include <asm-generic/errno-base.h>
-#include <asm-generic/errno.h>
 #include <linux/fs.h>
 #include <linux/signal.h>
 #include <asm-generic/posix_types.h>

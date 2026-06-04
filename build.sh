@@ -14,7 +14,7 @@ PATH_EXE="$PATH_BIN/common"
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
 # COMPILE_FLAGS="-O3 -s -flto -DARCH_X86__ -DRELEASE__ -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
-COMPILE_FLAGS="-O0 -DARCH_X86__ -DDEBUG__ -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
+COMPILE_FLAGS="-g3 -O0 -DARCH_X86__ -DDEBUG__ -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
 COMPILE_LIBRARIES=""
 
 # Re-create the object directory.

@@ -16,23 +16,23 @@ public:
         Arena &operator=(const Arena  &_copied) = delete;
         Arena &operator=(      Arena &&_moved ) = delete;
 
-        void reset();
+        void rollback(s64 _length  );
+        void resize  (s64 _capacity);
 private:
-        s64   available__(             ) const;
-        s64   used__     (             ) const;
-        bool  owns__     (void* _memory) const;
+        s64   available__(            ) const;
+        s64   used__     (            ) const;
+        bool  owns__     (u08 *_memory) const;
 
-        void* allocate__  (               s64 _size   , s64 _align  );
-        void  reallocate__(void* _memory, s64 _oldSize, s64 _newSize);
-        void  deallocate__(void* _memory                            );
+        u08 *allocate__  (                 s64 _size,                  s64 _align);
+        u08 *reallocate__(u08 *_oldMemory, s64 _oldSize, s64 _newSize, s64 _align);
 public:
-                  s64   capacity() const;
-                  s64   marker  () const;
-        const     void *heap    () const;
-                  void *heap    ();
+              s64  capacity() const;
+              s64  length  () const;
+        const u08 *heap    () const;
+              u08 *heap    ();
 private:
-        s64   capacity_;
-        s64   marker_;
-        void *heap_;
+        s64  capacity_;
+        s64  length_;
+        u08 *heap_;
     };
 }
