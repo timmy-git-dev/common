@@ -12,7 +12,7 @@ namespace cmn::error
         {
             s64 _length = 0;
             while (_text[_length] != '\0') {_length++;}
-            cmn::system::write(1, _text, _length);
+            system::write(1, _text, _length);
         };
         inline void assert_runtime(const c08 *_expression, const c08 *_message, bool _value, const c08 *_file, const int, const c08 *_function)
         {
@@ -35,7 +35,7 @@ namespace cmn::error
         }
 
         #define ASSERT_RUNTIME(_expression, _message) \
-            cmn::error::assert_runtime_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
+            error::assert_runtime_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
     #else
         #define ASSERT_RUNTIME(_expression, _message) \
             void(0)

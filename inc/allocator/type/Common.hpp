@@ -13,5 +13,9 @@ public:
 
         u08* allocate  (              s64 _size,                  s64 _align) {return static_cast<ALLOCATOR_*>(this)->allocate__  (         _size,              _align);}
         u08* reallocate(u08* _memory, s64 _oldSize, s64 _newSize, s64 _align) {return static_cast<ALLOCATOR_*>(this)->reallocate__(_memory, _oldSize, _newSize, _align);}
+        void deallocate(u08* _memory                                        ) {       static_cast<ALLOCATOR_*>(this)->deallocate__(_memory                            );}
     };
+
+    template<typename TYPE_>
+    concept COMMON = __is_base_of(type::Common<TYPE_>, TYPE_);
 }

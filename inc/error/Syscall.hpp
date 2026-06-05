@@ -155,12 +155,12 @@ namespace cmn::error
         {
             s64 _length = 0;
             while (_text[_length] != '\0') {_length++;}
-            cmn::system::write(1, _text, _length);
+            system::write(1, _text, _length);
         };
         inline i64 assert_syscall_(i64 _syscall, const c08 *_file, const int, const c08 *_function)
         {
             if (_syscall >= 0 || _syscall < -MAX_ERRNO) {return _syscall;}
-            Errno _errno = _errnos[cmn::math::min<u64>(static_cast<u64>(-_syscall), sizeof(_errnos) / sizeof(*_errnos) - 1)];
+            Errno _errno = _errnos[math::min<u64>(static_cast<u64>(-_syscall), sizeof(_errnos) / sizeof(*_errnos) - 1)];
 
             print_("SYSCALL:");
             print_("\n ERRNO:       ");
@@ -182,7 +182,7 @@ namespace cmn::error
         }
 
         #define ASSERT_SYSCALL(_syscall) \
-            cmn::error::assert_syscall_(_syscall, __FILE__, __LINE__, __func__)
+            error::assert_syscall_(_syscall, __FILE__, __LINE__, __func__)
     #else
         #define ASSERT_SYSCALL(_syscall) \
             _syscall

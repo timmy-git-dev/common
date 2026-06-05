@@ -8,7 +8,7 @@ namespace cmn::error
     {
         s64 _length = 0;
         while (_text[_length] != '\0') {_length++;}
-        cmn::system::write(1, _text, _length);
+        system::write(1, _text, _length);
     };
     [[gnu::noreturn]]
     inline void abort_(const c08 *_message, const c08 *_file, const int, const c08 *_function)
@@ -29,5 +29,5 @@ namespace cmn::error
     }
 
     #define ABORT(_message) \
-        cmn::error::abort_(_message, __FILE__, __LINE__, __func__)
+        error::abort_(_message, __FILE__, __LINE__, __func__)
 }

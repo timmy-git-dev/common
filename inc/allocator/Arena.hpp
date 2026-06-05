@@ -25,6 +25,7 @@ private:
 
         u08 *allocate__  (                 s64 _size,                  s64 _align);
         u08 *reallocate__(u08 *_oldMemory, s64 _oldSize, s64 _newSize, s64 _align);
+        void deallocate__(u08 *                                                  ) { };
 public:
               s64  capacity() const;
               s64  length  () const;

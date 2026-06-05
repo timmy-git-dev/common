@@ -8,12 +8,12 @@ namespace cmn::allocator
         length_  (0),
         heap_    (nullptr)
     {
-        heap_ = reinterpret_cast<u08*>(ASSERT_SYSCALL(cmn::system::mmap(NULL, capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)));
+        heap_ = reinterpret_cast<u08*>(ASSERT_SYSCALL(system::mmap(NULL, capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)));
     }
 
     Arena::~Arena          ()
     {
-        ASSERT_SYSCALL(cmn::system::munmap(reinterpret_cast<u64>(heap_), capacity_));
+        ASSERT_SYSCALL(system::munmap(reinterpret_cast<u64>(heap_), capacity_));
     }
 
     void Arena::rollback(s64 _length  )
@@ -22,12 +22,12 @@ namespace cmn::allocator
     }
     void Arena::resize  (s64 _capacity)
     {
-        u08* _heap = reinterpret_cast<u08*>(ASSERT_SYSCALL(cmn::system::mmap(NULL, _capacity, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)));
+        u08* _heap = reinterpret_cast<u08*>(ASSERT_SYSCALL(system::mmap(NULL, _capacity, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)));
         for (s64 _i = 0; _i < length_; _i++)
         {
             _heap[_i] = _heap[_i];
         }
-        ASSERT_SYSCALL(cmn::system::munmap(reinterpret_cast<u64>(heap_), capacity_));
+        ASSERT_SYSCALL(system::munmap(reinterpret_cast<u64>(heap_), capacity_));
 
         heap_ = _heap;
         capacity_ = _capacity;

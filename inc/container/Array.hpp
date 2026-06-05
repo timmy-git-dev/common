@@ -1,8 +1,8 @@
 #pragma once
+#include "allocator/type/Common.hpp"
 #include "container/type/Common.hpp"
 #include "container/type/Resizable.hpp"
 #include "container/type/Unordered.hpp"
-#include "error/Syscall.hpp"
 
 inline void* operator new(s64, void* _memory) noexcept
 {
@@ -13,18 +13,18 @@ inline void operator delete(void*, void*) noexcept
 
 namespace cmn::container
 {
-    template<typename TYPE_>
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>
     struct Array:
-        public type::Common   <Array<TYPE_>, TYPE_>,
-        public type::Resizable<Array<TYPE_>, TYPE_>,
-        public type::Unordered<Array<TYPE_>, TYPE_>
+        public type::Common   <Array<TYPE_, ALLOCATOR_>, TYPE_>,
+        public type::Resizable<Array<TYPE_, ALLOCATOR_>, TYPE_>,
+        public type::Unordered<Array<TYPE_, ALLOCATOR_>, TYPE_>
     {
-        friend struct type::Common   <Array<TYPE_>, TYPE_>;
-        friend struct type::Resizable<Array<TYPE_>, TYPE_>;
-        friend struct type::Unordered<Array<TYPE_>, TYPE_>;
+        friend struct type::Common   <Array<TYPE_, ALLOCATOR_>, TYPE_>;
+        friend struct type::Resizable<Array<TYPE_, ALLOCATOR_>, TYPE_>;
+        friend struct type::Unordered<Array<TYPE_, ALLOCATOR_>, TYPE_>;
 public:
-        Array(const s64 _capacity);
-        Array(const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement);
+        Array(ALLOCATOR_ &_allocator, const s64 _capacity);
+        Array(ALLOCATOR_ &_allocator, const s64 _capacity, const s64 _length, const TYPE_ &_copiedElement);
 
         ~Array          ();
         Array           (const Array  &_copied) = delete;
@@ -63,29 +63,33 @@ private:
 
         void reserve__(const s64 _capacity);
 public:
-                  s64    capacity() const;
-                  s64    length  () const;
-        const     TYPE_ *data    () const;
-                  TYPE_ *data    ();
+                  s64        capacity () const;
+                  s64        length   () const;
+        const     ALLOCATOR_ allocator() const;
+        const     TYPE_     *data     () const;
+                  TYPE_     *data     ();
 private:
-        s64    capacity_;
-        s64    length_;
-        TYPE_ *data_;
+        s64         capacity_;
+        s64         length_;
+        ALLOCATOR_ &allocator_;
+        TYPE_      *data_;
     };
 
-    template<typename TYPE_> Array<TYPE_>::Array(const s64 _capacity):
-        capacity_(_capacity),
-        length_  (0),
-        data_    (nullptr)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> Array<TYPE_, ALLOCATOR_>::Array(ALLOCATOR_ &_allocator, const s64 _capacity):
+        capacity_ (_capacity ),
+        length_   (0         ),
+        allocator_(_allocator),
+        data_     (nullptr   )
     {
-        data_ = reinterpret_cast<TYPE_*>(ASSERT_SYSCALL(cmn::system::mmap(reinterpret_cast<u64>(nullptr), sizeof(TYPE_) * capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)));
+        data_ = reinterpret_cast<TYPE_*>(allocator_.allocate(sizeof(TYPE_) * capacity_, alignof(TYPE_)));
     }
-    template<typename TYPE_> Array<TYPE_>::Array(const s64 _capacity, const s64 _length, const TYPE_ &_element):
-        capacity_(_capacity),
-        length_  (_length),
-        data_    (nullptr)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> Array<TYPE_, ALLOCATOR_>::Array(ALLOCATOR_ &_allocator, const s64 _capacity, const s64 _length, const TYPE_ &_element):
+        capacity_ (_capacity ),
+        length_   (_length   ),
+        allocator_(_allocator),
+        data_     (nullptr   )
     {
-        data_ = reinterpret_cast<TYPE_*>(ASSERT_SYSCALL(cmn::system::mmap(NULL, sizeof(TYPE_) * capacity_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, static_cast<u64>(-1), 0ul)));
+        data_ = reinterpret_cast<TYPE_*>(allocator_.allocate(sizeof(TYPE_) * capacity_, alignof(TYPE_)));
 
         for(s64 _i = 0; _i < length_; ++_i)
         {
@@ -93,19 +97,19 @@ private:
         }
     }
 
-    template<typename TYPE_> Array<TYPE_>::~Array()
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> Array<TYPE_, ALLOCATOR_>::~Array()
     {
         for(s64 _i = 0; _i < length_; ++_i)
         {
             data_[_i].~TYPE_();
         }
-        system::munmap((u64)data_, sizeof(TYPE_) * capacity_);
+        allocator_.deallocate(reinterpret_cast<u08*>(data_));
     }
 
-    template<typename TYPE_> const TYPE_ &Array<TYPE_>::operator[](s64 _index) const {return data_[_index];}
-    template<typename TYPE_>       TYPE_ &Array<TYPE_>::operator[](s64 _index)       {return data_[_index];}
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> const TYPE_ &Array<TYPE_, ALLOCATOR_>::operator[](s64 _index) const {return data_[_index];}
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       TYPE_ &Array<TYPE_, ALLOCATOR_>::operator[](s64 _index)       {return data_[_index];}
 
-    template<typename TYPE_> bool Array<TYPE_>::operator==(const Array &_other) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::operator==(const Array &_other) const
     {
         for (s64 _i = 0; _i < length_; ++_i)
         {
@@ -113,7 +117,7 @@ private:
         }
         return true;
     }
-    template<typename TYPE_> bool Array<TYPE_>::operator!=(const Array &_other) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::operator!=(const Array &_other) const
     {
         for (s64 _i = 0; _i < length_; ++_i)
         {
@@ -121,7 +125,7 @@ private:
         }
         return true;
     }
-    template<typename TYPE_> bool Array<TYPE_>::operator< (const Array &_other) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::operator< (const Array &_other) const
     {
         for (s64 _i = 0; _i < length_; ++_i)
         {
@@ -130,7 +134,7 @@ private:
         }
         return false;
     }
-    template<typename TYPE_> bool Array<TYPE_>::operator<=(const Array &_other) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::operator<=(const Array &_other) const
     {
         for (s64 _i = 0; _i < length_; ++_i)
         {
@@ -139,7 +143,7 @@ private:
         }
         return true;
     }
-    template<typename TYPE_> bool Array<TYPE_>::operator> (const Array &_other) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::operator> (const Array &_other) const
     {
         for (s64 _i = 0; _i < length_; ++_i)
         {
@@ -148,7 +152,7 @@ private:
         }
         return false;
     }
-    template<typename TYPE_> bool Array<TYPE_>::operator>=(const Array &_other) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::operator>=(const Array &_other) const
     {
         for (s64 _i = 0; _i < length_; ++_i)
         {
@@ -158,10 +162,10 @@ private:
         return true;
     }
 
-    template<typename TYPE_> TYPE_ *Array<TYPE_>::begin__() {return data_;          }
-    template<typename TYPE_> TYPE_ *Array<TYPE_>::end__  () {return data_ + length_;}
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> TYPE_ *Array<TYPE_, ALLOCATOR_>::begin__() {return data_;          }
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> TYPE_ *Array<TYPE_, ALLOCATOR_>::end__  () {return data_ + length_;}
 
-    template<typename TYPE_> bool Array<TYPE_>::contains__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::contains__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _start; _i < _stop; ++_i)
         {
@@ -170,7 +174,7 @@ private:
 
         return false;
     }
-    template<typename TYPE_> s64  Array<TYPE_>::count__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> s64  Array<TYPE_, ALLOCATOR_>::count__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         s64 _count = 0;
         for (s64 _i = _start; _i < _stop; ++_i)
@@ -180,7 +184,7 @@ private:
 
         return _count;
     }
-    template<typename TYPE_> s64  Array<TYPE_>::index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> s64  Array<TYPE_, ALLOCATOR_>::index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _start; _i < _stop; ++_i)
         {
@@ -189,7 +193,7 @@ private:
 
         return s64(-1);
     }
-    template<typename TYPE_> s64  Array<TYPE_>::index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> s64  Array<TYPE_, ALLOCATOR_>::index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _stop; _i-- > _start;)
         {
@@ -199,14 +203,14 @@ private:
         return s64(-1);
     }
 
-    template<typename TYPE_> void Array<TYPE_>::fill__   (const TYPE_ & _element, const s64 _start, const s64 _stop)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::fill__   (const TYPE_ & _element, const s64 _start, const s64 _stop)
     {
         for(s64 _i = _start; _i < _stop; ++_i)
         {
             data_[_i] = TYPE_(_element);
         }
     }
-    template<typename TYPE_> void Array<TYPE_>::replace__(const TYPE_ &_before , const TYPE_ &_after, const s64 _start, const s64 _stop)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::replace__(const TYPE_ &_before , const TYPE_ &_after, const s64 _start, const s64 _stop)
     {
         for(s64 _i = _start; _i < _stop; ++_i)
         {
@@ -217,17 +221,17 @@ private:
         }
     }
 
-    template<typename TYPE_> void Array<TYPE_>::append_copy__(const TYPE_  &_element)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::append_copy__(const TYPE_  &_element)
     {
         new(&data_[length_]) TYPE_(_element);
         length_++;
     }
-    template<typename TYPE_> void Array<TYPE_>::append_move__(      TYPE_ &&_element)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::append_move__(      TYPE_ &&_element)
     {
         new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(_element));
         length_++;
     }
-    template<typename TYPE_> void Array<TYPE_>::insert_copy__(const TYPE_  &_element, const s64 _index)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::insert_copy__(const TYPE_  &_element, const s64 _index)
     {
         new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(data_[length_ - 1]));
 
@@ -239,7 +243,7 @@ private:
         data_[_index] = _element;
         ++length_;
     }
-    template<typename TYPE_> void Array<TYPE_>::insert_move__(      TYPE_ &&_element, const s64 _index)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::insert_move__(      TYPE_ &&_element, const s64 _index)
     {
         new(&data_[length_]) TYPE_(static_cast<TYPE_&&>(data_[length_ - 1]));
 
@@ -251,11 +255,11 @@ private:
         data_[_index] = static_cast<TYPE_&&>(_element); // move
         ++length_;
     }
-    template<typename TYPE_> void Array<TYPE_>::remove__     (                )
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::remove__     (                )
     {
         data_[--length_].~TYPE_();
     }
-    template<typename TYPE_> void Array<TYPE_>::remove__     (const s64 _index)
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::remove__     (const s64 _index)
     {
         data_[_index].~TYPE_();
         --length_;
@@ -265,8 +269,8 @@ private:
         }
     }
 
-    template<typename TYPE_>       s64    Array<TYPE_>::capacity() const {return capacity_;}
-    template<typename TYPE_>       s64    Array<TYPE_>::length  () const {return length_;  }
-    template<typename TYPE_> const TYPE_ *Array<TYPE_>::data    () const {return data_;    }
-    template<typename TYPE_>       TYPE_ *Array<TYPE_>::data    ()       {return data_;    }
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       s64    Array<TYPE_, ALLOCATOR_>::capacity() const {return capacity_;}
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       s64    Array<TYPE_, ALLOCATOR_>::length  () const {return length_;  }
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> const TYPE_ *Array<TYPE_, ALLOCATOR_>::data    () const {return data_;    }
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       TYPE_ *Array<TYPE_, ALLOCATOR_>::data    ()       {return data_;    }
 }

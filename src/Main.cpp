@@ -21,30 +21,6 @@ constexpr u64 random(u64 _seed)
     return _seed * 2685821657736338717ull;
 }
 
-c08* to_string(i64 value, c08* end)
-{
-    c08* ptr = end;
-    *--ptr = '\0';
-
-    b08 negative = value < 0;
-    u64 magnitude = negative
-        ? static_cast<u64>(-(value + 1)) + 1
-        : static_cast<u64>(value);
-
-    do
-    {
-        *--ptr = static_cast<c08>('0' + (magnitude % 10));
-        magnitude /= 10;
-    }
-    while (magnitude != 0);
-
-    if (negative)
-    {
-        *--ptr = '-';
-    }
-
-    return ptr;
-}
 c08* to_fstring(f32 value, c08* end)
 {
     c08* ptr = end;
@@ -93,40 +69,77 @@ c08* to_fstring(f32 value, c08* end)
     return ptr;
 }
 
+static constexpr u32 POW10_[10] =
+{
+    1,
+    10,
+    100,
+    1000,
+    10000,
+    100000,
+    1000000,
+    10000000,
+    100000000,
+    1000000000,
+};
+static constexpr u16 CHARS2_10_[100] =
+{
+    '00', '10', '20', '30', '40', '50', '60', '70', '80', '90',
+    '01', '11', '21', '31', '41', '51', '61', '71', '81', '91',
+    '02', '12', '22', '32', '42', '52', '62', '72', '82', '92',
+    '03', '13', '23', '33', '43', '53', '63', '73', '83', '93',
+    '04', '14', '24', '34', '44', '54', '64', '74', '84', '94',
+    '05', '15', '25', '35', '45', '55', '65', '75', '85', '95',
+    '06', '16', '26', '36', '46', '56', '66', '76', '86', '96',
+    '07', '17', '27', '37', '47', '57', '67', '77', '87', '97',
+    '08', '18', '28', '38', '48', '58', '68', '78', '88', '98',
+    '09', '19', '29', '39', '49', '59', '69', '79', '89', '99',
+};
+c08* to_string(u32 _value, c08* _buffer)
+{
+    u32 _length =
+        (_value >= 1000000000) ? 10 :
+        (_value >= 100000000)  ? 9  :
+        (_value >= 10000000)   ? 8  :
+        (_value >= 1000000)    ? 7  :
+        (_value >= 100000)     ? 6  :
+        (_value >= 10000)      ? 5  :
+        (_value >= 1000)       ? 4  :
+        (_value >= 100)        ? 3  :
+        (_value >= 10)         ? 2  : 1;
+
+    u16* _buff = reinterpret_cast<u16*>(_buffer + (_length & 1));
+
+    u32 _i = _length >> 1;
+    while (_i > 0)
+    {
+        u32 _quo = _value / 100;
+        u32 _rem = _value - _quo * 100;
+        _value = _quo;
+
+        _buff[--_i] = CHARS2_10_[_rem];
+    }
+
+    if (_length & 1) _buffer[0] = '0' + _value;
+    _buffer[_length] = '\0';
+
+    return _buffer;
+}
+
 i08 main()
 {
     c08 _buffer[32];
     c08* _end = _buffer + 32;
 
-
     cmn::allocator::Arena _arena = cmn::allocator::Arena(4096);
     // cmn::allocator::Region _region = cmn::allocator::Region(4096);
 
-    i32* _memA = reinterpret_cast<i32*>(_arena.allocate(sizeof(i32), alignof(i32)));
-    _memA[0] = 4;
-    print("Arena:");
-    print("\n Before: ");
-    print(to_string(_memA[0], _end));
-    print(" @ ");
-    print(to_string(reinterpret_cast<i64>(_memA), _end));
-
-    i64* _memB = reinterpret_cast<i64*>(_arena.reallocate(reinterpret_cast<u08*>(_memA), sizeof(i32), sizeof(i64), alignof(i64)));
-    _memB[0] += 4;
-    print("\n After : ");
-    print(to_string(_memB[0], _end));
-    print(" @ ");
-    print(to_string(reinterpret_cast<i64>(_memB), _end));
-    print("\n");
-
-    _arena.rollback(0);
-
-
-    cmn::container::Array<f32    > _array = cmn::container::Array<f32    >(32, 32, 6.9f);
+    cmn::container::Array<f32, cmn::allocator::Arena> _array = cmn::container::Array<f32, cmn::allocator::Arena>(_arena, 32, 32, 0.0f);
     cmn::container::Span <i32, 32> _span  = cmn::container::Span <i32, 32>(0);
 
     print("Array:");
-    print("\n fill: ");
-    _array.fill(69.0f, 7, 19);
+    print("\n fill:        ");
+    _array.fill(6.9f, 7, 19);
     print("[");
     for (const f32& _x : _array)
     {
@@ -136,8 +149,8 @@ i08 main()
     if (_array.length() > 0) {print(to_fstring(_array[_array.length() - 1], _end));}
     print("]");
 
-    print("\n replace: ");
-    _array.replace(69.0f, 4.20f, 14, 23);
+    print("\n replace:     ");
+    _array.replace(6.9f, 4.2f, 14, 23);
     print("[");
     for (f32& _x : _array)
     {
@@ -148,56 +161,56 @@ i08 main()
     print("]");
 
 
-    print("\n contains [0]: ");
+    print("\n contains:    ");
     print(_array.contains          (0u, 0ul, _array.length()) ? "true" : "false");
 
-    print("\n count [0]: ");
-    print(to_string(_array.count   (0u, 0ul, _array.length()), _end));
+    print("\n count:       ");
+    print(to_string(_array.count   (0u, 0ul, _array.length()), _buffer));
 
-    print("\n index_first [0]: ");
-    print(to_string(_array.index_first(0u, 0ul, _array.length()), _end));
+    print("\n index_first: ");
+    print(to_string(_array.index_first(0u, 0ul, _array.length()), _buffer));
 
-    print("\n index_last [0]: ");
-    print(to_string(_array.index_last (0u, 0ul, _array.length()), _end));
+    print("\n index_last:  ");
+    print(to_string(_array.index_last (0u, 0ul, _array.length()), _buffer));
 
     print("\n");
 
 
     print("Span:");
-    print("\n fill: ");
-    _span.fill(69u, 7, 19);
+    print("\n fill:        ");
+    _span.fill(472, 7, 19);
     print("[");
     for (const i32& _x : _span)
     {
-        print(to_string(_x, _end));
+        print(to_string(_x, _buffer));
         print(", ");
     }
-    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _end));}
+    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _buffer));}
     print("]");
 
-    print("\n replace: ");
-    _span.replace(69u, 420u, 14, 23);
+    print("\n replace:     ");
+    _span.replace(472, 748912, 14, 23);
     print("[");
     for (i32& _x : _span)
     {
-        print(to_string(_x, _end));
+        print(to_string(_x, _buffer));
         print(", ");
     }
-    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _end));}
+    if (_span.length() > 0) {print(to_string(_span[_span.length() - 1], _buffer));}
     print("]");
 
 
-    print("\n contains [0]: ");
+    print("\n contains:    ");
     print(_span.contains          (0u, 0ul, _span.length()) ? "true" : "false");
 
-    print("\n count [0]: ");
-    print(to_string(_span.count   (0u, 0ul, _span.length()), _end));
+    print("\n count:       ");
+    print(to_string(_span.count   (0u, 0ul, _span.length()), _buffer));
 
-    print("\n index_first [0]: ");
-    print(to_string(_span.index_first(0u, 0ul, _span.length()), _end));
+    print("\n index_first: ");
+    print(to_string(_span.index_first(0u, 0ul, _span.length()), _buffer));
 
-    print("\n index_last [0]: ");
-    print(to_string(_span.index_last (0u, 0ul, _span.length()), _end));
+    print("\n index_last:  ");
+    print(to_string(_span.index_last (0u, 0ul, _span.length()), _buffer));
 
     print("\n");
 
