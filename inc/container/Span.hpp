@@ -24,8 +24,8 @@ public:
         Span &operator=(const Span  &_copied) = delete;
         Span &operator=(      Span &&_moved ) = delete;
 
-        const TYPE_ &operator[](s64 _index) const;
-              TYPE_ &operator[](s64 _index);
+        const TYPE_ &operator[](const s64 _index) const;
+              TYPE_ &operator[](const s64 _index);
 
         bool operator==(const Span &_other) const;
         bool operator!=(const Span &_other) const;
@@ -33,7 +33,6 @@ public:
         bool operator<=(const Span &_other) const;
         bool operator> (const Span &_other) const;
         bool operator>=(const Span &_other) const;
-
 private:
         TYPE_ *begin__();
         TYPE_ *end__  ();
@@ -69,8 +68,8 @@ private:
         data_{static_cast<_TYPE&&>(_elements)...}
     { }
 
-    template<typename TYPE_, s64 LENGTH_> const TYPE_ &Span<TYPE_, LENGTH_>::operator[](s64 _index) const {return data_[_index];}
-    template<typename TYPE_, s64 LENGTH_>       TYPE_ &Span<TYPE_, LENGTH_>::operator[](s64 _index)       {return data_[_index];}
+    template<typename TYPE_, s64 LENGTH_> const TYPE_ &Span<TYPE_, LENGTH_>::operator[](const s64 _index) const {return data_[_index];}
+    template<typename TYPE_, s64 LENGTH_>       TYPE_ &Span<TYPE_, LENGTH_>::operator[](const s64 _index)       {return data_[_index];}
 
     template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::operator==(const Span &_other) const
     {

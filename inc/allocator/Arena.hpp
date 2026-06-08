@@ -6,7 +6,7 @@ namespace cmn::allocator
     struct Arena:
         public type::Common<Arena>
     {
-        friend struct Common<Arena>;
+        friend struct type::Common<Arena>;
 public:
         Arena(const s64 _capacity);
 
@@ -16,16 +16,15 @@ public:
         Arena &operator=(const Arena  &_copied) = delete;
         Arena &operator=(      Arena &&_moved ) = delete;
 
-        void rollback(s64 _length  );
-        void resize  (s64 _capacity);
+        void rollback(const s64 _length  );
 private:
-        s64   available__(            ) const;
-        s64   used__     (            ) const;
-        bool  owns__     (u08 *_memory) const;
+        s64   available__(                  ) const;
+        s64   used__     (                  ) const;
+        bool  owns__     (const u08 *_memory) const;
 
-        u08 *allocate__  (                 s64 _size,                  s64 _align);
-        u08 *reallocate__(u08 *_oldMemory, s64 _oldSize, s64 _newSize, s64 _align);
-        void deallocate__(u08 *                                                  ) { };
+        u08 *allocate__  (                       const s64 _size,                        const s64 _align);
+        u08 *reallocate__(const u08 *_oldMemory, const s64 _oldSize, const s64 _newSize, const s64 _align);
+        void deallocate__(const u08 *                                                                    );
 public:
               s64  capacity() const;
               s64  length  () const;

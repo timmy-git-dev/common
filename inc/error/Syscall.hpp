@@ -1,4 +1,5 @@
 #pragma once
+#include "error/Print.hpp"
 #include "math/Util.hpp"
 #include "system/Errno.hpp"
 #include "system/Syscall.hpp"
@@ -151,12 +152,6 @@ namespace cmn::error
             {"EUNKNOWN",        "Unknown errno."                                    }, // 134+
         };
 
-        inline void print_(const c08 *_text) // TODO: Replace with proper print function.
-        {
-            s64 _length = 0;
-            while (_text[_length] != '\0') {_length++;}
-            system::write(1, _text, _length);
-        };
         inline i64 assert_syscall_(i64 _syscall, const c08 *_file, const int, const c08 *_function)
         {
             if (_syscall >= 0 || _syscall < -MAX_ERRNO) {return _syscall;}

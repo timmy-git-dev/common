@@ -1,7 +1,9 @@
 #include "allocator/Arena.hpp"
+#include "allocator/Region.hpp"
 #include "container/Array.hpp"
 #include "container/Span.hpp"
 #include "container/Array.hpp"
+#include "math/Util.hpp"
 #include "system/CxxABI.hpp"
 #include "system/EntryExit.hpp"
 #include "system/Syscall.hpp"
@@ -69,19 +71,8 @@ c08* to_fstring(f32 value, c08* end)
     return ptr;
 }
 
-static constexpr u32 POW10_[10] =
-{
-    1,
-    10,
-    100,
-    1000,
-    10000,
-    100000,
-    1000000,
-    10000000,
-    100000000,
-    1000000000,
-};
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmultichar"
 static constexpr u16 CHARS2_10_[100] =
 {
     '00', '10', '20', '30', '40', '50', '60', '70', '80', '90',
@@ -95,6 +86,7 @@ static constexpr u16 CHARS2_10_[100] =
     '08', '18', '28', '38', '48', '58', '68', '78', '88', '98',
     '09', '19', '29', '39', '49', '59', '69', '79', '89', '99',
 };
+#pragma GCC diagnostic pop
 c08* to_string(u32 _value, c08* _buffer)
 {
     u32 _length =
@@ -131,10 +123,14 @@ i08 main()
     c08 _buffer[32];
     c08* _end = _buffer + 32;
 
-    cmn::allocator::Arena _arena = cmn::allocator::Arena(4096);
-    // cmn::allocator::Region _region = cmn::allocator::Region(4096);
+    // cmn::allocator::Arena  _arena  = cmn::allocator::Arena (4096);
+    cmn::allocator::Region _region = cmn::allocator::Region(512);
 
-    cmn::container::Array<f32, cmn::allocator::Arena> _array = cmn::container::Array<f32, cmn::allocator::Arena>(_arena, 32, 32, 0.0f);
+    cmn::container::Array<u32, cmn::allocator::Region> _a(_region, 15, 3, 1.0f);
+    cmn::container::Array<u32, cmn::allocator::Region> _b(_region,  3, 2, 2.0f);
+    cmn::container::Array<u32, cmn::allocator::Region> _c(_region,  8, 1, 3.0f);
+
+    cmn::container::Array<f32, cmn::allocator::Region> _array = cmn::container::Array<f32, cmn::allocator::Region>(_region, 32, 32, 0.0f);
     cmn::container::Span <i32, 32> _span  = cmn::container::Span <i32, 32>(0);
 
     print("Array:");
@@ -213,6 +209,25 @@ i08 main()
     print(to_string(_span.index_last (0u, 0ul, _span.length()), _buffer));
 
     print("\n");
+
+
+    for (s64 _i = 0; _i < _region.capacity();)
+    {
+        s64 _length = static_cast<s64>(cmn::math::abs(reinterpret_cast<i64*>(_region.heap())[_i]));
+        _i += sizeof(s64);
+
+        print("[");
+        print(to_string(     _length, _buffer));
+        print(": ");
+        print(to_string(_i          , _buffer));
+        print("-");
+        print(to_string(_i + _length - 1, _buffer));
+        print("] ");
+
+        _i += _length;
+    }
+    print("\n");
+
 
     return 0;
 }

@@ -15,7 +15,7 @@ namespace cmn::math
     _TYPE lerp(const _TYPE &_valueA, const _TYPE &_valueB, const _TYPE &_delta);
 
     template<typename _TYPE>
-    _TYPE abs (const _TYPE &_value);
+    _TYPE abs (const _TYPE &_value) {return _value < 0 ? -_value : _value;}
     template<typename _TYPE>
     _TYPE sign(const _TYPE &_value);
 

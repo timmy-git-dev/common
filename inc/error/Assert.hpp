@@ -1,4 +1,5 @@
 #pragma once
+#include "error/Print.hpp"
 #include "system/Syscall.hpp"
 #include "type/Alias.hpp"
 // TODO: Needs much better organization.
@@ -8,12 +9,6 @@ namespace cmn::error
         static_assert(_expression, _message)
 
     #ifdef DEBUG__
-        inline void print_(const c08 *_text) // TODO: Replace with proper print function.
-        {
-            s64 _length = 0;
-            while (_text[_length] != '\0') {_length++;}
-            system::write(1, _text, _length);
-        };
         inline void assert_runtime(const c08 *_expression, const c08 *_message, bool _value, const c08 *_file, const int, const c08 *_function)
         {
             if (_value) {return;}

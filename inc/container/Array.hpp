@@ -32,8 +32,8 @@ public:
         Array &operator=(const Array  &_copied) = delete;
         Array &operator=(      Array &&_moved ) = delete;
 
-        const TYPE_ &operator[](s64 _index) const;
-              TYPE_ &operator[](s64 _index);
+        const TYPE_ &operator[](const s64 _index) const;
+              TYPE_ &operator[](const s64 _index);
 
         bool operator==(const Array &_other) const;
         bool operator!=(const Array &_other) const;
@@ -41,7 +41,6 @@ public:
         bool operator<=(const Array &_other) const;
         bool operator> (const Array &_other) const;
         bool operator>=(const Array &_other) const;
-
 private:
         TYPE_ *begin__();
         TYPE_ *end__  ();
@@ -106,8 +105,8 @@ private:
         allocator_.deallocate(reinterpret_cast<u08*>(data_));
     }
 
-    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> const TYPE_ &Array<TYPE_, ALLOCATOR_>::operator[](s64 _index) const {return data_[_index];}
-    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       TYPE_ &Array<TYPE_, ALLOCATOR_>::operator[](s64 _index)       {return data_[_index];}
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> const TYPE_ &Array<TYPE_, ALLOCATOR_>::operator[](const s64 _index) const {return data_[_index];}
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       TYPE_ &Array<TYPE_, ALLOCATOR_>::operator[](const s64 _index)       {return data_[_index];}
 
     template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> bool Array<TYPE_, ALLOCATOR_>::operator==(const Array &_other) const
     {

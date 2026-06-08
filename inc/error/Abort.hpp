@@ -1,15 +1,10 @@
 #pragma once
+#include "error/Print.hpp"
 #include "system/Syscall.hpp"
 #include "type/Alias.hpp"
 // TODO: Needs much better organization.
 namespace cmn::error
 {
-    inline void print_(const c08 *_text) // TODO: Replace with proper print function.
-    {
-        s64 _length = 0;
-        while (_text[_length] != '\0') {_length++;}
-        system::write(1, _text, _length);
-    };
     [[gnu::noreturn]]
     inline void abort_(const c08 *_message, const c08 *_file, const int, const c08 *_function)
     {

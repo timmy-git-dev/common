@@ -7,10 +7,10 @@ namespace cmn::allocator::type
     struct Block
     {
 public:
-        bool fits (s64 _size) const {return static_cast<const ALLOCATOR_*>(this)->fits__ (_size);}
+        bool fits (const s64 _size) const {return static_cast<const ALLOCATOR_*>(this)->fits__ (_size);}
 
-        s64 blocks_total    () const {return static_cast<const ALLOCATOR_*>(this)->blocks_total__    ();}
-        s64 blocks_available() const {return static_cast<const ALLOCATOR_*>(this)->blocks_available__();}
-        s64 blocks_used     () const {return static_cast<const ALLOCATOR_*>(this)->blocks_used__     ();}
+        // s64 blocks_total    () const {return static_cast<const ALLOCATOR_*>(this)->blocks_total__    ();}
+        // s64 blocks_available() const {return static_cast<const ALLOCATOR_*>(this)->blocks_available__();}
+        // s64 blocks_used     () const {return static_cast<const ALLOCATOR_*>(this)->blocks_used__     ();}
     };
 }
