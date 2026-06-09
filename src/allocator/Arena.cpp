@@ -22,26 +22,14 @@ namespace cmn::allocator
     s64  Arena::used__     (                  ) const {return             length_;                          }
     bool Arena::owns__     (const u08 *_memory) const {return _memory >= heap_ && _memory < heap_ + length_;}
 
-    u08 *Arena::allocate__  (                       const s64 _size,                        const s64 _align)
+    u08 *Arena::allocate__  (const s64 _size, const s64 _align)
     {
         length_ = (length_ + _align - 1) & ~(_align - 1);
         u08* _memory = heap_ + length_;
         length_ += _size;
         return _memory;
     }
-    u08 *Arena::reallocate__(const u08 *_oldMemory, const s64 _oldSize, const s64 _newSize, const s64 _align)
-    {
-        length_ = (length_ + _align - 1) & ~(_align - 1);
-        u08* _newMemory = heap_ + length_;
-        for (s64 _i = 0; _i < _oldSize; _i++)
-        {
-            _newMemory[_i] = _oldMemory[_i];
-        }
-
-        length_ += _newSize;
-        return _newMemory;
-    }
-    void Arena::deallocate__(const u08 *                                                                    )
+    void Arena::deallocate__(const u08 *                      )
     { }
 
           s64  Arena::capacity() const {return capacity_;}

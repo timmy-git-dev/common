@@ -268,6 +268,18 @@ private:
         }
     }
 
+    template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> void Array<TYPE_, ALLOCATOR_>::reserve__     (const s64 _capacity)
+    {
+        TYPE_* _data = reinterpret_cast<TYPE_*>(allocator_.allocate(sizeof(TYPE_) * _capacity, alignof(TYPE_)));
+        for(s64 _i = 0; _i < length_; ++_i)
+        {
+            _data[_i] = static_cast<TYPE_&&>(data_[_i]);
+        }
+
+        data_     = _data;
+        capacity_ = _capacity;
+    }
+
     template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       s64    Array<TYPE_, ALLOCATOR_>::capacity() const {return capacity_;}
     template<typename TYPE_, allocator::type::COMMON ALLOCATOR_>       s64    Array<TYPE_, ALLOCATOR_>::length  () const {return length_;  }
     template<typename TYPE_, allocator::type::COMMON ALLOCATOR_> const TYPE_ *Array<TYPE_, ALLOCATOR_>::data    () const {return data_;    }

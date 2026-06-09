@@ -1,4 +1,3 @@
-#pragma once
 #include "allocator/Region.hpp"
 #include "error/Abort.hpp"
 #include "error/Syscall.hpp"
@@ -20,80 +19,8 @@ namespace cmn::allocator
         ASSERT_SYSCALL(system::munmap(reinterpret_cast<u64>(heap_), capacity_));
     }
 
-    bool Region::fits__ (const s64 _size) const
+    bool Region::fits__ (const s64 _size, const s64 _align) const
     {
-
-    }
-
-    s64   Region::available__(                  ) const
-    {
-
-    }
-    s64   Region::used__     (                  ) const
-    {
-
-    }
-    bool  Region::owns__     (const u08 *_memory) const
-    {
-
-    }
-
-
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wmultichar"
-    static constexpr u16 CHARS2_10_[100] =
-    {
-        '00', '10', '20', '30', '40', '50', '60', '70', '80', '90',
-        '01', '11', '21', '31', '41', '51', '61', '71', '81', '91',
-        '02', '12', '22', '32', '42', '52', '62', '72', '82', '92',
-        '03', '13', '23', '33', '43', '53', '63', '73', '83', '93',
-        '04', '14', '24', '34', '44', '54', '64', '74', '84', '94',
-        '05', '15', '25', '35', '45', '55', '65', '75', '85', '95',
-        '06', '16', '26', '36', '46', '56', '66', '76', '86', '96',
-        '07', '17', '27', '37', '47', '57', '67', '77', '87', '97',
-        '08', '18', '28', '38', '48', '58', '68', '78', '88', '98',
-        '09', '19', '29', '39', '49', '59', '69', '79', '89', '99',
-    };
-    #pragma GCC diagnostic pop
-    c08* to_string(u32 _value, c08* _buffer)
-    {
-        u32 _length =
-            (_value >= 1000000000) ? 10 :
-            (_value >= 100000000)  ? 9  :
-            (_value >= 10000000)   ? 8  :
-            (_value >= 1000000)    ? 7  :
-            (_value >= 100000)     ? 6  :
-            (_value >= 10000)      ? 5  :
-            (_value >= 1000)       ? 4  :
-            (_value >= 100)        ? 3  :
-            (_value >= 10)         ? 2  : 1;
-
-        u16* _buff = reinterpret_cast<u16*>(_buffer + (_length & 1));
-
-        u32 _i = _length >> 1;
-        while (_i > 0)
-        {
-            u32 _quo = _value / 100;
-            u32 _rem = _value - _quo * 100;
-            _value = _quo;
-
-            _buff[--_i] = CHARS2_10_[_rem];
-        }
-
-        if (_length & 1) _buffer[0] = '0' + _value;
-        _buffer[_length] = '\0';
-
-        return _buffer;
-    }
-
-    u08 *Region::allocate__  (                       const s64 _size,                        const s64 _align)
-    {
-        c08 _buffer[32];
-
-
-        // Possibilites:
-        // 1. Not enough space to fit into aligned space.
-
         s64 _i = 0;
         while (_i < capacity_)
         {
@@ -104,8 +31,83 @@ namespace cmn::allocator
             const s64 _totalStart  = _totalBegin + sizeof(s64);
             const s64 _totalLength = _used ? static_cast<s64>(-_block) : static_cast<s64>(_block);
 
+            if (_used || _totalLength < _size)
+            {
+                _i += _totalLength + sizeof(s64);
+                continue;
+            }
 
-            if (_totalLength == 0) return 0;
+            const s64 _alignedStart = (_totalStart + _align - 1) & ~(_align - 1);
+            if (_alignedStart == _totalStart) return true;
+
+            const s64 _startB = (_totalStart + sizeof(s64) + _align - 1) & ~(_align - 1);
+            const s64 _lengthB = _totalLength - (_startB - _totalStart);
+
+            if (_lengthB < _size)
+            {
+                _i += _totalLength;
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    s64   Region::available__(                  ) const
+    {
+        s64 _available = 0;
+        s64 _i         = 0;
+        while (_i < capacity_)
+        {
+            const i64  _block = reinterpret_cast<i64*>(heap_)[_i];
+            if (_block < 0)
+            {
+                _i += -_block;
+                continue;
+            }
+
+            _available += _block;
+        }
+
+        return _available;
+    }
+    s64   Region::used__     (                  ) const
+    {
+        s64 _used = 0;
+        s64 _i    = 0;
+        while (_i < capacity_)
+        {
+            const i64  _block = reinterpret_cast<i64*>(heap_)[_i];
+            if (_block >= 0)
+            {
+                _i += _block;
+                continue;
+            }
+
+            _used += -_block;
+        }
+
+        return _used;
+    }
+    bool  Region::owns__     (const u08 *_memory) const
+    {
+        return _memory > heap_ && _memory < heap_ + capacity_;
+    }
+
+    u08 *Region::allocate__  (const s64 _size, const s64 _align)
+    {
+        s64 _i = 0;
+        while (_i < capacity_)
+        {
+            const i64  _block = reinterpret_cast<i64*>(heap_)[_i];
+            const bool _used  = _block < 0;
+
+            const s64 _totalBegin  = _i;
+            const s64 _totalStart  = _totalBegin + sizeof(s64);
+            const s64 _totalLength = _used ? static_cast<s64>(-_block) : static_cast<s64>(_block);
+
 
             if (_used || _totalLength < _size)
             {
@@ -159,11 +161,7 @@ namespace cmn::allocator
 
         ABORT("No available space to allocate.");
     }
-    u08 *Region::reallocate__(const u08 *_oldMemory, const s64 _oldSize, const s64 _newSize, const s64 _align)
-    {
-
-    }
-    void Region::deallocate__(const u08 *_memory                                                             )
+    void Region::deallocate__(const u08 *_memory               )
     {
         s64 _block = reinterpret_cast<s64>(_memory) - sizeof(s64) - reinterpret_cast<s64>(heap_);
 

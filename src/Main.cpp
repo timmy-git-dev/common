@@ -123,15 +123,11 @@ i08 main()
     c08 _buffer[32];
     c08* _end = _buffer + 32;
 
-    // cmn::allocator::Arena  _arena  = cmn::allocator::Arena (4096);
-    cmn::allocator::Region _region = cmn::allocator::Region(512);
+    cmn::allocator::Arena  _arena (4096);
+    cmn::allocator::Region _region( 512);
 
-    cmn::container::Array<u32, cmn::allocator::Region> _a(_region, 15, 3, 1.0f);
-    cmn::container::Array<u32, cmn::allocator::Region> _b(_region,  3, 2, 2.0f);
-    cmn::container::Array<u32, cmn::allocator::Region> _c(_region,  8, 1, 3.0f);
-
-    cmn::container::Array<f32, cmn::allocator::Region> _array = cmn::container::Array<f32, cmn::allocator::Region>(_region, 32, 32, 0.0f);
-    cmn::container::Span <i32, 32> _span  = cmn::container::Span <i32, 32>(0);
+    cmn::container::Array<f32, cmn::allocator::Region> _array(_region, 32, 32, 0.0f);
+    cmn::container::Span <i32, 32>                     _span(0);
 
     print("Array:");
     print("\n fill:        ");

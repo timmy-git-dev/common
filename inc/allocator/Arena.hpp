@@ -22,9 +22,8 @@ private:
         s64   used__     (                  ) const;
         bool  owns__     (const u08 *_memory) const;
 
-        u08 *allocate__  (                       const s64 _size,                        const s64 _align);
-        u08 *reallocate__(const u08 *_oldMemory, const s64 _oldSize, const s64 _newSize, const s64 _align);
-        void deallocate__(const u08 *                                                                    );
+        u08 *allocate__  (const s64 _size, const s64 _align);
+        void deallocate__(const u08 *                      );
 public:
               s64  capacity() const;
               s64  length  () const;
