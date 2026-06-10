@@ -3,6 +3,7 @@
 #include "container/Array.hpp"
 #include "container/Span.hpp"
 #include "container/Array.hpp"
+#include "container/String.hpp"
 #include "math/Util.hpp"
 #include "system/CxxABI.hpp"
 #include "system/EntryExit.hpp"
@@ -126,8 +127,12 @@ i08 main()
     cmn::allocator::Arena  _arena (4096);
     cmn::allocator::Region _region( 512);
 
-    cmn::container::Array<f32, cmn::allocator::Region> _array(_region, 32, 32, 0.0f);
     cmn::container::Span <i32, 32>                     _span(0);
+    cmn::container::Array<f32, cmn::allocator::Region> _array(_region, 32, 32, 0.0f);
+    cmn::container::String<cmn::allocator::Region>     _string(_region, "Hello, world!\n");
+
+    _string.c_string(_buffer);
+    print(_buffer);
 
     print("Array:");
     print("\n fill:        ");

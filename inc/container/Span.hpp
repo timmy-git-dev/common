@@ -13,7 +13,7 @@ namespace cmn::container
         friend struct type::Unordered<Span<TYPE_, LENGTH_>, TYPE_>;
 public:
         Span();
-        Span(const TYPE_ &_element);
+        Span(TYPE_ _element);
         template<typename... _TYPE>
         requires(sizeof...(_TYPE) == LENGTH_)
         Span(_TYPE&&... _elements);
@@ -54,7 +54,7 @@ private:
 
     template<typename TYPE_, s64 LENGTH_> Span<TYPE_, LENGTH_>::Span()
     { }
-    template<typename TYPE_, s64 LENGTH_> Span<TYPE_, LENGTH_>::Span(const TYPE_ &_element)
+    template<typename TYPE_, s64 LENGTH_> Span<TYPE_, LENGTH_>::Span(TYPE_ _element)
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
