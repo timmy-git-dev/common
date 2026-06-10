@@ -1,0 +1,265 @@
+#pragma once
+#include "allocator/type/Common.hpp"
+#include "container/type/Common.hpp"
+#include "container/type/Resizable.hpp"
+#include "container/type/Unordered.hpp"
+
+inline void* operator new(s64, void* _memory) noexcept
+{
+    return _memory;
+}
+inline void operator delete(void*, void*) noexcept
+{ }
+
+namespace cmn::container
+{
+    template<allocator::type::COMMON ALLOCATOR_>
+    struct String:
+        public type::Common   <String<ALLOCATOR_>, c08>,
+        public type::Resizable<String<ALLOCATOR_>, c08>,
+        public type::Unordered<String<ALLOCATOR_>, c08>
+    {
+        friend struct type::Common   <String<ALLOCATOR_>, c08>;
+        friend struct type::Resizable<String<ALLOCATOR_>, c08>;
+        friend struct type::Unordered<String<ALLOCATOR_>, c08>;
+public:
+        String(ALLOCATOR_ &_allocator, const s64 _capacity);
+        String(ALLOCATOR_ &_allocator, const s64 _capacity, const s64 _length, const c08 &_copiedElement);
+
+        ~String          ();
+        String           (const String  &_copied) = delete;
+        String           (      String &&_moved ) = delete;
+        String &operator=(const String  &_copied) = delete;
+        String &operator=(      String &&_moved ) = delete;
+
+        const c08 &operator[](const s64 _index) const;
+              c08 &operator[](const s64 _index);
+
+        bool operator==(const String &_other) const;
+        bool operator!=(const String &_other) const;
+        bool operator< (const String &_other) const;
+        bool operator<=(const String &_other) const;
+        bool operator> (const String &_other) const;
+        bool operator>=(const String &_other) const;
+private:
+        c08 *begin__();
+        c08 *end__  ();
+
+        bool contains__   (const c08 &_element, const s64 _start, const s64 _stop) const;
+        s64  count__      (const c08 &_element, const s64 _start, const s64 _stop) const;
+        s64  index_first__(const c08 &_element, const s64 _start, const s64 _stop) const;
+        s64  index_last__ (const c08 &_element, const s64 _start, const s64 _stop) const;
+
+        void fill__   (const c08 &_element                     , const s64 _start, const s64 _stop);
+        void replace__(const c08 &_before , const c08 &_after, const s64 _start, const s64 _stop);
+
+        void append_copy__(c08   _element                  );
+        void append_move__(c08 &&_element                  );
+        void insert_copy__(c08   _element, const s64 _index);
+        void insert_move__(c08 &&_element, const s64 _index);
+        void remove__     (                             );
+        void remove__     (             const s64 _index);
+
+        void reserve__(const s64 _capacity);
+public:
+                  s64        capacity () const;
+                  s64        length   () const;
+        const     ALLOCATOR_ allocator() const;
+        const     c08       *data     () const;
+                  c08       *data     ();
+private:
+        s64         capacity_;
+        s64         length_;
+        ALLOCATOR_ &allocator_;
+        c08        *data_;
+    };
+
+        template<allocator::type::COMMON ALLOCATOR_> String<ALLOCATOR_>::~String()
+    {
+        for(s64 _i = 0; _i < length_; ++_i)
+        {
+            data_[_i].~c08();
+        }
+        allocator_.deallocate(reinterpret_cast<u08*>(data_));
+    }
+
+    template<allocator::type::COMMON ALLOCATOR_> const c08 &String<ALLOCATOR_>::operator[](const s64 _index) const {return data_[_index];}
+    template<allocator::type::COMMON ALLOCATOR_>       c08 &String<ALLOCATOR_>::operator[](const s64 _index)       {return data_[_index];}
+
+    template<allocator::type::COMMON ALLOCATOR_> bool String<ALLOCATOR_>::operator==(const String &_other) const
+    {
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] != _other.data_[_i]) {return false;}
+        }
+        return true;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> bool String<ALLOCATOR_>::operator!=(const String &_other) const
+    {
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] == _other.data_[_i]) {return false;}
+        }
+        return true;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> bool String<ALLOCATOR_>::operator< (const String &_other) const
+    {
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] < _other.data_[_i]) {return true; }
+            if (data_[_i] > _other.data_[_i]) {return false;}
+        }
+        return false;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> bool String<ALLOCATOR_>::operator<=(const String &_other) const
+    {
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] < _other.data_[_i]) {return true; }
+            if (data_[_i] > _other.data_[_i]) {return false;}
+        }
+        return true;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> bool String<ALLOCATOR_>::operator> (const String &_other) const
+    {
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] > _other.data_[_i]) {return true; }
+            if (data_[_i] < _other.data_[_i]) {return false;}
+        }
+        return false;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> bool String<ALLOCATOR_>::operator>=(const String &_other) const
+    {
+        for (s64 _i = 0; _i < length_; ++_i)
+        {
+            if (data_[_i] > _other.data_[_i]) {return true; }
+            if (data_[_i] < _other.data_[_i]) {return false;}
+        }
+        return true;
+    }
+
+    template<allocator::type::COMMON ALLOCATOR_> c08 *String<ALLOCATOR_>::begin__() {return data_;          }
+    template<allocator::type::COMMON ALLOCATOR_> c08 *String<ALLOCATOR_>::end__  () {return data_ + length_;}
+
+    template<allocator::type::COMMON ALLOCATOR_> bool String<ALLOCATOR_>::contains__   (const c08 &_element, const s64 _start, const s64 _stop) const
+    {
+        for (s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _element) {return true;}
+        }
+
+        return false;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> s64  String<ALLOCATOR_>::count__      (const c08 &_element, const s64 _start, const s64 _stop) const
+    {
+        s64 _count = 0;
+        for (s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _element) {_count++;}
+        }
+
+        return _count;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> s64  String<ALLOCATOR_>::index_first__(const c08 &_element, const s64 _start, const s64 _stop) const
+    {
+        for (s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _element) {return _i;}
+        }
+
+        return s64(-1);
+    }
+    template<allocator::type::COMMON ALLOCATOR_> s64  String<ALLOCATOR_>::index_last__ (const c08 &_element, const s64 _start, const s64 _stop) const
+    {
+        for (s64 _i = _stop; _i-- > _start;)
+        {
+            if (data_[_i] == _element) {return _i;}
+        }
+
+        return s64(-1);
+    }
+
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::fill__   (const c08 & _element                  , const s64 _start, const s64 _stop)
+    {
+        for(s64 _i = _start; _i < _stop; ++_i)
+        {
+            data_[_i] = c08(_element);
+        }
+    }
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::replace__(const c08 &_before , const c08 &_after, const s64 _start, const s64 _stop)
+    {
+        for(s64 _i = _start; _i < _stop; ++_i)
+        {
+            if (data_[_i] == _before)
+            {
+                data_[_i] = c08(_after);
+            }
+        }
+    }
+
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::append_copy__(c08   _element                  )
+    {
+        new(&data_[length_]) c08(_element);
+        length_++;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::append_move__(c08 &&_element                  )
+    {
+        new(&data_[length_]) c08(static_cast<c08&&>(_element));
+        length_++;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::insert_copy__(c08   _element, const s64 _index)
+    {
+        new(&data_[length_]) c08(static_cast<c08&&>(data_[length_ - 1]));
+
+        for(s64 _i = length_ - 1; _i > _index; --_i)
+        {
+            data_[_i] = static_cast<c08&&>(data_[_i - 1]);
+        }
+
+        data_[_index] = _element;
+        ++length_;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::insert_move__(c08 &&_element, const s64 _index)
+    {
+        new(&data_[length_]) c08(static_cast<c08&&>(data_[length_ - 1]));
+
+        for(s64 _i = length_ - 1; _i > _index; --_i)
+        {
+            data_[_i] = static_cast<c08&&>(data_[_i - 1]);
+        }
+
+        data_[_index] = static_cast<c08&&>(_element); // move
+        ++length_;
+    }
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::remove__     (                                  )
+    {
+        data_[--length_].~c08();
+    }
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::remove__     (                  const s64 _index)
+    {
+        data_[_index].~c08();
+        --length_;
+        for(s64 _i = _index; _i < length_; ++_i)
+        {
+            data_[_i] = static_cast<c08&&>(data_[_i + 1]);
+        }
+    }
+
+    template<allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::reserve__     (const s64 _capacity)
+    {
+        c08* _data = reinterpret_cast<c08*>(allocator_.allocate(sizeof(c08) * _capacity, alignof(c08)));
+        for(s64 _i = 0; _i < length_; ++_i)
+        {
+            _data[_i] = static_cast<c08&&>(data_[_i]);
+        }
+
+        data_     = _data;
+        capacity_ = _capacity;
+    }
+
+    template<allocator::type::COMMON ALLOCATOR_>       s64    String<ALLOCATOR_>::capacity() const {return capacity_;}
+    template<allocator::type::COMMON ALLOCATOR_>       s64    String<ALLOCATOR_>::length  () const {return length_;  }
+    template<allocator::type::COMMON ALLOCATOR_> const c08 *String<ALLOCATOR_>::data    () const {return data_;    }
+    template<allocator::type::COMMON ALLOCATOR_>       c08 *String<ALLOCATOR_>::data    ()       {return data_;    }
+}
