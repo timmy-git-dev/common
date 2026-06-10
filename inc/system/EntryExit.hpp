@@ -4,4 +4,13 @@ namespace cmn::system
 {
     void run_global_ctors();
     void run_global_dtors();
+
+    extern "C"
+    {
+        [[gnu::used]]
+        [[noreturn]]
+        void _program();
+        [[gnu::naked]]
+        void _start();
+    }
 }

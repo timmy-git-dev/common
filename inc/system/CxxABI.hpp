@@ -28,6 +28,7 @@ namespace cmn::system
         void __cxa_guard_release(unsigned long long *_guard);
         void __cxa_guard_abort  (unsigned long long *_guard);
 
-        void __cxa_pure_virtual();
+        void __cxa_pure_virtual   ();
+        void __cxa_deleted_virtual();
     }
 }
