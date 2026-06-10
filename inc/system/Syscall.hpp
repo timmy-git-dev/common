@@ -1,80 +1,13 @@
 // AUTO-GENERATED SCRIPT //
 #pragma once
+#include <asm-generic/errno-base.h>
+#include <asm-generic/errno.h>
 #include <linux/fs.h>
 #include <linux/signal.h>
 #include <asm-generic/posix_types.h>
 
 namespace cmn::system
 {
-    struct __aio_sigset;
-    struct epoll_event;
-    struct iattr;
-    struct inode;
-    struct iocb;
-    struct io_event;
-    struct iovec;
-    struct __kernel_old_itimerval;
-    struct kexec_segment;
-    struct linux_dirent;
-    struct linux_dirent64;
-    struct list_head;
-    struct mmap_arg_struct;
-    struct msgbuf;
-    struct user_msghdr;
-    struct mmsghdr;
-    struct msqid_ds;
-    struct new_utsname;
-    struct nfsctl_arg;
-    struct __old_kernel_stat;
-    struct oldold_utsname;
-    struct old_utsname;
-    struct pollfd;
-    struct rlimit;
-    struct rlimit64;
-    struct rusage;
-    struct sched_param;
-    struct sched_attr;
-    struct sel_arg_struct;
-    struct semaphore;
-    struct sembuf;
-    struct shmid_ds;
-    struct sockaddr;
-    struct stat;
-    struct stat64;
-    struct statfs;
-    struct statfs64;
-    struct statx;
-    struct sysinfo;
-    struct timespec;
-    struct __kernel_old_timeval;
-    struct __kernel_timex;
-    struct timezone;
-    struct tms;
-    struct utimbuf;
-    struct mq_attr;
-    struct compat_stat;
-    struct old_timeval32;
-    struct robust_list_head;
-    struct futex_waitv;
-    struct old_linux_dirent;
-    struct perf_event_attr;
-    struct file_handle;
-    struct sigaltstack;
-    struct rseq;
-    union bpf_attr;
-    struct io_uring_params;
-    struct clone_args;
-    struct open_how;
-    struct mount_attr;
-    struct landlock_ruleset_attr;
-    struct lsm_ctx;
-    struct cachestat_range;
-    struct cachestat;
-    struct statmount;
-    struct mnt_id_req;
-    struct ns_id_req;
-    struct xattr_args;
-    struct file_attr;
     struct __user_cap_header_struct;
     struct __user_cap_data_struct;
 

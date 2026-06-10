@@ -6,6 +6,7 @@ echo "Setting constants..."
 # Set project directories.
 PATH_PWD="$PWD"
 PATH_SRC="$PATH_PWD/src"
+PATH_TST="$PATH_PWD/test"
 PATH_INC="$PATH_PWD/inc"
 PATH_BIN="$PATH_PWD/bin"
 PATH_OBJ="$PATH_BIN/obj"
@@ -65,6 +66,18 @@ for PATH_SRC_CPP in $PATHS_CPP; do
     mkdir -p "$PATH_SUB_OBJ"
 
     g++ $COMPILE_VERSION $COMPILE_FLAGS $COMPILE_LIBRARIES -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
+done
+PATHS_CPP=$(find "$PATH_TST" -type f -name "*.cpp")
+for PATH_TST_CPP in $PATHS_CPP; do
+    PATH_REL_CPP="${PATH_TST_CPP#$PATH_TST}"
+    PATH_OBJ_O="$PATH_OBJ${PATH_REL_CPP%.cpp}.o"
+    PATH_SUB_OBJ="${PATH_OBJ_O%/*}"
+
+    echo "  Compiling $PATH_REL_CPP..."
+
+    mkdir -p "$PATH_SUB_OBJ"
+
+    g++ $COMPILE_VERSION $COMPILE_FLAGS $COMPILE_LIBRARIES -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
 done
 
 echo "Linking project..."
