@@ -13,4 +13,7 @@ public:
         // s64 blocks_available() const {return static_cast<const ALLOCATOR_*>(this)->blocks_available__();}
         // s64 blocks_used     () const {return static_cast<const ALLOCATOR_*>(this)->blocks_used__     ();}
     };
+
+    template<typename TYPE_>
+    concept BLOCK = __is_base_of(Block<TYPE_>, TYPE_);
 }

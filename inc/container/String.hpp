@@ -6,71 +6,75 @@ namespace cmn::container
 {
     template<allocator::type::COMMON ALLOCATOR_>
     struct String:
-        public Array<c08, ALLOCATOR_>
+        public Array<ALLOCATOR_, c08>
     {
 public:
         String(ALLOCATOR_ &_allocator, const s64 _capacity);
         String(ALLOCATOR_ &_allocator, const s64 _capacity, const s64 _length, c08 _char);
-        template<s64 LENGTH_>
-        String(ALLOCATOR_ &_allocator, const c08 (&_cString)[LENGTH_]);
+        String(ALLOCATOR_ &_allocator, const c08 *_cString);
 
-        ~String          ();
-        String           (const String  &_copied) = delete;
-        String           (      String &&_moved ) = delete;
-        String &operator=(const String  &_copied) = delete;
-        String &operator=(      String &&_moved ) = delete;
-
-        void c_string(c08 *_buffer);
+        void c_string       (      c08 *_buffer );
+        s64  c_string_length(const c08 *_cString) const; // TODO: Move to separate util script outside string class.
 
         void lower();
         void upper();
     };
 
-    template <allocator::type::COMMON ALLOCATOR_> String<ALLOCATOR_>::String(ALLOCATOR_ &_allocator, const s64 _capacity):
-        Array<c08, ALLOCATOR_>(_allocator, _capacity)
+    template <allocator::type::COMMON ALLOCATOR_>
+    String<ALLOCATOR_>::String(ALLOCATOR_ &_allocator, const s64 _capacity):
+        Array<ALLOCATOR_, c08>(_allocator, _capacity)
     { }
-    template <allocator::type::COMMON ALLOCATOR_> String<ALLOCATOR_>::String(ALLOCATOR_ &_allocator, const s64 _capacity, const s64 _length, c08 _char):
-        Array<c08, ALLOCATOR_>(_allocator, _capacity, _length, _char)
+    template <allocator::type::COMMON ALLOCATOR_>
+    String<ALLOCATOR_>::String(ALLOCATOR_ &_allocator, const s64 _capacity, const s64 _length, c08 _char):
+        Array<ALLOCATOR_, c08>(_allocator, _capacity, _length, _char)
     { }
-    template <allocator::type::COMMON ALLOCATOR_> template <s64 LENGTH_> String<ALLOCATOR_>::String(ALLOCATOR_ &_allocator, const c08 (&_cString)[LENGTH_]):
-        Array<c08, ALLOCATOR_>(_allocator, LENGTH_)
+    template <allocator::type::COMMON ALLOCATOR_>
+    String<ALLOCATOR_>::String(ALLOCATOR_ &_allocator, const c08 *_cString):
+        Array<ALLOCATOR_, c08>(_allocator, c_string_length(_cString))
     {
-        for (s64 _i = 0; _i < LENGTH_ - 1; ++_i)
+        for (s64 _i = 0; _i < this->capacity(); ++_i)
         {
             this->append_copy(_cString[_i]);
         }
     }
 
-    template <allocator::type::COMMON ALLOCATOR_> String<ALLOCATOR_>::~String()
-    { }
-
-    template <allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::c_string(c08 *_buffer)
+    template <allocator::type::COMMON ALLOCATOR_>
+    void String<ALLOCATOR_>::c_string(c08 *_buffer)
     {
         s64 _i = 0;
-        for (; _i < this->length_; ++_i)
+        for (; _i < this->length(); ++_i)
         {
-            _buffer[_i] = this->data_[_i];
+            _buffer[_i] = this->data()[_i];
         }
         _buffer[_i] = '\0';
     }
-
-    template <allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::lower()
+    template <allocator::type::COMMON ALLOCATOR_>
+    s64 String<ALLOCATOR_>::c_string_length(const c08 *_cString) const
     {
-        for (s64 _i = 0; _i < this->length_; ++_i)
+        s64 _length = 0;
+        while(_cString[_length] != '\0') _length++;
+        return _length;
+    }
+
+    template <allocator::type::COMMON ALLOCATOR_>
+    void String<ALLOCATOR_>::lower()
+    {
+        for (s64 _i = 0; _i < this->length(); ++_i)
         {
-            if (static_cast<s64>(this->data_[_i]) - static_cast<s64>('A') <= static_cast<s64>('Z' - 'A'))
+            if (static_cast<s64>(this->data()[_i]) - static_cast<s64>('A') <= static_cast<s64>('Z' - 'A'))
             {
-                this->data_[_i] += 'a' - 'A';
+                this->data()[_i] += 'a' - 'A';
             }
         }
     }
-    template <allocator::type::COMMON ALLOCATOR_> void String<ALLOCATOR_>::upper()
+    template <allocator::type::COMMON ALLOCATOR_>
+    void String<ALLOCATOR_>::upper()
     {
-        for (s64 _i = 0; _i < this->length_; ++_i)
+        for (s64 _i = 0; _i < this->length(); ++_i)
         {
-            if (static_cast<s64>(this->data_[_i]) - static_cast<s64>('a') <= static_cast<s64>('z' - 'a'))
+            if (static_cast<s64>(this->data()[_i]) - static_cast<s64>('a') <= static_cast<s64>('z' - 'a'))
             {
-                this->data_[_i] += 'A' - 'a';
+                this->data()[_i] += 'A' - 'a';
             }
         }
     }

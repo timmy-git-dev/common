@@ -11,4 +11,7 @@ public:
         const TYPE_ *end  () const { return static_cast<const CONTAINER_*>(this)->end__  ();}
               TYPE_ *end  ()       { return static_cast<      CONTAINER_*>(this)->end__  ();}
     };
+
+    template<typename CONTAINER_, typename TYPE_>
+    concept COMMON = __is_base_of(Common<CONTAINER_, TYPE_>, TYPE_);
 }

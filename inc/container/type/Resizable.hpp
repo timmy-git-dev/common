@@ -16,4 +16,7 @@ public:
 
         void reserve(const s64 _capacity) {static_cast<CONTAINER_*>(this)->reserve__(_capacity);}
     };
+
+    template<typename CONTAINER_, typename TYPE_>
+    concept RESIZABLE = __is_base_of(Resizable<CONTAINER_, TYPE_>, TYPE_);
 }

@@ -18,12 +18,6 @@ public:
         requires(sizeof...(_TYPE) == LENGTH_)
         Span(_TYPE&&... _elements);
 
-        ~Span          () = default;
-        Span           (const Span  &_copied) = delete;
-        Span           (      Span &&_moved ) = delete;
-        Span &operator=(const Span  &_copied) = delete;
-        Span &operator=(      Span &&_moved ) = delete;
-
         const TYPE_ &operator[](const s64 _index) const;
               TYPE_ &operator[](const s64 _index);
 
@@ -34,8 +28,10 @@ public:
         bool operator> (const Span &_other) const;
         bool operator>=(const Span &_other) const;
 private:
-        TYPE_ *begin__();
-        TYPE_ *end__  ();
+        const TYPE_ *begin__() const;
+              TYPE_ *begin__();
+        const TYPE_ *end__  () const;
+              TYPE_ *end__  ();
 
         s64  count__      (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
         bool contains__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const;
@@ -52,9 +48,11 @@ private:
         TYPE_ data_[LENGTH_];
     };
 
-    template<typename TYPE_, s64 LENGTH_> Span<TYPE_, LENGTH_>::Span()
+    template<typename TYPE_, s64 LENGTH_>
+    Span<TYPE_, LENGTH_>::Span()
     { }
-    template<typename TYPE_, s64 LENGTH_> Span<TYPE_, LENGTH_>::Span(TYPE_ _element)
+    template<typename TYPE_, s64 LENGTH_>
+    Span<TYPE_, LENGTH_>::Span(TYPE_ _element)
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
@@ -68,10 +66,13 @@ private:
         data_{static_cast<_TYPE&&>(_elements)...}
     { }
 
-    template<typename TYPE_, s64 LENGTH_> const TYPE_ &Span<TYPE_, LENGTH_>::operator[](const s64 _index) const {return data_[_index];}
-    template<typename TYPE_, s64 LENGTH_>       TYPE_ &Span<TYPE_, LENGTH_>::operator[](const s64 _index)       {return data_[_index];}
+    template<typename TYPE_, s64 LENGTH_>
+    const TYPE_ &Span<TYPE_, LENGTH_>::operator[](const s64 _index) const {return data_[_index];}
+    template<typename TYPE_, s64 LENGTH_>
+          TYPE_ &Span<TYPE_, LENGTH_>::operator[](const s64 _index)       {return data_[_index];}
 
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::operator==(const Span &_other) const
+    template<typename TYPE_, s64 LENGTH_>
+    bool Span<TYPE_, LENGTH_>::operator==(const Span &_other) const
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
@@ -79,7 +80,8 @@ private:
         }
         return true;
     }
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::operator!=(const Span &_other) const
+    template<typename TYPE_, s64 LENGTH_>
+    bool Span<TYPE_, LENGTH_>::operator!=(const Span &_other) const
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
@@ -87,7 +89,8 @@ private:
         }
         return true;
     }
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::operator< (const Span &_other) const
+    template<typename TYPE_, s64 LENGTH_>
+    bool Span<TYPE_, LENGTH_>::operator< (const Span &_other) const
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
@@ -96,7 +99,8 @@ private:
         }
         return false;
     }
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::operator<=(const Span &_other) const
+    template<typename TYPE_, s64 LENGTH_>
+    bool Span<TYPE_, LENGTH_>::operator<=(const Span &_other) const
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
@@ -105,7 +109,9 @@ private:
         }
         return true;
     }
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::operator> (const Span &_other) const
+    template<typename TYPE_, s64 LENGTH_>
+    bool Span<TYPE_, LENGTH_>::operator>
+    (const Span &_other) const
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
@@ -114,7 +120,8 @@ private:
         }
         return false;
     }
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::operator>=(const Span &_other) const
+    template<typename TYPE_, s64 LENGTH_>
+    bool Span<TYPE_, LENGTH_>::operator>=(const Span &_other) const
     {
         for (s64 _i = 0; _i < LENGTH_; ++_i)
         {
@@ -124,10 +131,17 @@ private:
         return true;
     }
 
-    template<typename TYPE_, s64 LENGTH_> TYPE_ *Span<TYPE_, LENGTH_>::begin__() {return data_;          }
-    template<typename TYPE_, s64 LENGTH_> TYPE_ *Span<TYPE_, LENGTH_>::end__  () {return data_ + LENGTH_;}
+    template<typename TYPE_, s64 LENGTH_>
+    const TYPE_ *Span<TYPE_, LENGTH_>::begin__() const {return data_;          }
+    template<typename TYPE_, s64 LENGTH_>
+          TYPE_ *Span<TYPE_, LENGTH_>::begin__()       {return data_;          }
+    template<typename TYPE_, s64 LENGTH_>
+    const TYPE_ *Span<TYPE_, LENGTH_>::end__  () const {return data_ + LENGTH_;}
+    template<typename TYPE_, s64 LENGTH_>
+          TYPE_ *Span<TYPE_, LENGTH_>::end__  ()       {return data_ + LENGTH_;}
 
-    template<typename TYPE_, s64 LENGTH_> bool Span<TYPE_, LENGTH_>::contains__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, s64 LENGTH_>
+    bool Span<TYPE_, LENGTH_>::contains__   (const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _start; _i < _stop; ++_i)
         {
@@ -135,7 +149,8 @@ private:
         }
         return false;
     }
-    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::count__      (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, s64 LENGTH_>
+    s64  Span<TYPE_, LENGTH_>::count__      (const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         s64 _count = 0;
         for (s64 _i = _start; _i < _stop; ++_i)
@@ -144,7 +159,8 @@ private:
         }
         return _count;
     }
-    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, s64 LENGTH_>
+    s64  Span<TYPE_, LENGTH_>::index_first__(const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _start; _i < _stop; ++_i)
         {
@@ -152,7 +168,8 @@ private:
         }
         return s64(-1);
     }
-    template<typename TYPE_, s64 LENGTH_> s64  Span<TYPE_, LENGTH_>::index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
+    template<typename TYPE_, s64 LENGTH_>
+    s64  Span<TYPE_, LENGTH_>::index_last__ (const TYPE_ &_element, const s64 _start, const s64 _stop) const
     {
         for (s64 _i = _stop; _i-- > _start;)
         {
@@ -161,14 +178,16 @@ private:
         return s64(-1);
     }
 
-    template<typename TYPE_, s64 LENGTH_> void Span<TYPE_, LENGTH_>::fill__   (const TYPE_ &_element                    , const s64 _start, const s64 _stop)
+    template<typename TYPE_, s64 LENGTH_>
+    void Span<TYPE_, LENGTH_>::fill__   (const TYPE_ &_element                    , const s64 _start, const s64 _stop)
     {
         for (s64 _i = _start; _i < _stop; ++_i)
         {
             data_[_i] = _element;
         }
     }
-    template<typename TYPE_, s64 LENGTH_> void Span<TYPE_, LENGTH_>::replace__(const TYPE_ &_before, const TYPE_ &_after, const s64 _start, const s64 _stop)
+    template<typename TYPE_, s64 LENGTH_>
+    void Span<TYPE_, LENGTH_>::replace__(const TYPE_ &_before, const TYPE_ &_after, const s64 _start, const s64 _stop)
     {
         for (s64 _i = _start; _i < _stop; ++_i)
         {
@@ -176,7 +195,10 @@ private:
         }
     }
 
-    template<typename TYPE_, s64 LENGTH_>       s64    Span<TYPE_, LENGTH_>::length() const {return LENGTH_;}
-    template<typename TYPE_, s64 LENGTH_> const TYPE_ *Span<TYPE_, LENGTH_>::data  () const {return data_;}
-    template<typename TYPE_, s64 LENGTH_>       TYPE_ *Span<TYPE_, LENGTH_>::data  ()       {return data_;}
+    template<typename TYPE_, s64 LENGTH_>
+          s64    Span<TYPE_, LENGTH_>::length() const {return LENGTH_;}
+    template<typename TYPE_, s64 LENGTH_>
+    const TYPE_ *Span<TYPE_, LENGTH_>::data  () const {return data_;}
+    template<typename TYPE_, s64 LENGTH_>
+          TYPE_ *Span<TYPE_, LENGTH_>::data  ()       {return data_;}
 }

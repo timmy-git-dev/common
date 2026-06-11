@@ -10,7 +10,7 @@ namespace cmn::system
     {
         [[gnu::used]]
         [[noreturn]]
-        void _program(i32 _argCount, c08** _args);
+        void _program(const i32 _argCount, const c08** _args);
         [[gnu::naked]]
         void _start();
     }

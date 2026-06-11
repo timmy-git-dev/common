@@ -15,4 +15,7 @@ public:
         void fill    (const TYPE_ &_element                     , const s64 _start, const s64 _stop) {static_cast<CONTAINER_*>(this)->fill__   (_element       , _start, _stop);}
         void replace (const TYPE_ &_before , const TYPE_ &_after, const s64 _start, const s64 _stop) {static_cast<CONTAINER_*>(this)->replace__(_before, _after, _start, _stop);}
     };
+
+    template<typename CONTAINER_, typename TYPE_>
+    concept UNORDERED = __is_base_of(Unordered<CONTAINER_, TYPE_>, TYPE_);
 }

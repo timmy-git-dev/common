@@ -24,5 +24,5 @@ namespace cmn::error
     }
 
     #define ABORT(_message) \
-        error::abort_(_message, __FILE__, __LINE__, __func__)
+        cmn::error::abort_(_message, __FILE__, __LINE__, __func__)
 }

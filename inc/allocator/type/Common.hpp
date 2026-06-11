@@ -16,5 +16,5 @@ public:
     };
 
     template<typename TYPE_>
-    concept COMMON = __is_base_of(type::Common<TYPE_>, TYPE_);
+    concept COMMON = __is_base_of(Common<TYPE_>, TYPE_);
 }
