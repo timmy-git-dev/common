@@ -24,27 +24,31 @@ namespace cmn::system
     {
         [[gnu::used]]
         [[noreturn]]
-        void _program()
+        void _program(i32 _argCount, c08** _args)
         {
             cmn::system::run_global_ctors();
-            i08 _exitCode = main();
+
+            i08 _exitCode = main(_argCount, _args);
+
             cmn::system::__cxa_finalize(nullptr);
             cmn::system::run_global_dtors();
+
             cmn::system::exit_group(_exitCode);
             __builtin_unreachable();
         }
+
         [[gnu::naked]]
         void _start()
         {
-            // Align stack to 16-byte for addresses.
-            asm volatile
-            (
+            asm volatile(
+                "movq (%%rsp), %%rdi\n"      // argc
+                "leaq 8(%%rsp), %%rsi\n"    // argv
                 "andq $-16, %%rsp\n"
                 "call _program\n"
                 "ud2\n"
                 :
                 :
-                : "memory"
+                : "rdi", "rsi", "memory"
             );
         }
     }

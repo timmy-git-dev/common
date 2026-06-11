@@ -1,4 +1,5 @@
 #pragma once
+#include "type/Alias.hpp"
 
 namespace cmn::system
 {
@@ -9,7 +10,7 @@ namespace cmn::system
     {
         [[gnu::used]]
         [[noreturn]]
-        void _program();
+        void _program(i32 _argCount, c08** _args);
         [[gnu::naked]]
         void _start();
     }
