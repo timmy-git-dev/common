@@ -183,9 +183,9 @@ private:
     {
         for (s64 _i = 0; _i < length_; ++_i)
         {
-            if (data_[_i] == _other.data_[_i]) {return false;}
+            if (data_[_i] != _other.data_[_i]) {return true;}
         }
-        return true;
+        return false;
     }
     template<allocator::type::COMMON ALLOCATOR_, typename TYPE_>
     bool Array<ALLOCATOR_, TYPE_>::operator< (const Array &_other) const

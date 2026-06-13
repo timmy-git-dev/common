@@ -13,6 +13,13 @@ public:
         String(ALLOCATOR_ &_allocator, const s64 _capacity, const s64 _length, c08 _char);
         String(ALLOCATOR_ &_allocator, const c08 *_cString);
 
+        bool operator==(const c08 *_cString) const;
+        bool operator!=(const c08 *_cString) const;
+        bool operator< (const c08 *_cString) const;
+        bool operator<=(const c08 *_cString) const;
+        bool operator> (const c08 *_cString) const;
+        bool operator>=(const c08 *_cString) const;
+
         void c_string       (      c08 *_buffer );
         s64  c_string_length(const c08 *_cString) const; // TODO: Move to separate util script outside string class.
 
@@ -36,6 +43,25 @@ public:
         {
             this->append_copy(_cString[_i]);
         }
+    }
+
+    template<allocator::type::COMMON ALLOCATOR_>
+    bool String<ALLOCATOR_>::operator==(const c08 *_cString) const
+    {
+        for (s64 _i = 0; _i < this->length(); ++_i)
+        {
+            if (_cString[_i] == '\0' || this->data()[_i] != _cString[_i]) {return false;}
+        }
+        return true;
+    }
+    template<allocator::type::COMMON ALLOCATOR_>
+    bool String<ALLOCATOR_>::operator!=(const c08 *_cString) const
+    {
+        for (s64 _i = 0; _i < this->length(); ++_i)
+        {
+            if (_cString[_i] == '\0' || this->data()[_i] != _cString[_i]) {return true;}
+        }
+        return false;
     }
 
     template <allocator::type::COMMON ALLOCATOR_>

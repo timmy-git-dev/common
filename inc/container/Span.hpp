@@ -89,47 +89,6 @@ private:
         }
         return true;
     }
-    template<typename TYPE_, s64 LENGTH_>
-    bool Span<TYPE_, LENGTH_>::operator< (const Span &_other) const
-    {
-        for (s64 _i = 0; _i < LENGTH_; ++_i)
-        {
-            if (data_[_i] < _other.data_[_i]) {return true; }
-            if (data_[_i] > _other.data_[_i]) {return false;}
-        }
-        return false;
-    }
-    template<typename TYPE_, s64 LENGTH_>
-    bool Span<TYPE_, LENGTH_>::operator<=(const Span &_other) const
-    {
-        for (s64 _i = 0; _i < LENGTH_; ++_i)
-        {
-            if (data_[_i] < _other.data_[_i]) {return true; }
-            if (data_[_i] > _other.data_[_i]) {return false;}
-        }
-        return true;
-    }
-    template<typename TYPE_, s64 LENGTH_>
-    bool Span<TYPE_, LENGTH_>::operator>
-    (const Span &_other) const
-    {
-        for (s64 _i = 0; _i < LENGTH_; ++_i)
-        {
-            if (data_[_i] > _other.data_[_i]) {return true; }
-            if (data_[_i] < _other.data_[_i]) {return false;}
-        }
-        return false;
-    }
-    template<typename TYPE_, s64 LENGTH_>
-    bool Span<TYPE_, LENGTH_>::operator>=(const Span &_other) const
-    {
-        for (s64 _i = 0; _i < LENGTH_; ++_i)
-        {
-            if (data_[_i] > _other.data_[_i]) {return true; }
-            if (data_[_i] < _other.data_[_i]) {return false;}
-        }
-        return true;
-    }
 
     template<typename TYPE_, s64 LENGTH_>
     const TYPE_ *Span<TYPE_, LENGTH_>::begin__() const {return data_;          }
