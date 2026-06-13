@@ -177,7 +177,7 @@ namespace cmn::error
         }
 
         #define ASSERT_SYSCALL(_syscall) \
-            error::assert_syscall_(_syscall, __FILE__, __LINE__, __func__)
+            cmn::error::assert_syscall_(_syscall, __FILE__, __LINE__, __func__)
     #else
         #define ASSERT_SYSCALL(_syscall) \
             _syscall

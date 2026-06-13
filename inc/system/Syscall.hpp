@@ -5,6 +5,7 @@
 #include <linux/fs.h>
 #include <linux/signal.h>
 #include <asm-generic/posix_types.h>
+#include <asm/stat.h>
 
 namespace cmn::system
 {

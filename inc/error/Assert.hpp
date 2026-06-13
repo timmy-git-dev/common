@@ -30,7 +30,7 @@ namespace cmn::error
         }
 
         #define ASSERT_RUNTIME(_expression, _message) \
-            error::assert_runtime_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
+            cmn::error::assert_runtime_(#_expression, _message, _expression, __FILE__, __LINE__, __func__)
     #else
         #define ASSERT_RUNTIME(_expression, _message) \
             void(0)

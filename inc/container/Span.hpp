@@ -4,18 +4,18 @@
 
 namespace cmn::container
 {
-    template<typename TYPE_, s64 LENGTH_>
+    template<typename TYPE_, s64 CAPACITY_>
     struct Span:
-        public type::Common   <Span<TYPE_, LENGTH_>, TYPE_>,
-        public type::Unordered<Span<TYPE_, LENGTH_>, TYPE_>
+        public type::Common   <Span<TYPE_, CAPACITY_>, TYPE_>,
+        public type::Unordered<Span<TYPE_, CAPACITY_>, TYPE_>
     {
-        friend struct type::Common   <Span<TYPE_, LENGTH_>, TYPE_>;
-        friend struct type::Unordered<Span<TYPE_, LENGTH_>, TYPE_>;
+        friend struct type::Common   <Span<TYPE_, CAPACITY_>, TYPE_>;
+        friend struct type::Unordered<Span<TYPE_, CAPACITY_>, TYPE_>;
 public:
         Span();
         Span(TYPE_ _element);
         template<typename... _TYPE>
-        requires(sizeof...(_TYPE) == LENGTH_)
+        requires(sizeof...(_TYPE) == CAPACITY_)
         Span(_TYPE&&... _elements);
 
         const TYPE_ &operator[](const s64 _index) const;
@@ -41,11 +41,11 @@ private:
         void fill__   (const TYPE_ &_element                     , const s64 _start, const s64 _stop);
         void replace__(const TYPE_ &_before , const TYPE_ &_after, const s64 _start, const s64 _stop);
 public:
-                  s64    length() const;
-        const     TYPE_ *data  () const;
-                  TYPE_ *data  ();
+                  s64    capacity() const;
+        const     TYPE_ *data    () const;
+                  TYPE_ *data    ();
 private:
-        TYPE_ data_[LENGTH_];
+        TYPE_ data_[CAPACITY_];
     };
 
     template<typename TYPE_, s64 LENGTH_>
@@ -196,7 +196,7 @@ private:
     }
 
     template<typename TYPE_, s64 LENGTH_>
-          s64    Span<TYPE_, LENGTH_>::length() const {return LENGTH_;}
+          s64    Span<TYPE_, LENGTH_>::capacity() const {return LENGTH_;}
     template<typename TYPE_, s64 LENGTH_>
     const TYPE_ *Span<TYPE_, LENGTH_>::data  () const {return data_;}
     template<typename TYPE_, s64 LENGTH_>
