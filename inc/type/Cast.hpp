@@ -1,6 +1,6 @@
 #pragma once
 #include "type/trait/Transform.hpp"
-
+// TODO: Might need more work?
 namespace cmn::type
 {
     #define cast_sttc static_cast
