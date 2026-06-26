@@ -1,34 +1,34 @@
 type:
-├─ alias # compiler type aliases.
-├─ cast  # explicit type conversions.
+├─ alias
+├─ cast
 └─ trait
-   ├─ characteristic # compile-time properties of types. (is ptr, ref, same, etc.)
-   ├─ transform      # compile-time changes to types. (const, volatile, ref, ptr, etc.)
-   ├─ util           # compile-time type diagnostics. (conditionals, underlying/identity, etc.)
-   └─ value          # compile-time type specifications. (integral, floating-point, trivial, etc.)
+   ├─ characteristic
+   ├─ transform
+   ├─ util
+   └─ value
 
     system
     ├─ platform
-    │  ├─ os       # linux, windows, macos, bsd, freestanding
-    │  ├─ compiler # gcc, clang, msvc
-    │  ├─ arch     # x86, x64, arm32, arm64, riscv
-    │  ├─ endian   # little, big
-    │  └─ build    # debug, release
-    ├─ errno # platform error constants
+    │  ├─ os
+    │  ├─ compiler
+    │  ├─ arch
+    │  ├─ endian
+    │  └─ build
+    ├─ errno
     ├─ syscall
-    │  ├─ raw      # syscall ABI wrapper
-    │  └─ numbers  # OS-specific syscall IDs
+    │  ├─ raw
+    │  └─ numbers
     ├─ abi // Currently on:
-    │  ├─ cxx      # __cxa_* (exceptions, static init, terminate)
-    │  └─ entry    # _start, main, init/fini, TLS bootstrap
+    │  ├─ cxx
+    │  └─ entry
     ├─ cpu
-    │  ├─ features # SIMD, cache line, CPUID
-    │  ├─ fence    # memory barriers
-    │  └─ time     # rdtsc / counter
+    │  ├─ features
+    │  ├─ fence
+    │  └─ time
     └─ memory
-       ├─ ops      # memcpy/memmove/memset/memcmp
-       ├─ alloc    # sbrk/mmap/VirtualAlloc (optional layer)
-       └─ layout   # alignment, pages, cache line utils
+       ├─ ops
+       ├─ alloc
+       └─ layout
 
     error: type, system
     ├─ result
@@ -43,8 +43,7 @@ type:
     ├─ mat
     ├─ random
     ├─ noise
-    ├─ color
-    └─ geometry
+    └─ color
     hash: type
     ├─ fnv1a
     └─ wyhash

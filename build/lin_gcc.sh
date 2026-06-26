@@ -14,9 +14,10 @@ PATH_EXE="$PATH_BIN/common"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
-# COMPILE_FLAGS="-O3 -s -flto -DARCH_X86__ -DRELEASE__ -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
-COMPILE_FLAGS="-g3 -O0 -DARCH_X86__ -DDEBUG__ -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
-COMPILE_LIBRARIES=""
+# COMPILE_FLAGS="-O3 -s -flto -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
+FLAGS_BOTH="-O3 -s -flto -ffreestanding"
+FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
+FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
 
 # Re-create the object directory.
 rm -rf $PATH_OBJ
@@ -65,7 +66,7 @@ for PATH_SRC_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    g++ $COMPILE_VERSION $COMPILE_FLAGS $COMPILE_LIBRARIES -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
+    x86_64-linux-gnu-g++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
 done
 PATHS_CPP=$(find "$PATH_TST" -type f -name "*.cpp")
 for PATH_TST_CPP in $PATHS_CPP; do
@@ -77,16 +78,14 @@ for PATH_TST_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    g++ $COMPILE_VERSION $COMPILE_FLAGS $COMPILE_LIBRARIES -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
+    x86_64-linux-gnu-g++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
 done
 
 echo "Linking project..."
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-g++ $COMPILE_VERSION $COMPILE_FLAGS $COMPILE_LIBRARIES $PATHS_O -o $PATH_EXE
+x86_64-linux-gnu-g++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE
 
 echo "Finished!"
 echo "-----"
-
-$PATH_EXE

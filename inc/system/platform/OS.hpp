@@ -19,10 +19,4 @@ namespace cmn::system::platform
     #else
         #define CMN_SYSTEM_OS_MAC 0
     #endif
-
-    #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
-        #define CMN_SYSTEM_OS_BSD 1
-    #else
-        #define CMN_SYSTEM_OS_BSD 0
-    #endif
 }
