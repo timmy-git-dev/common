@@ -10,11 +10,10 @@ PATH_TST="$PATH_PWD/test"
 PATH_INC="$PATH_PWD/inc"
 PATH_BIN="$PATH_PWD/bin"
 PATH_OBJ="$PATH_BIN/obj"
-PATH_EXE="$PATH_BIN/common"
+PATH_EXE="$PATH_BIN/common.elf"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
-# COMPILE_FLAGS="-O3 -s -flto -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
 FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
 FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
@@ -23,10 +22,10 @@ FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
 rm -rf $PATH_OBJ
 mkdir -p $PATH_OBJ
 
-echo "Editing .clang++d..."
+echo "Editing .clangd..."
 
-# Create the .clang++d file to ensure IDE-syntax works correctly.
-cat <<EOF > ${PATH_PWD}/.clang++d
+# Create the .clangd file to ensure IDE-syntax works correctly.
+cat <<EOF > ${PATH_PWD}/.clangd
 CompileFlags:
     Add:
         - -std=c++23
@@ -89,3 +88,5 @@ clang++ --target=x86_64-linux-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PAT
 
 echo "Finished!"
 echo "-----"
+
+$PATH_EXE

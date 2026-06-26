@@ -10,12 +10,11 @@ PATH_TST="$PATH_PWD/test"
 PATH_INC="$PATH_PWD/inc"
 PATH_BIN="$PATH_PWD/bin"
 PATH_OBJ="$PATH_BIN/obj"
-PATH_EXE="$PATH_BIN/common"
+PATH_EXE="$PATH_BIN/common.elf"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
-# COMPILE_FLAGS="-O3 -s -flto -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdlib -nostartfiles -nodefaultlibs -static -no-pie"
-FLAGS_BOTH="-O3 -s -flto -ffreestanding"
+FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
 FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
 
@@ -89,3 +88,5 @@ x86_64-linux-gnu-g++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH
 
 echo "Finished!"
 echo "-----"
+
+$PATH_EXE

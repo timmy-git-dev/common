@@ -14,7 +14,7 @@ PATH_EXE="$PATH_BIN/common"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
-FLAGS_BOTH="-g -O0 -ffreestanding"
+FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
 FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
 
@@ -65,7 +65,7 @@ for PATH_SRC_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
+    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O" -v
 done
 PATHS_CPP=$(find "$PATH_TST" -type f -name "*.cpp")
 for PATH_TST_CPP in $PATHS_CPP; do
@@ -77,14 +77,16 @@ for PATH_TST_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
+    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O" -v
 done
 
 echo "Linking project..."
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE
+clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -v
 
 echo "Finished!"
 echo "-----"
+
+$PATH_EXE

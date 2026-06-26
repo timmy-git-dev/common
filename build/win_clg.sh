@@ -14,7 +14,7 @@ PATH_EXE="$PATH_BIN/common.exe"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
-FLAGS_BOTH="-g -O0 -ffreestanding"
+FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
 FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
 
@@ -88,3 +88,5 @@ clang++ --target=x86_64-w64-windows-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LIN
 
 echo "Finished!"
 echo "-----"
+
+$PATH_EXE
