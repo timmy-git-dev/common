@@ -60,9 +60,9 @@ def_syscall_funcs()
         [[ "$ignored_names" == *$'\n'"$name"$'\n'* ]] && continue
 
         if [[ "$params" == "" ]]; then
-            printf "    constexpr long %-24s(%s) {return syscall(%s);};\n" "$name" "$signature" "${name^^}"
+            printf "    inline long %-24s(%s) {return syscall(%s);};\n" "$name" "$signature" "${name^^}"
         else
-            printf "    constexpr long %-24s(%s) {return syscall(%s, %s);};\n" "$name" "$signature" "${name^^}" "$params"
+            printf "    inline long %-24s(%s) {return syscall(%s, %s);};\n" "$name" "$signature" "${name^^}" "$params"
         fi
 
     done <<< "$syscalls"

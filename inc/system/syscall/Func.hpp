@@ -6,7 +6,7 @@
 namespace cmn::system::syscall
 {
     #if CMN_SYSTEM_ARCH_ARM64
-    constexpr long syscall(long _type, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0)
+    inline long syscall(long _type, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0)
     {
         register long x8 __asm__("x8") = _type;
         register long x0 __asm__("x0") = _arg0;
@@ -33,7 +33,7 @@ namespace cmn::system::syscall
     }
     #endif
     #if CMN_SYSTEM_ARCH_X64
-    constexpr long syscall(long _type, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0)
+    inline long syscall(long _type, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0)
     {
         long _returnValue;
         register long _rax __asm__("rax") = _type;
