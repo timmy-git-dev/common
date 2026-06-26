@@ -1,5 +1,7 @@
 // AUTO-GENERATED SCRIPT
 #pragma once
+#include "system/platform/OS.hpp"
+#if CMN_SYSTEM_OS_LIN
 #include "system/platform/Arch.hpp"
 
 namespace cmn::system::syscall
@@ -655,3 +657,4 @@ namespace cmn::system::syscall
     #define WRITEV                    20
     #endif
 }
+#endif

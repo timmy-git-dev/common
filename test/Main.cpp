@@ -1,6 +1,8 @@
 #include "system/abi/Entry.hpp"
-#include "system/syscall/Call.hpp"
+#include "system/platform/OS.hpp"
 
+#if CMN_SYSTEM_OS_LIN
+#include "system/syscall/Call.hpp"
 
 i32 main(const i32, const c08**)
 {
@@ -9,3 +11,32 @@ i32 main(const i32, const c08**)
 
     return 0;
 }
+
+#elif CMN_SYSTEM_OS_WIN
+extern "C" void ExitProcess(u32);
+extern "C" void* CreateFileA(const char*, u32, u32, void*, u32, u32, void*);
+
+#define GENERIC_WRITE 0x40000000
+#define CREATE_ALWAYS 2
+#define FILE_ATTRIBUTE_NORMAL 0x80
+
+i32 main(const i32, const c08**)
+{
+    void* h = CreateFileA(
+        "test.txt",
+        GENERIC_WRITE,
+        0,
+        nullptr,
+        CREATE_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        nullptr
+    );
+
+    // naive write via pointer cast (skip proper WriteFile for now)
+    u32 written = 0;
+    using write_t = i32(*)(void*, const void*, u32, u32*, void*);
+    ((write_t)0)(nullptr, nullptr, 0, nullptr, nullptr); // placeholder if not linked
+
+    ExitProcess(0);
+}
+#endif

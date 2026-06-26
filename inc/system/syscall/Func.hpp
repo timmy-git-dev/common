@@ -1,4 +1,6 @@
 #pragma once
+#include "system/platform/OS.hpp"
+#if CMN_SYSTEM_OS_LIN
 #include "system/platform/Arch.hpp"
 
 namespace cmn::system::syscall
@@ -58,3 +60,4 @@ namespace cmn::system::syscall
     }
     #endif
 }
+#endif

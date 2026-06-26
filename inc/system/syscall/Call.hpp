@@ -1,5 +1,7 @@
 // AUTO-GENERATED SCRIPT
 #pragma once
+#include "system/platform/OS.hpp"
+#if CMN_SYSTEM_OS_LIN
 #include "system/syscall/Func.hpp"
 #include "system/syscall/ID.hpp"
 #include "system/syscall/Type.hpp"
@@ -329,3 +331,4 @@ namespace cmn::system::syscall
     constexpr long write                   (unsigned int fd, const char *buf, size_t count) {return syscall(WRITE, (long)fd, (long)buf, (long)count);};
     constexpr long writev                  (unsigned long fd, const struct iovec *vec, unsigned long vlen) {return syscall(WRITEV, (long)fd, (long)vec, (long)vlen);};
 }
+#endif

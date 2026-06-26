@@ -18,7 +18,7 @@ type:
     ├─ syscall
     │  ├─ raw      # syscall ABI wrapper
     │  └─ numbers  # OS-specific syscall IDs
-    ├─ abi
+    ├─ abi // Currently on:
     │  ├─ cxx      # __cxa_* (exceptions, static init, terminate)
     │  └─ entry    # _start, main, init/fini, TLS bootstrap
     ├─ cpu
