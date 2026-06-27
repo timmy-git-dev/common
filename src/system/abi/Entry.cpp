@@ -85,18 +85,14 @@ namespace cmn::system::abi_
 }
 
 #elif CMN_SYSTEM_OS_MAC
+#include <mach-o/getsect.h>
+#include <mach-o/loader.h>
+
 namespace cmn::system::abi_
 {
     extern "C"
     {
         using ctor_t = void(*)();
-
-        // Mach-O constructor sections
-        extern ctor_t __mod_init_func_start[];
-        extern ctor_t __mod_init_func_end[];
-
-        extern ctor_t __mod_term_func_start[];
-        extern ctor_t __mod_term_func_end[];
 
         [[noreturn]]
         void _exit(i32);
@@ -104,22 +100,30 @@ namespace cmn::system::abi_
 
     static void initialize_ctors()
     {
-        for (ctor_t* p = __mod_init_func_start; p < __mod_init_func_end; ++p)
-        {
+        unsigned long size = 0;
+
+#if defined(__LP64__)
+        ctor_t* p = reinterpret_cast<ctor_t*>(
+            getsectiondata(&_mh_execute_header, "__DATA_CONST", "__mod_init_func", &size));
+#else
+        ctor_t* p = reinterpret_cast<ctor_t*>(
+            getsectiondata(&_mh_execute_header, "__DATA", "__mod_init_func", &size));
+#endif
+
+        if (!p) return;
+
+        for (ctor_t* end = p + size / sizeof(ctor_t); p != end; ++p)
             if (*p) (*p)();
-        }
     }
 
     static void destruct_dtors()
     {
-        for (ctor_t* p = __mod_term_func_start; p < __mod_term_func_end; ++p)
-        {
-            if (*p) (*p)();
-        }
+        // __mod_term_func is generally unused on macOS.
+        // Leave empty unless you intentionally emit this section.
     }
 
     extern "C"
-    void _start()
+    void start()
     {
         initialize_ctors();
 
@@ -128,8 +132,6 @@ namespace cmn::system::abi_
         destruct_dtors();
 
         _exit(result);
-
-        while (true) { }
     }
 }
 #endif
