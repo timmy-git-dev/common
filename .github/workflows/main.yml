@@ -40,15 +40,15 @@ jobs:
       #     sudo apt-get install -y clang gcc g++
 
       # Windows
-      # - name: Setup MSYS2
-      #   if: runner.os == 'Windows'
-      #   uses: msys2/setup-msys2@v2
-      #   with:
-      #     msystem: UCRT64
-      #     update: true
-      #     install: >
-      #       mingw-w64-ucrt-x86_64-gcc
-      #       mingw-w64-ucrt-x86_64-clang
+      - name: Setup MSYS2
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-clang
 
       # macOS
       # - name: Install dependencies (macOS)
