@@ -65,7 +65,7 @@ for PATH_SRC_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O" -v
+    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
 done
 PATHS_CPP=$(find "$PATH_TST" -type f -name "*.cpp")
 for PATH_TST_CPP in $PATHS_CPP; do
@@ -77,7 +77,7 @@ for PATH_TST_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O" -v
+    clang++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
 done
 
 echo "Linking project..."
@@ -86,7 +86,7 @@ nm -g bin/obj/system/abi/Entry.o
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -v -e __start -Wl,-lSystem
+clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -e __start -Wl,-lSystem
 
 echo "Finished!"
 echo "-----"

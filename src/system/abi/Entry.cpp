@@ -6,30 +6,31 @@
 
 namespace cmn::system::abi_
 {
+    using ctor_t = void(*)();
+    using dtor_t = void(*)();
+
     extern "C"
     {
-        using ctor_t = void(*)();
-
         extern ctor_t __init_array_start[];
-        extern ctor_t __init_array_end[];
+        extern ctor_t __init_array_end  [];
 
-        extern ctor_t __fini_array_start[];
-        extern ctor_t __fini_array_end[];
+        extern dtor_t __fini_array_start[];
+        extern dtor_t __fini_array_end  [];
     }
 
     static void initialize_ctors()
     {
-        for (ctor_t* p = __init_array_start; p != __init_array_end; ++p)
+        for (ctor_t* _ctor = __init_array_start; _ctor != __init_array_end; ++_ctor)
         {
-            (*p)();
+            (*_ctor)();
         }
     }
 
     static void destruct_dtors()
     {
-        for (ctor_t* p = __fini_array_start; p != __fini_array_end; ++p)
+        for (dtor_t* _dtor = __fini_array_start; _dtor != __fini_array_end; ++_dtor)
         {
-            (*p)();
+            (*_dtor)();
         }
     }
 
@@ -43,7 +44,6 @@ namespace cmn::system::abi_
         destruct_dtors();
 
         cmn::system::syscall::exit(_result);
-
         while (true) { }
     }
 }
@@ -79,7 +79,6 @@ namespace cmn::system::abi_
         i32 _result = main(0, nullptr);
 
         ExitProcess(static_cast<u32>(_result));
-
         while (true) { }
     }
 }
@@ -113,13 +112,14 @@ namespace cmn::system::abi_
         #else
         #error Unsupported macOS architecture.
         #endif
-
-        while (true) { }
     }
 
     extern "C" void _start()
     {
+        main(0, nullptr);
+
         exit(0);
+        while (true) { }
     }
 }
 #endif
