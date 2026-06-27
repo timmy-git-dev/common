@@ -86,7 +86,7 @@ nm -g bin/obj/system/abi/Entry.o
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -v -e _start
+clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -v -e __start
 
 echo "Finished!"
 echo "-----"
