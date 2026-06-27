@@ -83,55 +83,35 @@ namespace cmn::system::abi_
         while (true) { }
     }
 }
-
 #elif CMN_SYSTEM_OS_MAC
-#include <mach-o/getsect.h>
-#include <mach-o/loader.h>
+#include "system/platform/Arch.hpp"
 
 namespace cmn::system::abi_
 {
-    extern "C"
+    [[noreturn]] inline void exit(i32 code)
     {
-        using ctor_t = void(*)();
+#if defined(CMN_SYSTEM_ARCH_X64)
 
-        [[noreturn]]
-        void _exit(i32);
-    }
+        asm volatile
+        (
+            "movq %0, %%rdi\n\t"
+            "movq $0x2000001, %%rax\n\t" // SYS_exit
+            "syscall"
+            :
+            : "r"(static_cast<i64>(code))
+            : "rax", "rdi", "rcx", "r11", "memory"
+        );
 
-    static void initialize_ctors()
-    {
-        unsigned long size = 0;
-
-#if defined(__LP64__)
-        ctor_t* p = reinterpret_cast<ctor_t*>(
-            getsectiondata(&_mh_execute_header, "__DATA_CONST", "__mod_init_func", &size));
 #else
-        ctor_t* p = reinterpret_cast<ctor_t*>(
-            getsectiondata(&_mh_execute_header, "__DATA", "__mod_init_func", &size));
+#error Unsupported macOS architecture.
 #endif
 
-        if (!p) return;
-
-        for (ctor_t* end = p + size / sizeof(ctor_t); p != end; ++p)
-            if (*p) (*p)();
+        while (true) { }
     }
 
-    static void destruct_dtors()
+    extern "C" void _start()
     {
-        // __mod_term_func is generally unused on macOS.
-        // Leave empty unless you intentionally emit this section.
-    }
-
-    extern "C"
-    void start()
-    {
-        initialize_ctors();
-
-        i32 result = main(0, nullptr);
-
-        destruct_dtors();
-
-        _exit(result);
+        exit(0);
     }
 }
 #endif

@@ -18,7 +18,7 @@ type:
     ├─ syscall
     │  ├─ raw
     │  └─ numbers
-    ├─ abi // Currently on:
+    ├─ abi
     │  ├─ cxx
     │  └─ entry
     ├─ cpu
