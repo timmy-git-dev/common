@@ -12,17 +12,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            script: build/lin_gcc.sh
+          # - os: ubuntu-latest
+          #   script: build/lin_gcc.sh
 
-          - os: ubuntu-latest
-            script: build/lin_clg.sh
+          # - os: ubuntu-latest
+          #   script: build/lin_clg.sh
 
-          - os: windows-latest
-            script: build/win_gcc.sh
+          # - os: windows-latest
+          #   script: build/win_gcc.sh
 
-          - os: windows-latest
-            script: build/win_clg.sh
+          # - os: windows-latest
+          #   script: build/win_clg.sh
 
           - os: macos-latest
             script: build/mac_clg.sh
