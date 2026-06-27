@@ -90,8 +90,7 @@ namespace cmn::system::abi_
 {
     [[noreturn]] inline void exit(i32 code)
     {
-#if defined(CMN_SYSTEM_ARCH_X64)
-
+        #if defined(__x86_64__)
         asm volatile
         (
             "movq %0, %%rdi\n\t"
@@ -101,10 +100,19 @@ namespace cmn::system::abi_
             : "r"(static_cast<i64>(code))
             : "rax", "rdi", "rcx", "r11", "memory"
         );
-
-#else
-#error Unsupported macOS architecture.
-#endif
+        #elif defined(__aarch64__)
+        register i64 x0 asm("x0") = code;
+        register i64 x16 asm("x16") = 1; // SYS_exit
+        asm volatile
+        (
+            "svc #0x80"
+            :
+            : "r"(x0), "r"(x16)
+            : "memory"
+        );
+        #else
+        #error Unsupported macOS architecture.
+        #endif
 
         while (true) { }
     }
