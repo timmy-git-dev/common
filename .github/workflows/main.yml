@@ -51,10 +51,10 @@ jobs:
             mingw-w64-ucrt-x86_64-clang
 
       # macOS
-      - name: Install dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew update
+      # - name: Install dependencies (macOS)
+      #   if: runner.os == 'macOS'
+      #   run: |
+      #     brew update
 
       - name: Make script executable
         if: runner.os != 'Windows'
