@@ -78,7 +78,7 @@ namespace cmn::system::abi_
 
         i32 _result = main(0, nullptr);
 
-        ExitProcess(0);
+        ExitProcess(_result);
 
         while (true) { }
     }

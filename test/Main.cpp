@@ -22,7 +22,7 @@ extern "C" void* CreateFileA(const char*, u32, u32, void*, u32, u32, void*);
 
 i32 main(const i32, const c08**)
 {
-    void* h = CreateFileA(
+    void* _fileHandle = CreateFileA(
         "test.txt",
         GENERIC_WRITE,
         0,
@@ -32,12 +32,7 @@ i32 main(const i32, const c08**)
         nullptr
     );
 
-    // naive write via pointer cast (skip proper WriteFile for now)
-    u32 written = 0;
-    using write_t = i32(*)(void*, const void*, u32, u32*, void*);
-    ((write_t)0)(nullptr, nullptr, 0, nullptr, nullptr); // placeholder if not linked
-
-    ExitProcess(0);
+    return 0;
 }
 #elif CMN_SYSTEM_OS_MAC
 i32 main(const i32, const c08**)
