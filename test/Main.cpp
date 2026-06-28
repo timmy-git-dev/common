@@ -13,7 +13,7 @@ i32 main(const i32, const c08**)
 }
 
 #elif CMN_SYSTEM_OS_WIN
-// extern "C" void ExitProcess(u32);
+extern "C" void ExitProcess(u32);
 extern "C" void* CreateFileA(const char*, u32, u32, void*, u32, u32, void*);
 
 #define GENERIC_WRITE 0x40000000
@@ -37,7 +37,7 @@ i32 main(const i32, const c08**)
     using write_t = i32(*)(void*, const void*, u32, u32*, void*);
     ((write_t)0)(nullptr, nullptr, 0, nullptr, nullptr); // placeholder if not linked
 
-    return 0;
+    ExitProcess(0);
 }
 #elif CMN_SYSTEM_OS_MAC
 i32 main(const i32, const c08**)

@@ -48,49 +48,41 @@ namespace cmn::system::abi_
     }
 }
 #elif CMN_SYSTEM_OS_WIN
-extern "C"
+namespace cmn::system::abi_
 {
-    // using ctor_t = void(*)();
-    // using dtor_t = void(*)();
+    extern "C"
+    {
+        using ctor_t = void(*)();
 
-    // // You define these symbols yourself in linker script OR object file aggregation
-    // extern ctor_t __init_array_start[];
-    // extern ctor_t __init_array_end[];
+        __attribute__((section(".CRT$XCA"))) ctor_t __xc_a[] = { nullptr };
 
-    // extern dtor_t __fini_array_start[];
-    // extern dtor_t __fini_array_end[];
-}
+        __attribute__((section(".CRT$XCZ"))) ctor_t __xc_z[] = { nullptr };
 
-extern "C" [[noreturn]] void ExitProcess(u32);
-extern "C" i32 __main() { }
+        void __main()
+        { }
 
-// static void initialize_ctors()
-// {
-//     for (ctor_t* p = __init_array_start; p < __init_array_end; ++p)
-//         if (*p) (*p)();
-// }
+        [[noreturn]] void ExitProcess(u32);
+    }
 
-// static void run_dtors()
-// {
-//     for (dtor_t* p = __fini_array_end; p != __fini_array_start; )
-//     {
-//         --p;
-//         if (*p) (*p)();
-//     }
-// }
+    static void initialize_ctors()
+    {
+        for (ctor_t* p = __xc_a + 1; p < __xc_z; ++p)
+        {
+            if (*p) (*p)();
+        }
+    }
 
-extern "C" [[noreturn]] void _start()
-{
-    // initialize_ctors();
+    extern "C" void _start()
+    {
+        // initialize_ctors();
 
-    // i32 result = main(0, nullptr);
-    main(0, nullptr);
+        // i32 _result = main(0, nullptr);
 
-    // run_dtors();
+        // ExitProcess(static_cast<u32>(_result));
+        ExitProcess(0);
 
-    ExitProcess(0);
-
-    while (true) { }
+        while (true) { }
+    }
 }
 #elif CMN_SYSTEM_OS_MAC
 #include "system/platform/Arch.hpp"
