@@ -62,7 +62,7 @@ extern "C"
 }
 
 extern "C" [[noreturn]] void ExitProcess(u32);
-extern "C" __main() { }
+extern "C" i32 __main() { }
 
 // static void initialize_ctors()
 // {
