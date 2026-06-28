@@ -74,11 +74,10 @@ namespace cmn::system::abi_
 
     extern "C" void _start()
     {
-        // initialize_ctors();
+        initialize_ctors();
 
-        // i32 _result = main(0, nullptr);
+        i32 _result = main(0, nullptr);
 
-        // ExitProcess(static_cast<u32>(_result));
         ExitProcess(0);
 
         while (true) { }
