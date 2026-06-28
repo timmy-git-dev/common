@@ -14,7 +14,7 @@ PATH_EXE="$PATH_BIN/common.exe"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
-FLAGS_BOTH="-s -O3 -ffreestanding"
+FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
 FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
 
@@ -84,7 +84,7 @@ echo "Linking project..."
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-x86_64-w64-mingw32-g++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -lkernel32
+x86_64-w64-mingw32-g++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -lkernel32 -e _start
 
 echo "Finished!"
 echo "-----"
