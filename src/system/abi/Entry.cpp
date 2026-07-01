@@ -61,7 +61,21 @@ namespace cmn::system::abi_
         void __main()
         { }
 
-        [[noreturn]] void ExitProcess(u32);
+        // [[noreturn]] void ExitProcess(u32);
+    }
+
+    extern "C"
+    {
+        using HANDLE = void*;
+        using NTSTATUS = i32;
+
+        [[noreturn]]
+        NTSTATUS NtTerminateProcess(HANDLE, NTSTATUS);
+
+        void* NtCurrentProcess()
+        {
+            return (void*)-1;
+        }
     }
 
     static void initialize_ctors()
@@ -78,7 +92,7 @@ namespace cmn::system::abi_
 
         i32 _result = main(0, nullptr);
 
-        ExitProcess(_result);
+        NtTerminateProcess(NtCurrentProcess(), _result);
 
         while (true) { }
     }

@@ -7,7 +7,7 @@ readonly LINK_X86="$LINK_REPO/x86/64/x64/latest/table.json"
 
 readonly PATH_OUT_ID="inc/system/syscall/ID.hpp"
 readonly PATH_OUT_CALL="inc/system/syscall/Call.hpp"
-readonly PATH_BIN="script/bin"
+readonly PATH_BIN="script/bin/syscall"
 readonly PATH_ARM="$PATH_BIN/arm.json"
 readonly PATH_X86="$PATH_BIN/x86.json"
 

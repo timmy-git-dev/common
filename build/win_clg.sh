@@ -84,7 +84,7 @@ echo "Linking project..."
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-clang++ --target=x86_64-w64-windows-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -lkernel32 -e _start
+clang++ --target=x86_64-w64-windows-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -lntdll -e _start
 
 echo "Finished!"
 echo "-----"
