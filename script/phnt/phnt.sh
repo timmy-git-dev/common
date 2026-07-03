@@ -1,1 +1,0 @@
-curl -s -L "https://github.com/mrexodia/phnt-single-header/releases/latest/download/phnt.h" -o "inc/system/phnt.hpp"

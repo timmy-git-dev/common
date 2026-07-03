@@ -15,10 +15,10 @@ readonly DEF_ARM="CMN_SYSTEM_ARCH_ARM64"
 readonly DEF_X86="CMN_SYSTEM_ARCH_X64"
 
 # Ensure paths & download syscall tables.
-mkdir -p $PATH_BIN
+mkdir -p "$PATH_BIN"
 
-curl -s -L "$LINK_ARM" -o $PATH_ARM
-curl -s -L "$LINK_X86" -o $PATH_X86
+curl -s -L "$LINK_ARM" -o "$PATH_ARM"
+curl -s -L "$LINK_X86" -o "$PATH_X86"
 
 # Define helper funcs.
 parse_syscall_table()

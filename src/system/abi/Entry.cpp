@@ -69,13 +69,13 @@ namespace cmn::system::abi_
         using HANDLE = void*;
         using NTSTATUS = i32;
 
-        [[noreturn]]
-        NTSTATUS NtTerminateProcess(HANDLE, NTSTATUS);
+        // [[noreturn]]
+        // NTSTATUS NtTerminateProcess(HANDLE, NTSTATUS);
 
-        void* NtCurrentProcess()
-        {
-            return (void*)-1;
-        }
+        // void* NtCurrentProcess()
+        // {
+        //     return (void*)-1;
+        // }
     }
 
     static void initialize_ctors()
