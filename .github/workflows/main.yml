@@ -18,8 +18,8 @@ jobs:
           - os: ubuntu-latest
             script: build/lin_clg.sh
 
-          # - os: windows-latest
-          #   script: build/win_gcc.sh
+          - os: windows-latest
+            script: build/win_gcc.ps1
 
           - os: windows-latest
             script: build/win_clg.ps1
@@ -32,33 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Windows
-      # - name: Setup MSYS2
-      #   if: runner.os == 'Windows'
-      #   uses: msys2/setup-msys2@v2
-      #   with:
-      #     msystem: UCRT64
-      #     update: true
-      #     install: >
-      #       mingw-w64-ucrt-x86_64-gcc
-      #       mingw-w64-ucrt-x86_64-clang
-
-      # macOS
-      # - name: Install dependencies (macOS)
-      #   if: runner.os == 'macOS'
-      #   run: |
-      #     brew update
-
       - name: Make script executable
         if: runner.os != 'Windows'
         run: chmod +x ${{ matrix.script }}
 
       - name: Build
         run: ./${{ matrix.script }}
-
-      #   if: runner.os != 'Windows'
-
-      # - name: Build (Windows)
-      #   if: runner.os == 'Windows'
-      #   run: ./${{ matrix.script }}
-      #   # shell: msys2 {0}

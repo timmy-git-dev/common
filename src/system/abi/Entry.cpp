@@ -1,6 +1,5 @@
 #include "system/platform/OS.hpp"
 #include "system/abi/Entry.hpp"
-#include "system/nt/Func.hpp"
 
 #if CMN_SYSTEM_OS_LIN
 #include "system/syscall/Call.hpp"
@@ -49,6 +48,7 @@ namespace cmn::system::abi_
     }
 }
 #elif CMN_SYSTEM_OS_WIN
+#include "system/nt/Func.hpp"
 namespace cmn::system::abi_
 {
     extern "C"

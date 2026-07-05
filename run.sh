@@ -1,1 +1,1 @@
-./build/lin_gcc.sh
+./build/lin_clg.sh

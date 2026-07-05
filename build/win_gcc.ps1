@@ -1,4 +1,4 @@
-# Simple build script (PowerShell equivalent)
+# Simple build script (PowerShell equivalent using GCC)
 
 $ErrorActionPreference = "Stop"
 
@@ -13,7 +13,7 @@ $PATH_BIN = Join-Path $PATH_PWD "bin"
 $PATH_OBJ = Join-Path $PATH_BIN "obj"
 $PATH_EXE = Join-Path $PATH_BIN "common.exe"
 
-# Flags
+# Flags (GCC)
 $COMPILE_VERSION = "-std=c++23"
 $FLAGS_BOTH = "-g3", "-O0", "-ffreestanding"
 $FLAGS_COMP = "-fno-exceptions", "-fno-rtti", "-fno-stack-protector",
@@ -24,7 +24,7 @@ $FLAGS_LINK = "-nostdlib", "-nostartfiles", "-nodefaultlibs", "-static"
 Remove-Item -Recurse -Force $PATH_OBJ -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $PATH_OBJ | Out-Null
 
-Write-Host "Editing .clangd..."
+Write-Host "Writing .clangd..."
 
 @"
 CompileFlags:
@@ -63,8 +63,7 @@ function Compile-Files($basePath)
 
         New-Item -ItemType Directory -Force $objDir | Out-Null
 
-        & clang++ `
-            --target=x86_64-w64-windows-gnu `
+        & gcc `
             $COMPILE_VERSION `
             @FLAGS_BOTH `
             @FLAGS_COMP `
@@ -81,8 +80,7 @@ Write-Host "Linking project..."
 
 $objects = Get-ChildItem $PATH_OBJ -Recurse -Filter *.o | ForEach-Object { $_.FullName }
 
-& clang++ `
-    --target=x86_64-w64-windows-gnu `
+& gcc `
     $COMPILE_VERSION `
     @FLAGS_BOTH `
     @FLAGS_LINK `

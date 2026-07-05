@@ -45,11 +45,6 @@ CompileFlags:
         - -nodefaultlibs
         - -static
         - -no-pie
-        - -DARCH_X86__
-        - -DDEBUG__
-
-Documentation:
-  CommentFormat: Doxygen
 EOF
 
 echo "Compiling objects..."
