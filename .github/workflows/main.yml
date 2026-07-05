@@ -18,11 +18,11 @@ jobs:
           - os: ubuntu-latest
             script: build/lin_clg.sh
 
-          - os: windows-latest
-            script: build/win_gcc.sh
+          # - os: windows-latest
+          #   script: build/win_gcc.sh
 
           - os: windows-latest
-            script: build/win_clg.sh
+            script: build/win_clg.ps1
 
           - os: macos-latest
             script: build/mac_clg.sh
@@ -32,23 +32,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Linux
-      # - name: Install dependencies (Linux)
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y clang gcc g++
-
       # Windows
-      - name: Setup MSYS2
-        if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: UCRT64
-          update: true
-          install: >
-            mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-clang
+      # - name: Setup MSYS2
+      #   if: runner.os == 'Windows'
+      #   uses: msys2/setup-msys2@v2
+      #   with:
+      #     msystem: UCRT64
+      #     update: true
+      #     install: >
+      #       mingw-w64-ucrt-x86_64-gcc
+      #       mingw-w64-ucrt-x86_64-clang
 
       # macOS
       # - name: Install dependencies (macOS)
@@ -61,10 +54,11 @@ jobs:
         run: chmod +x ${{ matrix.script }}
 
       - name: Build
-        if: runner.os != 'Windows'
         run: ./${{ matrix.script }}
 
-      - name: Build (Windows)
-        if: runner.os == 'Windows'
-        shell: msys2 {0}
-        run: ./${{ matrix.script }}
+      #   if: runner.os != 'Windows'
+
+      # - name: Build (Windows)
+      #   if: runner.os == 'Windows'
+      #   run: ./${{ matrix.script }}
+      #   # shell: msys2 {0}
