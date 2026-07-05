@@ -1,5 +1,6 @@
 #include "system/platform/OS.hpp"
 #include "system/abi/Entry.hpp"
+#include "system/nt/Func.hpp"
 
 #if CMN_SYSTEM_OS_LIN
 #include "system/syscall/Call.hpp"
@@ -60,22 +61,12 @@ namespace cmn::system::abi_
 
         void __main()
         { }
-
-        // [[noreturn]] void ExitProcess(u32);
     }
 
     extern "C"
     {
         using HANDLE = void*;
         using NTSTATUS = i32;
-
-        // [[noreturn]]
-        // NTSTATUS NtTerminateProcess(HANDLE, NTSTATUS);
-
-        // void* NtCurrentProcess()
-        // {
-        //     return (void*)-1;
-        // }
     }
 
     static void initialize_ctors()
@@ -90,9 +81,9 @@ namespace cmn::system::abi_
     {
         initialize_ctors();
 
-        i32 _result = main(0, nullptr);
+        NTSTATUS _result = main(0, nullptr);
 
-        NtTerminateProcess(NtCurrentProcess(), _result);
+        NtTerminateProcess((void*)-1, _result);
 
         while (true) { }
     }
