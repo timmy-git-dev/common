@@ -229,7 +229,7 @@ int main()
     const char* _args[] =
     {
         "--target=x86_64-w64-windows-gnu",
-        "-I/home/timmy/code/test/phnt"
+        "-Iscript/bin/nt/phnt"
     };
 
     CXTranslationUnit _translationUnit = clang_parseTranslationUnit

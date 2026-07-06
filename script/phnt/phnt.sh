@@ -1,11 +1,12 @@
 set -e
 
-readonly PATH_PARSER="script/nt/Parser.cpp"
-readonly PATH_BIN="script/bin/nt"
-readonly PATH_PHNT="$PATH_BIN/phnt"
+readonly PATH_PARSER="script/phnt/Parser.cpp"
+readonly PATH_BIN="script/bin/phnt"
+readonly PATH_PHNT="$PATH_BIN/repo"
 readonly PATH_OUT="$PATH_BIN/Main.out"
 
 mkdir -p "$PATH_BIN"
+rm -rf "$PATH_PHNT"
 
 # git clone https://github.com/apple-oss-distributions/xnu.git /path/to/folder
 git clone "https://github.com/winsiderss/phnt.git" "$PATH_PHNT"
