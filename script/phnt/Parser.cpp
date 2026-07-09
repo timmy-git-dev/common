@@ -67,7 +67,7 @@ static bool define_type(CXType _type, CXCursor _baseCursor)
                 }
                 case CXType_FunctionProto:
                 {
-                    CXType      _baseType      = clang_getCursorType                       (_baseCursor   ); // Ensure return value + params are defined & ignore adding typedef/ptr if FunctionProto exists.
+                    CXType      _baseType      = clang_getCursorType                       (_baseCursor   );
                     CXString    _baseName      = clang_getTypeSpelling                     (_baseType     );
                     const char* _baseStr       = clang_getCString                          (_baseName     );
                     CXType      _baseValueType = clang_getCanonicalType(clang_getCursorType(_baseCursor   ));
@@ -225,11 +225,11 @@ static CXChildVisitResult visitor(CXCursor _funcCursor, CXCursor, CXClientData)
 int main()
 {
     CXIndex     _index  = clang_createIndex(0, 0);
-    const char* _file   = "script/nt/Includes.cpp";
+    const char* _file   = "script/phnt/Includes.cpp";
     const char* _args[] =
     {
         "--target=x86_64-w64-windows-gnu",
-        "-Iscript/bin/nt/phnt"
+        "-Iscript/bin/phnt/repo"
     };
 
     CXTranslationUnit _translationUnit = clang_parseTranslationUnit
@@ -243,7 +243,7 @@ int main()
 
     if (!_translationUnit)
     {
-        outputTypes << "Failed to parse file.";
+        std::cout << "Failed to parse file.";
         return 1;
     }
 
