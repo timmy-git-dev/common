@@ -9,5 +9,5 @@ mkdir -p "$PATH_BIN"
 
 # git clone https://github.com/apple-oss-distributions/xnu.git "$PATH_XNU"
 
-clang++ "$PATH_PARSER" -g3 -O0 -std=c++23 -lclang -o "$PATH_OUT"
+clang++ "$PATH_PARSER" -O3 -std=c++23 -lclang -o "$PATH_OUT"
 $PATH_OUT

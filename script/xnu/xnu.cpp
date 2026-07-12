@@ -10,8 +10,8 @@
 
 namespace fs = std::filesystem;
 
-constexpr const char* PATH_BSD      = "script/bin/xnu/repo/bsd";
 constexpr const char* PATH_REPO     = "script/bin/xnu/repo";
+constexpr const char* PATH_BSD      = "script/bin/xnu/repo/bsd";
 constexpr const char* PATH_CLANGD   = "script/bin/xnu/.clangd";
 constexpr const char* PATH_INCLUDES = "script/bin/xnu/Includes.cpp";
 constexpr const char* PATH_SYSCALLS = "script/bin/xnu/repo/bsd/kern/syscalls.master";
@@ -90,9 +90,6 @@ static bool define_type(CXType _type, CXCursor _baseCursor)
         return true;
     }
 
-    definedTypes.insert(           _str );
-    definedTypes.insert(strip_line(_str));
-
     if (_type.kind < CXType_FirstBuiltin || _type.kind > CXType_LastBuiltin)
     {
         switch (_type.kind)
@@ -104,6 +101,8 @@ static bool define_type(CXType _type, CXCursor _baseCursor)
                 const char* _underlyingStr  = clang_getCString                  (_underlyingName);
                 if (define_type(_underlyingType, _baseCursor))
                 {
+                    definedTypes.insert(           _str );
+                    definedTypes.insert(strip_line(_str));
                     types << "using " << _str << " = " << _underlyingStr << ";\n";
                 }
                 clang_disposeString(_underlyingName);
@@ -128,11 +127,15 @@ static bool define_type(CXType _type, CXCursor _baseCursor)
             }
             case CXType_Record:
             {
+                definedTypes.insert(           _str );
+                definedTypes.insert(strip_line(_str));
                 types << _str << ";\n";
                 break;
             }
             case CXType_Enum:
             {
+                definedTypes.insert(           _str );
+                definedTypes.insert(strip_line(_str));
                 types << "enum " << _str << " { };\n";
                 break;
             }
@@ -153,11 +156,21 @@ static bool define_type(CXType _type, CXCursor _baseCursor)
                     define_type(_paramType, _paramCursor);
                 }
 
+                definedTypes.insert(           _baseStr );
+                definedTypes.insert(strip_line(_baseStr));
                 types << "using " << _baseStr << " = " << _baseValueStr << ";\n";
 
                 clang_disposeString(_baseName     );
                 clang_disposeString(_baseValueName);
                 return false;
+            }
+            case CXType_Unexposed:
+            {
+                // CXType      _underlyingType = clang_getTypedefDeclUnderlyingType(_cursor        );
+                // CXString    _underlyingName = clang_getTypeSpelling             (_underlyingType);
+                // const char* _underlyingStr  = clang_getCString                  (_underlyingName);
+                // std::cout << "? -> " << _str << ": " << _underlyingStr << "\n";
+                return true;
             }
 
             default:
@@ -174,16 +187,11 @@ static bool define_type(CXType _type, CXCursor _baseCursor)
 
 static CXChildVisitResult type_visitor(CXCursor _cursor, CXCursor, CXClientData)
 {
-    CXCursorKind _kind = clang_getCursorKind(_cursor);
-
-    if (_kind != CXCursor_TypedefDecl && _kind != CXCursor_StructDecl && _kind != CXCursor_UnionDecl && _kind != CXCursor_EnumDecl)
-        return CXChildVisit_Recurse;
-
     CXString    _aliasName = clang_getCursorSpelling(_cursor   );
     std::string _aliasStr  = clang_getCString       (_aliasName);
     clang_disposeString(_aliasName);
 
-    if (currentAlias == _aliasStr)
+    if (currentAlias == strip_line(_aliasStr))
     {
         CXType _type = clang_getCursorType(_cursor);
         define_type(_type, _cursor);
@@ -193,7 +201,7 @@ static CXChildVisitResult type_visitor(CXCursor _cursor, CXCursor, CXClientData)
     return CXChildVisit_Recurse;
 }
 
-bool parse_header(std::string _alias, std::string _path)
+void parse_header(std::string _alias, std::string _path)
 {
     currentAlias = _alias;
     CXIndex     _index  = clang_createIndex(0, 0);
@@ -201,7 +209,10 @@ bool parse_header(std::string _alias, std::string _path)
     {
         "--target=x86_64-linux-gnu",
         "-D__arm64__"              ,
+        "-DPRIVATE"                ,
         "-DKERNEL"                 ,
+        "-DBSD_KERNEL_PRIVATE"     ,
+        "-D__APPLE_API_PRIVATE"    ,
         "-Iscript/bin/xnu/repo/bsd",
         "-Iscript/bin/xnu/repo"    ,
     };
@@ -226,8 +237,6 @@ bool parse_header(std::string _alias, std::string _path)
 
     clang_disposeTranslationUnit(_translationUnit);
     clang_disposeIndex(_index);
-
-    return definedTypes.contains(_alias);
 }
 
 std::string find_header(const std::string& _alias)
@@ -248,7 +257,8 @@ std::string find_header(const std::string& _alias)
         {
             if (_line.contains(_alias))
             {
-                if (parse_header(_alias, _entry.path().string()))
+                parse_header(_alias, _entry.path().string());
+                if (definedTypes.contains(_alias))
                 {
                     return _entry.path().string();
                 }
@@ -257,6 +267,7 @@ std::string find_header(const std::string& _alias)
             }
         }
     }
+
     for (const auto& _entry : std::filesystem::recursive_directory_iterator(PATH_REPO))
     {
         if (!_entry.is_regular_file() || _entry.path().extension() != ".h")
@@ -273,7 +284,8 @@ std::string find_header(const std::string& _alias)
         {
             if (_line.contains(_alias))
             {
-                if (parse_header(_alias, _entry.path().string()))
+                parse_header(_alias, _entry.path().string());
+                if (definedTypes.contains(_alias))
                 {
                     return _entry.path().string();
                 }
@@ -295,21 +307,24 @@ void parse_types()
     for (std::string _alias : typeAliases)
     {
         std::string _path = find_header(_alias);
-        std::cout << _alias << " -> " << _path << "\n";
-
-        // if (_path.empty())
-        // {
-        //     std::cout << "Failed to locate: ";
-        // }
+        if (_path.empty())
+        {
+            std::cout << _alias << "?\n";
+        }
     }
 
-
-    std::cout << "Failed to find:\n";
-    for (std::string _alias : typeAliases)
-    {
-        if (!definedTypes.contains(_alias))
-            std::cout << "  " << _alias << "\n";
-    }
+    // std::cout << "Aliases:\n";
+    // for (std::string _alias : typeAliases)
+    // {
+    //     // if (!definedTypes.contains(_alias))
+    //         std::cout << _alias << "\n";
+    // }
+    // std::cout << "Undefined:\n";
+    // for (std::string _alias : definedTypes)
+    // {
+    //     if (!definedTypes.contains(_alias))
+    //         std::cout << _alias << "\n";
+    // }
 
     types.close();
 }
@@ -430,7 +445,7 @@ int main()
         _end = _start;
         _start = 0;
         std::string _returnType = _line.substr(0, _end);
-        typeAliases.insert(_returnType);
+        typeAliases.insert(strip_line(_returnType));
 
         funcs << "    " << _func.erase(_func.length() - 1) << (_returnType == "void" ? " {syscall(" : " {return syscall(");
 
@@ -451,7 +466,7 @@ int main()
             std::string _paramName = _line.substr(_mid + 1, _end - _mid - 1);
 
             funcs << ",(long)" << _paramName;
-            typeAliases.insert(_paramType);
+            typeAliases.insert(strip_line(_paramType));
 
             _start = _end + 1;
         }
@@ -465,7 +480,7 @@ int main()
             std::string _paramName = _line.substr(_mid + 1, _end - _mid - 1);
 
             funcs << ",(long)" << _paramName;
-            typeAliases.insert(_paramType);
+            typeAliases.insert(strip_line(_paramType));
         }
 
         funcs << ");}\n";
