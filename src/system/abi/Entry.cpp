@@ -83,7 +83,7 @@ namespace cmn::system::abi_
 
         NTSTATUS _result = main(0, nullptr);
 
-        NtTerminateProcess((void*)-1, _result);
+        // NtTerminateProcess((void*)-1, _result);
 
         while (true) { }
     }
