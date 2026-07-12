@@ -41,7 +41,7 @@ struct PEB
 
 i32 main(const i32, const c08**)
 {
-    PROCESS_BASIC_INFORMATION pbi{};
+    PROCESS_BASIC_INFORMATION pbi;
     NtQueryInformationProcess(
         (HANDLE)-1,
         (PROCESSINFOCLASS)0, // ProcessBasicInformation
@@ -53,7 +53,7 @@ i32 main(const i32, const c08**)
     auto peb = (PEB*)pbi.PebBaseAddress;
     HANDLE stdout = peb->ProcessParameters->StandardOutput;
 
-    static constexpr c08 text[] = "Hello, World!\n";
+    static constexpr c08 text[] = "Hello, world!\n";
 
     NtWriteFile(
         stdout,
