@@ -59,24 +59,10 @@ struct _TEB
 
 i32 main(const i32, const c08**)
 {
-    // PEB* _peb = (PEB*)(NtCurrentTeb()->ProcessEnvironmentBlock);
-    // HANDLE _stdout = _peb->ProcessParameters->StandardOutput;
-
-    // static constexpr c08 text[] = "Hello, world!\n";
-
-    // IO_STATUS_BLOCK iosb;
-
-    // NtWriteFile(
-    //     _stdout,
-    //     nullptr,
-    //     nullptr,
-    //     nullptr,
-    //     PIO_STATUS_BLOCK(&iosb),
-    //     (void*)text,
-    //     sizeof(text) - 1,
-    //     nullptr,
-    //     nullptr
-    // );
+    while(true)
+    {
+        continue;
+    }
 
     return 0;
 }
