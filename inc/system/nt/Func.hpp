@@ -3,7 +3,7 @@
 
 extern "C"
 {
-    struct _TEB * NtCurrentTeb();
+    _TEB * NtCurrentTeb();
     NTSTATUS NtCallbackReturn(PVOID OutputBuffer, ULONG OutputLength, NTSTATUS Status);
     NTSTATUS NtQueryDebugFilterState(ULONG ComponentId, ULONG Level);
     NTSTATUS NtSetDebugFilterState(ULONG ComponentId, ULONG Level, BOOLEAN State);

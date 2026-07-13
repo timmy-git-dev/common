@@ -39,39 +39,53 @@ struct PEB
     RTL_USER_PROCESS_PARAMETERS* ProcessParameters;
 };
 
+struct IO_STATUS_BLOCK
+{
+    union
+    {
+        i64 Status;
+        void* Pointer;
+    };
+
+    s64 Information;
+};
+
+struct _TEB
+{
+    void* Reserved1[12];
+    void* ProcessEnvironmentBlock;
+    void* Reserved2[399];
+};
+
 i32 main(const i32, const c08**)
 {
-    PROCESS_BASIC_INFORMATION pbi;
-    NtQueryInformationProcess(
-        (HANDLE)-1,
-        (PROCESSINFOCLASS)0, // ProcessBasicInformation
-        &pbi,
-        sizeof(pbi),
-        __null
-    );
+    // PEB* _peb = (PEB*)(NtCurrentTeb()->ProcessEnvironmentBlock);
+    // HANDLE _stdout = _peb->ProcessParameters->StandardOutput;
 
-    auto peb = (PEB*)pbi.PebBaseAddress;
-    HANDLE stdout = peb->ProcessParameters->StandardOutput;
+    // static constexpr c08 text[] = "Hello, world!\n";
 
-    static constexpr c08 text[] = "Hello, world!\n";
+    // IO_STATUS_BLOCK iosb;
 
-    NtWriteFile(
-        stdout,
-        nullptr,
-        nullptr,
-        nullptr,
-        nullptr,
-        (void*)text,
-        sizeof(text) - 1,
-        nullptr,
-        nullptr
-    );
+    // NtWriteFile(
+    //     _stdout,
+    //     nullptr,
+    //     nullptr,
+    //     nullptr,
+    //     PIO_STATUS_BLOCK(&iosb),
+    //     (void*)text,
+    //     sizeof(text) - 1,
+    //     nullptr,
+    //     nullptr
+    // );
 
     return 0;
 }
 #elif CMN_SYSTEM_OS_MAC
 i32 main(const i32, const c08**)
 {
+    static constexpr c08 _text[] = "Hello, world!\n";
+    syscall(SYS_write, 1, _text, sizeof(_text) - 1);
+
     return 0;
 }
 #endif
