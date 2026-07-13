@@ -81,10 +81,12 @@ i32 main(const i32, const c08**)
     return 0;
 }
 #elif CMN_SYSTEM_OS_MAC
+#include "system/xnu/Call.hpp"
+
 i32 main(const i32, const c08**)
 {
     static constexpr c08 _text[] = "Hello, world!\n";
-    syscall(SYS_write, 1, _text, sizeof(_text) - 1);
+    cmn::system::xnu::write(1, reinterpret_cast<user_addr_t>(_text), sizeof(_text) - 1);
 
     return 0;
 }
