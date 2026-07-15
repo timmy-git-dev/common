@@ -1,18 +1,18 @@
 #include "system/abi/Entry.hpp"
-// #include "system/platform/OS.hpp"
+#include "system/platform/OS.hpp"
 
-// #if CMN_SYSTEM_OS_LIN
-// #include "system/syscall/Call.hpp"
+#if CMN_SYSTEM_OS_LIN
+#include "system/syscall/Call.hpp"
 
-// i32 main(const i32, const c08**)
-// {
-//     c08 _buffer[14] = "Hello, world!";
-//     cmn::system::syscall::write(1, _buffer, 14);
+i32 main(const i32, const c08**)
+{
+    c08 _buffer[14] = "Hello, world!";
+    cmn::system::syscall::write(1, _buffer, 14);
 
-//     return 0;
-// }
+    return 0;
+}
 
-// #elif CMN_SYSTEM_OS_WIN
+#elif CMN_SYSTEM_OS_WIN
 #include "system/nt/Func.hpp"
 
 typedef struct _IO_STATUS_BLOCK {
@@ -78,16 +78,16 @@ i32 main(const i32, const c08**)
     );
 
 
+    return 1;
+}
+#elif CMN_SYSTEM_OS_MAC
+#include "system/xnu/Call.hpp"
+
+i32 main(const i32, const c08**)
+{
+    static constexpr c08 _text[] = "Hello, world!\n";
+    cmn::system::xnu::write(1, reinterpret_cast<user_addr_t>(_text), sizeof(_text) - 1);
+
     return 0;
 }
-// #elif CMN_SYSTEM_OS_MAC
-// #include "system/xnu/Call.hpp"
-
-// i32 main(const i32, const c08**)
-// {
-//     static constexpr c08 _text[] = "Hello, world!\n";
-//     cmn::system::xnu::write(1, reinterpret_cast<user_addr_t>(_text), sizeof(_text) - 1);
-
-//     return 0;
-// }
-// #endif
+#endif

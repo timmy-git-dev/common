@@ -18,7 +18,7 @@ namespace cmn::system::abi_
         extern dtor_t __fini_array_end  [];
     }
 
-    static void initialize_ctors()
+    static void init_ctors()
     {
         for (ctor_t* _ctor = __init_array_start; _ctor != __init_array_end; ++_ctor)
         {
@@ -26,7 +26,7 @@ namespace cmn::system::abi_
         }
     }
 
-    static void destruct_dtors()
+    static void fini_dtors()
     {
         for (dtor_t* _dtor = __fini_array_start; _dtor != __fini_array_end; ++_dtor)
         {
@@ -37,11 +37,9 @@ namespace cmn::system::abi_
     extern "C"
     void _start()
     {
-        initialize_ctors();
-
+        init_ctors();
         i32 _result = main(0, nullptr);
-
-        destruct_dtors();
+        fini_dtors();
 
         cmn::system::syscall::exit(_result);
         while (true) { }
@@ -54,9 +52,9 @@ namespace cmn::system::abi_
     extern "C"
     {
         using ctor_t = void(*)();
+        using dtor_t = void(*)();
 
         __attribute__((section(".CRT$XCA"))) ctor_t __xc_a[] = { nullptr };
-
         __attribute__((section(".CRT$XCZ"))) ctor_t __xc_z[] = { nullptr };
 
         void __main()
@@ -69,7 +67,7 @@ namespace cmn::system::abi_
         using NTSTATUS = i32;
     }
 
-    static void initialize_ctors()
+    static void init_ctors()
     {
         for (ctor_t* p = __xc_a + 1; p < __xc_z; ++p)
         {
@@ -79,11 +77,11 @@ namespace cmn::system::abi_
 
     extern "C" void _start()
     {
-        initialize_ctors();
+        // init_ctors();
 
-        NTSTATUS _result = main(0, nullptr);
+        // NTSTATUS _result = main(0, nullptr);
 
-        NtTerminateProcess((void*)-1, _result);
+        NtTerminateProcess((void*)-1, 2);
 
         while (true) { }
     }
@@ -122,9 +120,9 @@ namespace cmn::system::abi_
 
     extern "C" void _start()
     {
-        main(0, nullptr);
+        i32 _result = main(0, nullptr);
 
-        exit(0);
+        exit(_result);
         while (true) { }
     }
 }

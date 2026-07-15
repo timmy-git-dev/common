@@ -84,4 +84,12 @@ clang++ --target=x86_64-w64-windows-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LIN
 echo "Finished!"
 echo "-----"
 
-$PATH_EXE
+"$PATH_EXE"
+status=$?
+
+echo "-----"
+if [ $status -ge 128 ]; then
+    echo "Terminated: $((status - 128))"
+else
+    echo "Exited: $status"
+fi
