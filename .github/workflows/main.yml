@@ -1,4 +1,4 @@
-name: Build
+name: build
 
 on:
   push:
@@ -13,28 +13,34 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            script: build/lin_gcc.sh
+            arch: x64
+            script: build/lin.sh
+            compiler: clang++ --target=x86_64-linux-gnu
+            target: --target=x86_64-linux-gnu
 
           - os: ubuntu-latest
-            script: build/lin_clg.sh
+            arch: x64
+            script: build/lin.sh
+            compiler: x86_64-linux-gnu-g++
+            target: --target=x86_64-linux-gnu
 
-          - os: windows-latest
-            script: build/win_gcc.ps1
+          # - os: windows-latest
+          #   script: build/win_gcc.ps1
 
-          - os: windows-latest
-            script: build/win_clg.ps1
+          # - os: windows-latest
+          #   script: build/win_clg.ps1
 
-          - os: macos-latest
-            script: build/mac_clg.sh
+          # - os: macos-latest
+          #   script: build/mac_clg.sh
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v6
 
-      - name: Make script executable
-        if: runner.os != 'Windows'
-        run: chmod +x ${{ matrix.script }}
+      # - name: Make script executable
+      #   if: runner.os != 'Windows'
+      #   run: chmod +x ${{ matrix.script }}
 
-      - name: Build
-        run: ./${{ matrix.script }}
+      - name: compile
+        run: ${{ matrix.script }} "${{ matrix.compiler }}" "${{ matrix.target }}"
