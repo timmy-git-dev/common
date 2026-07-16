@@ -7,7 +7,11 @@ $ErrorActionPreference = "Stop"
 
 $COMPILER = $args[0]
 $TARGET = $args[1]
-$OS_FLAGS = $args[2..($args.Length - 1)]
+
+$OS_FLAGS = @()
+if ($args.Length -gt 2) {
+    $OS_FLAGS = $args[2..($args.Length - 1)]
+}
 
 
 ################################################################################
@@ -74,10 +78,10 @@ function Compile-Dir {
 
     Get-ChildItem -Path $Dir -Recurse -File -Filter "*.cpp" | ForEach-Object {
         $cpp = $_.FullName
-        $rel = $cpp.Substring($Dir.Length)
-        $obj = "$OBJ$($rel -replace '\.cpp$', '.o')"
+        $rel = $cpp.Substring($Dir.Length).TrimStart('\','/')
+        $obj = Join-Path $OBJ ($rel -replace '\.cpp$', '.o')
 
-        Write-Host "  Compiling $rel..."
+        Write-Host "  Compiling \/$rel..."
 
         New-Item -ItemType Directory -Force -Path (Split-Path $obj) | Out-Null
 
