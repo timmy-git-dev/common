@@ -1,8 +1,18 @@
 $ErrorActionPreference = "Stop"
 
 
+################################################################################
+# Arguments
+################################################################################
+
 $COMPILER = $args[0]
 $TARGET = $args[1]
+$OS_FLAGS = $args[2..($args.Length - 1)]
+
+
+################################################################################
+# Constants
+################################################################################
 
 $CPP_STANDARD = "-std=c++23"
 $ENTRY = "_start"
@@ -16,6 +26,10 @@ $BIN = "$ROOT/bin"
 $OBJ = "$BIN/obj"
 $EXE = "$BIN/common.exe"
 
+
+################################################################################
+# Flags
+################################################################################
 
 $COMMON_FLAGS = @(
     $CPP_STANDARD
@@ -49,6 +63,10 @@ $INCLUDE_FLAGS = @(
 )
 
 
+################################################################################
+# Functions
+################################################################################
+
 function Compile-Dir {
     param (
         [string]$Dir
@@ -64,11 +82,12 @@ function Compile-Dir {
         New-Item -ItemType Directory -Force -Path (Split-Path $obj) | Out-Null
 
         & $COMPILER `
+            @OS_FLAGS `
             @COMMON_FLAGS `
             @COMPILE_FLAGS `
             @INCLUDE_FLAGS `
-            -c $cpp `
-            -o $obj
+            -c "$cpp" `
+            -o "$obj"
     }
 }
 
@@ -82,9 +101,9 @@ function Link-Project {
     & $COMPILER `
         @COMMON_FLAGS `
         @LINK_FLAGS `
-        $objects `
-        -o $EXE `
-        -e $ENTRY
+        @objects `
+        -o "$EXE" `
+        -e "$ENTRY"
 }
 
 
@@ -108,22 +127,32 @@ CompileFlags:
 }
 
 
-Remove-Item -Recurse -Force $BIN -ErrorAction SilentlyContinue
-New-Item -ItemType Directory -Force -Path $OBJ | Out-Null
+################################################################################
+# Build
+################################################################################
+
+Remove-Item -Recurse -Force "$BIN" -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path "$OBJ" | Out-Null
 
 Write-Clangd
 
 Write-Host "Compiling..."
-Compile-Dir $SRC
-Compile-Dir $TST
+Compile-Dir "$SRC"
+Compile-Dir "$TST"
 
 Link-Project
 
 
-Write-Host "-----"
-& $EXE
-$result = $LASTEXITCODE
+################################################################################
+# Run
+################################################################################
+
 Write-Host "-----"
 
-Write-Host $result
+& "$EXE"
+$result = $LASTEXITCODE
+
+Write-Host "-----"
+
+Write-Host "$result"
 exit $result

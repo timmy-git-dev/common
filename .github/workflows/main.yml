@@ -16,7 +16,7 @@ jobs:
           - name: lin-x64-clang
             os: ubuntu-latest
             arch: x64
-            script: build/lin.sh
+            script: build/unix.sh
             compiler: clang++
             target: x86_64-linux-gnu
             flags: --target=x86_64-linux-gnu
@@ -24,7 +24,7 @@ jobs:
           - name: lin-x64-gcc
             os: ubuntu-latest
             arch: x64
-            script: build/lin.sh
+            script: build/unix.sh
             compiler: x86_64-linux-gnu-g++
             target: x86_64-linux-gnu
             flags: ""
@@ -33,10 +33,10 @@ jobs:
           - name: mac-x64-clang
             os: macos-latest
             arch: x64
-            script: build/lin.sh
+            script: build/unix.sh
             compiler: clang++
             target: x86_64-apple-darwin
-            flags: --target=x86_64-apple-darwin
+            flags: ""
 
           # windows.
           - name: win-x64-clang
