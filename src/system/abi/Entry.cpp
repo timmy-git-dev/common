@@ -35,7 +35,7 @@ namespace cmn::system::abi_
     }
 
     extern "C"
-    void _start()
+    void start__()
     {
         init_ctors();
         i32 _result = main(0, nullptr);
@@ -67,7 +67,7 @@ namespace cmn::system::abi_
         }
     }
 
-    extern "C" void _start()
+    extern "C" void start__()
     {
         // initialize_ctors();
 
@@ -80,7 +80,7 @@ namespace cmn::system::abi_
     #elif CMN_SYSTEM_OS_MAC
     #include "system/xnu/Call.hpp"
 
-    extern "C" void _start()
+    extern "C" void start__()
     {
         i32 _result = main(0, nullptr);
 

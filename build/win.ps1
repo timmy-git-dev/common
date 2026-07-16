@@ -54,7 +54,7 @@ CompileFlags:
 
 Write-Host "Compiling objects..."
 
-function Compile-Files($basePath)
+function CompileFiles($basePath)
 {
     Get-ChildItem $basePath -Recurse -Filter *.cpp | ForEach-Object {
 
@@ -78,8 +78,8 @@ function Compile-Files($basePath)
     }
 }
 
-Compile-Files $PATH_SRC
-Compile-Files $PATH_TST
+CompileFiles $PATH_SRC
+CompileFiles $PATH_TST
 
 Write-Host "Linking project..."
 
@@ -93,7 +93,7 @@ $objects = Get-ChildItem $PATH_OBJ -Recurse -Filter *.o | ForEach-Object { $_.Fu
     $objects `
     -o $PATH_EXE `
     -lntdll `
-    -e _start
+    -e start__
 
 $ErrorActionPreference = "Continue"
 Write-Host "-----"
