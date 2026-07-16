@@ -34,7 +34,7 @@ jobs:
             target: arm64-apple-darwin
             flags: "--target=arm64-apple-darwin"
           - name: mac-x64-clg
-            os: macos-13
+            os: macos-latest-large
             script: build/mac.sh
             compiler: clang++
             target: x86_64-apple-darwin
@@ -42,7 +42,7 @@ jobs:
 
           # windows.
           - name: win-arm-clg
-            os: windows-arm64
+            os: windows-11-arm
             script: build/win.ps1
             compiler: clang++
             target: aarch64-w64-windows-gnu
