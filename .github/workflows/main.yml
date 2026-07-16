@@ -30,13 +30,13 @@ jobs:
             flags: ""
 
           # mac.
-          - name: mac-x64-clang
+          - name: mac-arm-clang
             os: macos-latest
-            # arch: x64
+            arch: arm64
             script: build/mac.sh
             compiler: clang++
-            target: x86_64-apple-darwin
-            flags: ""
+            target: arm64-apple-darwin
+            flags: "--target=arm64-apple-darwin"
 
           # windows.
           - name: win-x64-clang
