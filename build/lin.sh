@@ -5,6 +5,7 @@ set -e
 
 COMPILER="$1"
 TARGET="$2"
+OS_FLAGS="$3"
 
 CPP_STANDARD="-std=c++23"
 ENTRY="_start"
@@ -63,6 +64,7 @@ compile_dir() {
         mkdir -p "$(dirname "$obj")"
 
         $COMPILER \
+            ${OS_FLAGS[@]} \
             ${COMMON_FLAGS[@]} \
             ${COMPILE_FLAGS[@]} \
             ${INCLUDE_FLAGS[@]} \
