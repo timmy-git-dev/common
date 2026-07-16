@@ -55,6 +55,22 @@ typedef struct PEB
     ULONG SessionId;
 } PEB;
 
+#if CMN_SYSTEM_ARCH_ARM64
+static PEB *get_peb()
+{
+    PEB *peb;
+    void *teb;
+
+    asm volatile(
+        "mrs %0, tpidr_el0"
+        : "=r"(teb)
+    );
+
+    peb = *(PEB **)((u64)teb + 0x60);
+
+    return peb;
+}
+#else
 static PEB *get_peb()
 {
     PEB *peb;
@@ -64,6 +80,7 @@ static PEB *get_peb()
     );
     return peb;
 }
+#endif
 
 static HANDLE get_std(u64 id)
 {

@@ -13,83 +13,46 @@ jobs:
       matrix:
         include:
           # linux.
-          - name: lin-arm-clang
-            os: ubuntu-latest
-            arch: arm64
+          - name: lin-arm-clg
+            os: ubuntu-24.04-arm
             script: build/lin.sh
             compiler: clang++
             target: aarch64-linux-gnu
             flags: --target=aarch64-linux-gnu
-          - name: lin-arm-gcc
+          - name: lin-x64-clg
             os: ubuntu-latest
-            arch: arm64
-            script: build/lin.sh
-            compiler: aarch64-linux-gnu-g++
-            target: aarch64-linux-gnu
-            flags: ""
-
-          - name: lin-x64-clang
-            os: ubuntu-latest
-            arch: x64
             script: build/lin.sh
             compiler: clang++
             target: x86_64-linux-gnu
             flags: --target=x86_64-linux-gnu
-          - name: lin-x64-gcc
-            os: ubuntu-latest
-            arch: x64
-            script: build/lin.sh
-            compiler: x86_64-linux-gnu-g++
-            target: x86_64-linux-gnu
-            flags: ""
 
           # mac.
-          - name: mac-arm-clang
+          - name: mac-arm-clg
             os: macos-latest
-            arch: arm64
             script: build/mac.sh
             compiler: clang++
             target: arm64-apple-darwin
             flags: "--target=arm64-apple-darwin"
-
-          - name: mac-x64-clang
+          - name: mac-x64-clg
             os: macos-13
-            arch: x86_64
             script: build/mac.sh
             compiler: clang++
             target: x86_64-apple-darwin
             flags: "--target=x86_64-apple-darwin"
 
           # windows.
-          - name: win-arm-clang
-            os: windows-latest
-            arch: arm64
+          - name: win-arm-clg
+            os: windows-arm64
             script: build/win.ps1
             compiler: clang++
             target: aarch64-w64-windows-gnu
             flags: --target=aarch64-w64-windows-gnu
-          - name: win-arm-gcc
+          - name: win-x64-clg
             os: windows-latest
-            arch: x64
-            script: build/win.ps1
-            compiler: aarch64-w64-mingw32-g++
-            target: aarch64-w64-windows-gnu
-            flags: ""
-
-          - name: win-x64-clang
-            os: windows-latest
-            arch: x64
             script: build/win.ps1
             compiler: clang++
             target: x86_64-w64-windows-gnu
             flags: --target=x86_64-w64-windows-gnu
-          - name: win-x64-gcc
-            os: windows-latest
-            arch: x64
-            script: build/win.ps1
-            compiler: x86_64-w64-mingw32-g++
-            target: x86_64-w64-windows-gnu
-            flags: ""
 
     runs-on: ${{ matrix.os }}
 

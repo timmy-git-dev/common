@@ -1,6 +1,4 @@
 #pragma once
-#include "system/platform/OS.hpp"
-#if CMN_SYSTEM_OS_LIN
 #include <linux/fs.h>
 #include <linux/signal.h>
 #include <asm-generic/posix_types.h>
@@ -68,4 +66,3 @@ namespace cmn::system::syscall
     #define MAP_SYNC            0x80000
     #define MAP_FIXED_NOREPLACE 0x100000
 }
-#endif
