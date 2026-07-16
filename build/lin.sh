@@ -77,6 +77,7 @@ link_project() {
     echo "Linking..."
 
     $COMPILER \
+        ${OS_FLAGS[@]} \
         ${COMMON_FLAGS[@]} \
         ${LINK_FLAGS[@]} \
         $(find "$OBJ" -type f -name "*.o") \

@@ -1,162 +1,105 @@
+param(
+    [string]$COMPILER,
+    [string]$TARGET,
+    [string[]]$OS_FLAGS = @()
+)
+
 $ErrorActionPreference = "Stop"
 
+Write-Host "Setting constants..."
 
-################################################################################
-# Arguments
-################################################################################
+# Paths
+$PATH_PWD = Get-Location
+$PATH_SRC = Join-Path $PATH_PWD "src"
+$PATH_TST = Join-Path $PATH_PWD "test"
+$PATH_INC = Join-Path $PATH_PWD "inc"
+$PATH_BIN = Join-Path $PATH_PWD "bin"
+$PATH_OBJ = Join-Path $PATH_BIN "obj"
+$PATH_EXE = Join-Path $PATH_BIN "common.exe"
 
-$COMPILER = $args[0]
-$TARGET = $args[1]
-
-$OS_FLAGS = @()
-if ($args.Length -gt 2) {
-    $OS_FLAGS = $args[2..($args.Length - 1)]
-}
-
-
-################################################################################
-# Constants
-################################################################################
-
-$CPP_STANDARD = "-std=c++23"
-$ENTRY = "_start"
-
-$ROOT = $PWD.Path
-$SRC = "$ROOT/src"
-$TST = "$ROOT/test"
-$INC = "$ROOT/inc"
-
-$BIN = "$ROOT/bin"
-$OBJ = "$BIN/obj"
-$EXE = "$BIN/common.exe"
-
-
-################################################################################
 # Flags
-################################################################################
+$COMPILE_VERSION = "-std=c++23"
+$FLAGS_BOTH = "-g3", "-O0", "-ffreestanding"
+$FLAGS_COMP = "-fno-exceptions", "-fno-rtti", "-fno-stack-protector", "-fno-asynchronous-unwind-tables", "-fno-unwind-tables"
+$FLAGS_LINK = "-nostdlib", "-static"
 
-$COMMON_FLAGS = @(
-    $CPP_STANDARD
-    "-g3"
-    "-O0"
-    "-ffreestanding"
-)
+# Recreate object directory
+Remove-Item -Recurse -Force $PATH_OBJ -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force $PATH_OBJ | Out-Null
 
-$COMPILE_FLAGS = @(
-    "-fno-exceptions"
-    "-fno-rtti"
-    "-fno-stack-protector"
-    "-fno-asynchronous-unwind-tables"
-    "-fno-unwind-tables"
-)
+Write-Host "Editing .clangd..."
 
-$LINK_FLAGS = @(
-    "-nostdlib"
-    "-static"
-)
+@"
+CompileFlags:
+  Add:
+    - -std=c++23
+    - -I$PATH_INC
+    - --target=$TARGET
+    - -Wall
+    - -Wextra
+    - -Wpedantic
+    - -Wunused-value
+    - -ffreestanding
+    - -fno-exceptions
+    - -fno-rtti
+    - -fno-stack-protector
+    - -fno-asynchronous-unwind-tables
+    - -fno-unwind-tables
+    - -nostdlib
+    - -nostartfiles
+    - -nodefaultlibs
+    - -static
+    - -no-pie
+"@ | Set-Content -Path (Join-Path $PATH_PWD ".clangd") -Encoding UTF8
 
-$WARNING_FLAGS = @(
-    "-Wall"
-    "-Wextra"
-    "-Wpedantic"
-    "-Wunused-value"
-)
+Write-Host "Compiling objects..."
 
-$INCLUDE_FLAGS = @(
-    "-I$INC"
-)
+function Compile-Files($basePath)
+{
+    Get-ChildItem $basePath -Recurse -Filter *.cpp | ForEach-Object {
 
+        $src = $_.FullName
+        $rel = $src.Substring($basePath.Length)
+        $obj = Join-Path $PATH_OBJ ($rel -replace "\.cpp$", ".o")
+        $objDir = Split-Path $obj -Parent
 
-################################################################################
-# Functions
-################################################################################
+        Write-Host "  Compiling $rel"
 
-function Compile-Dir {
-    param (
-        [string]$Dir
-    )
-
-    Get-ChildItem -Path $Dir -Recurse -File -Filter "*.cpp" | ForEach-Object {
-        $cpp = $_.FullName
-        $rel = $cpp.Substring($Dir.Length).TrimStart('\','/')
-        $obj = Join-Path $OBJ ($rel -replace '\.cpp$', '.o')
-
-        Write-Host "  Compiling \/$rel..."
-
-        New-Item -ItemType Directory -Force -Path (Split-Path $obj) | Out-Null
+        New-Item -ItemType Directory -Force $objDir | Out-Null
 
         & $COMPILER `
-            @OS_FLAGS `
-            @COMMON_FLAGS `
-            @COMPILE_FLAGS `
-            @INCLUDE_FLAGS `
-            -c "$cpp" `
-            -o "$obj"
+            $OS_FLAGS `
+            $COMPILE_VERSION `
+            @FLAGS_BOTH `
+            @FLAGS_COMP `
+            "-I$PATH_INC" `
+            -c $src `
+            -o $obj
     }
 }
 
+Compile-Files $PATH_SRC
+Compile-Files $PATH_TST
 
-function Link-Project {
-    Write-Host "Linking..."
+Write-Host "Linking project..."
 
-    $objects = Get-ChildItem -Path $OBJ -Recurse -File -Filter "*.o" |
-        ForEach-Object { $_.FullName }
+$objects = Get-ChildItem $PATH_OBJ -Recurse -Filter *.o | ForEach-Object { $_.FullName }
 
-    & $COMPILER `
-        @COMMON_FLAGS `
-        @LINK_FLAGS `
-        @objects `
-        -o "$EXE" `
-        -e "$ENTRY"
-}
+& $COMPILER `
+    $OS_FLAGS `
+    $COMPILE_VERSION `
+    @FLAGS_BOTH `
+    @FLAGS_LINK `
+    $objects `
+    -o $PATH_EXE `
+    -lntdll `
+    -e _start
 
-
-function Write-Clangd {
-    @"
-CompileFlags:
-    Add:
-"@ | Set-Content "$ROOT/.clangd"
-
-    @(
-        "--target=$TARGET"
-        $CPP_STANDARD
-        $INCLUDE_FLAGS
-        $WARNING_FLAGS
-        $COMMON_FLAGS
-        $COMPILE_FLAGS
-        $LINK_FLAGS
-    ) | ForEach-Object {
-        Add-Content "$ROOT/.clangd" "        - $_"
-    }
-}
-
-
-################################################################################
-# Build
-################################################################################
-
-Remove-Item -Recurse -Force "$BIN" -ErrorAction SilentlyContinue
-New-Item -ItemType Directory -Force -Path "$OBJ" | Out-Null
-
-Write-Clangd
-
-Write-Host "Compiling..."
-Compile-Dir "$SRC"
-Compile-Dir "$TST"
-
-Link-Project
-
-
-################################################################################
-# Run
-################################################################################
-
+$ErrorActionPreference = "Continue"
+Write-Host "-----"
+& $PATH_EXE
+$RESULT=$LASTEXITCODE
 Write-Host "-----"
 
-& "$EXE"
-$result = $LASTEXITCODE
-
-Write-Host "-----"
-
-Write-Host "$result"
-exit $result
+Write-Host "$RESULT"
+exit $RESULT
