@@ -78,13 +78,40 @@ namespace cmn::system::abi_
         while (true) { }
     }
     #elif CMN_SYSTEM_OS_MAC
-    #include "system/xnu/Call.hpp"
+    // #include "system/xnu/Call.hpp"
+
+    void exit(i32 code)
+    {
+        #if defined(__x86_64__)
+        asm volatile
+        (
+            "movq %0, %%rdi\n\t"
+            "movq $0x2000001, %%rax\n\t" // SYS_exit
+            "syscall"
+            :
+            : "r"(static_cast<i64>(code))
+            : "rax", "rdi", "rcx", "r11", "memory"
+        );
+        #elif defined(__aarch64__)
+        register i64 x0 asm("x0") = code;
+        register i64 x16 asm("x16") = 1; // SYS_exit
+        asm volatile
+        (
+            "svc #0x80"
+            :
+            : "r"(x0), "r"(x16)
+            : "memory"
+        );
+        #else
+        #error Unsupported macOS architecture.
+        #endif
+    }
 
     extern "C" void start__()
     {
         i32 _result = main(0, nullptr);
 
-        cmn::system::xnu::exit(_result);
+        exit(_result);
         while (true) { }
     }
     #endif
