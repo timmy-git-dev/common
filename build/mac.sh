@@ -4,7 +4,6 @@ set -e
 
 
 COMPILER="$1"
-TARGET="$2"
 
 CPP_STANDARD="-std=c++23"
 ENTRY="_start"
@@ -89,7 +88,6 @@ CompileFlags:
 EOF
 
     for flag in \
-        --target=$TARGET \
         $CPP_STANDARD \
         ${INCLUDE_FLAGS[@]} \
         ${WARNING_FLAGS[@]} \

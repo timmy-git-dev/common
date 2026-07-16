@@ -12,35 +12,48 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          # linux.
+          - name: lin-x64-clang
+            os: ubuntu-latest
             arch: x64
             script: build/lin.sh
             compiler: clang++ --target=x86_64-linux-gnu
-            target: --target=x86_64-linux-gnu
+            target: x86_64-linux-gnu
 
-          - os: ubuntu-latest
+          - name: lin-x64-gcc
+            os: ubuntu-latest
             arch: x64
             script: build/lin.sh
             compiler: x86_64-linux-gnu-g++
-            target: --target=x86_64-linux-gnu
+            target: x86_64-linux-gnu
 
-          # - os: windows-latest
-          #   script: build/win_gcc.ps1
+          # mac.
+          - name: mac-x64-clang
+            os: macos-latest
+            arch: x64
+            script: build/lin.sh
+            compiler: clang++ --target=x86_64-apple-darwin
+            target: x86_64-apple-darwin
 
-          # - os: windows-latest
-          #   script: build/win_clg.ps1
+          # windows.
+          - name: win-x64-clang
+            os: windows-latest
+            arch: x64
+            script: build/win.ps1
+            compiler: clang++ --target=x86_64-w64-windows-gnu
+            target: x86_64-w64-windows-gnu
 
-          # - os: macos-latest
-          #   script: build/mac_clg.sh
+          - name: win-x64-gcc
+            os: windows-latest
+            arch: x64
+            script: build/win.ps1
+            compiler: x86_64-w64-mingw32-g++
+            target: x86_64-w64-windows-gnu
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v6
 
-      # - name: Make script executable
-      #   if: runner.os != 'Windows'
-      #   run: chmod +x ${{ matrix.script }}
-
-      - name: compile
+      - name: Compiling
         run: ${{ matrix.script }} "${{ matrix.compiler }}" "${{ matrix.target }}"
