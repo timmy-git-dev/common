@@ -15,7 +15,7 @@ PATH_EXE="$PATH_BIN/common"
 COMPILE_VERSION="-std=c++23"
 FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
-FLAGS_LINK="-nostdlib"
+FLAGS_LINK="-nostdlib -lSystem"
 
 # Re-create the object directory.
 rm -rf $PATH_OBJ
@@ -78,7 +78,7 @@ nm -g bin/obj/system/abi/Entry.o
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -e __start -Wl,-lSystem
+clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -e __start
 
 set +e
 echo "-----"

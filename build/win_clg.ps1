@@ -88,7 +88,11 @@ $objects = Get-ChildItem $PATH_OBJ -Recurse -Filter *.o | ForEach-Object { $_.Fu
     -lntdll `
     -e _start
 
-Write-Host "Finished!"
+$ErrorActionPreference = "Continue"
+Write-Host "-----"
+& $PATH_EXE
+$RESULT=$LASTEXITCODE
 Write-Host "-----"
 
-& $PATH_EXE
+Write-Host "$RESULT"
+exit $RESULT
