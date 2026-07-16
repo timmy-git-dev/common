@@ -33,7 +33,7 @@ jobs:
           - name: mac-arm-clang
             os: macos-latest
             arch: arm64
-            script: build/mac.sh
+            script: build/mac_clg.sh
             compiler: clang++
             target: arm64-apple-darwin
             flags: "--target=arm64-apple-darwin"
