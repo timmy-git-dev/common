@@ -8,7 +8,7 @@ TARGET="$2"
 OS_FLAGS="$3"
 
 CPP_STANDARD="-std=c++23"
-ENTRY="start__"
+ENTRY="_start__"
 
 ROOT="$PWD"
 SRC="$ROOT/src"
