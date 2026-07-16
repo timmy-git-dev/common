@@ -16,43 +16,31 @@ jobs:
           - name: lin-arm-clg
             os: ubuntu-24.04-arm
             script: build/lin.sh
-            compiler: clang++
             target: aarch64-linux-gnu
-            flags: --target=aarch64-linux-gnu
           - name: lin-x64-clg
             os: ubuntu-latest
             script: build/lin.sh
-            compiler: clang++
             target: x86_64-linux-gnu
-            flags: --target=x86_64-linux-gnu
 
           # mac.
           - name: mac-arm-clg
             os: macos-latest
             script: build/mac.sh
-            compiler: clang++
             target: arm64-apple-darwin
-            flags: "--target=arm64-apple-darwin"
           - name: mac-x64-clg
             os: macos-15-intel
             script: build/mac.sh
-            compiler: clang++
             target: x86_64-apple-darwin
-            flags: "--target=x86_64-apple-darwin"
 
           # windows.
           - name: win-arm-clg
             os: windows-11-arm
             script: build/win.ps1
-            compiler: clang++
             target: aarch64-w64-windows-gnu
-            flags: --target=aarch64-w64-windows-gnu
           - name: win-x64-clg
             os: windows-latest
             script: build/win.ps1
-            compiler: clang++
             target: x86_64-w64-windows-gnu
-            flags: --target=x86_64-w64-windows-gnu
 
     runs-on: ${{ matrix.os }}
 
@@ -60,4 +48,4 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Compiling
-        run: ${{ matrix.script }} ${{ matrix.compiler }} ${{ matrix.target }} ${{ matrix.flags }}
+        run: ${{ matrix.script }} ${{ matrix.target }}
