@@ -109,10 +109,10 @@ namespace cmn::system::abi_
 
     extern "C" void start__()
     {
-        i32 _result = main(0, nullptr);
+        // i32 _result = main(0, nullptr);
 
-        exit(_result);
-        while (true) { }
+        // exit(_result);
+        // while (true) { }
     }
     #endif
 }
