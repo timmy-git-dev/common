@@ -1,4 +1,3 @@
-# A simple build script to compile the project.
 set -e
 
 echo "Setting constants..."
@@ -16,7 +15,7 @@ PATH_EXE="$PATH_BIN/common.elf"
 COMPILE_VERSION="-std=c++23"
 FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
-FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
+FLAGS_LINK="-nostdlib -static"
 
 # Re-create the object directory.
 rm -rf $PATH_OBJ
@@ -29,6 +28,7 @@ cat <<EOF > ${PATH_PWD}/.clangd
 CompileFlags:
     Add:
         - -std=c++23
+        - --target=x86_64-linux-gnu
         - -I$PATH_INC
         - -Wall
         - -Wextra
@@ -41,8 +41,6 @@ CompileFlags:
         - -fno-asynchronous-unwind-tables
         - -fno-unwind-tables
         - -nostdlib
-        - -nostartfiles
-        - -nodefaultlibs
         - -static
         - -no-pie
 EOF
@@ -81,7 +79,11 @@ echo "Linking project..."
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
 x86_64-linux-gnu-g++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE
 
-echo "Finished!"
+set +e
+echo "-----"
+"$PATH_EXE"
+RESULT=$?
 echo "-----"
 
-$PATH_EXE
+echo "$RESULT"
+exit $RESULT

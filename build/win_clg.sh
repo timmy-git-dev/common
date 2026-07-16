@@ -1,4 +1,3 @@
-# A simple build script to compile the project.
 set -e
 
 echo "Setting constants..."
@@ -10,13 +9,13 @@ PATH_TST="$PATH_PWD/test"
 PATH_INC="$PATH_PWD/inc"
 PATH_BIN="$PATH_PWD/bin"
 PATH_OBJ="$PATH_BIN/obj"
-PATH_EXE="$PATH_BIN/common.elf"
+PATH_EXE="$PATH_BIN/common.exe"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
 FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
-FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs -static"
+FLAGS_LINK="-nostdlib -static"
 
 # Re-create the object directory.
 rm -rf $PATH_OBJ
@@ -29,6 +28,7 @@ cat <<EOF > ${PATH_PWD}/.clangd
 CompileFlags:
     Add:
         - -std=c++23
+        - --target=x86_64-w64-windows-gnu
         - -I$PATH_INC
         - -Wall
         - -Wextra
@@ -41,8 +41,6 @@ CompileFlags:
         - -fno-asynchronous-unwind-tables
         - -fno-unwind-tables
         - -nostdlib
-        - -nostartfiles
-        - -nodefaultlibs
         - -static
         - -no-pie
 EOF
@@ -79,17 +77,13 @@ echo "Linking project..."
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-clang++ --target=x86_64-w64-windows-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -lntdll
+clang++ --target=x86_64-w64-windows-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -lntdll -e _start
 
-echo "Finished!"
+set +e
+echo "-----"
+WINEDEBUG=-all "$PATH_EXE"
+RESULT=$?
 echo "-----"
 
-"$PATH_EXE"
-status=$?
-
-echo "-----"
-if [ $status -ge 128 ]; then
-    echo "Terminated: $((status - 128))"
-else
-    echo "Exited: $status"
-fi
+echo "$RESULT"
+exit $RESULT

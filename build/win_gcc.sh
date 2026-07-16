@@ -9,7 +9,7 @@ PATH_TST="$PATH_PWD/test"
 PATH_INC="$PATH_PWD/inc"
 PATH_BIN="$PATH_PWD/bin"
 PATH_OBJ="$PATH_BIN/obj"
-PATH_EXE="$PATH_BIN/common.elf"
+PATH_EXE="$PATH_BIN/common.exe"
 
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
@@ -28,7 +28,7 @@ cat <<EOF > ${PATH_PWD}/.clangd
 CompileFlags:
     Add:
         - -std=c++23
-        - --target=x86_64-linux-gnu
+        - --target=x86_64-w64-windows-gnu
         - -I$PATH_INC
         - -Wall
         - -Wextra
@@ -58,7 +58,7 @@ for PATH_SRC_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ --target=x86_64-linux-gnu $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
+    x86_64-w64-mingw32-g++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
 done
 PATHS_CPP=$(find "$PATH_TST" -type f -name "*.cpp")
 for PATH_TST_CPP in $PATHS_CPP; do
@@ -70,14 +70,14 @@ for PATH_TST_CPP in $PATHS_CPP; do
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ --target=x86_64-linux-gnu $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
+    x86_64-w64-mingw32-g++ $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
 done
 
 echo "Linking project..."
 
 # Gather all compiled object files and link the project.
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
-clang++ --target=x86_64-linux-gnu $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE
+x86_64-w64-mingw32-g++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -lntdll -e _start
 
 set +e
 echo "-----"

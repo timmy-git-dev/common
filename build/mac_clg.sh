@@ -1,4 +1,3 @@
-# A simple build script to compile the project.
 set -e
 
 echo "Setting constants..."
@@ -16,7 +15,7 @@ PATH_EXE="$PATH_BIN/common"
 COMPILE_VERSION="-std=c++23"
 FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
-FLAGS_LINK="-nostdlib -nostartfiles -nodefaultlibs"
+FLAGS_LINK="-nostdlib"
 
 # Re-create the object directory.
 rm -rf $PATH_OBJ
@@ -41,8 +40,6 @@ CompileFlags:
         - -fno-asynchronous-unwind-tables
         - -fno-unwind-tables
         - -nostdlib
-        - -nostartfiles
-        - -nodefaultlibs
         - -static
         - -no-pie
 EOF
@@ -83,7 +80,11 @@ nm -g bin/obj/system/abi/Entry.o
 PATHS_O=$(find "$PATH_OBJ" -type f -name "*.o")
 clang++ $COMPILE_VERSION  $FLAGS_BOTH $FLAGS_LINK $PATHS_O -o $PATH_EXE -e __start -Wl,-lSystem
 
-echo "Finished!"
+set +e
+echo "-----"
+"$PATH_EXE"
+RESULT=$?
 echo "-----"
 
-$PATH_EXE
+echo "$RESULT"
+exit $RESULT

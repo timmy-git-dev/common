@@ -3,7 +3,6 @@
 
 #if CMN_SYSTEM_OS_LIN
 #include "system/syscall/Call.hpp"
-
 i32 main(const i32, const c08**)
 {
     c08 _buffer[14] = "Hello, world!";
@@ -11,74 +10,109 @@ i32 main(const i32, const c08**)
 
     return 0;
 }
-
 #elif CMN_SYSTEM_OS_WIN
 #include "system/nt/Func.hpp"
-
 typedef struct _IO_STATUS_BLOCK {
     union {
         NTSTATUS Status;
         void *Pointer;
     };
-    SIZE_T Information;
+    unsigned long long Information;
 } IO_STATUS_BLOCK;
 
-typedef struct _UNICODE_STRING {
-    USHORT Length;
-    USHORT MaximumLength;
+extern "C" HANDLE GetStdHandle(unsigned long);
+
+#define STD_INPUT_HANDLE  ((u64)-10)
+#define STD_OUTPUT_HANDLE ((u64)-11)
+#define STD_ERROR_HANDLE  ((u64)-12)
+
+typedef struct _UNICODE_STRING
+{
+    u16 Length;          // bytes, not characters
+    u16 MaximumLength;   // bytes, not characters
     wchar_t *Buffer;
 } UNICODE_STRING;
 
-typedef struct _RTL_USER_PROCESS_PARAMETERS {
-    unsigned char Reserved1[16];
-    void *Reserved2[10];
-    UNICODE_STRING ImagePathName;
-    UNICODE_STRING CommandLine;
+typedef struct _RTL_USER_PROCESS_PARAMETERS
+{
+    b08 Unneeded[32];
+
     HANDLE StandardInput;
     HANDLE StandardOutput;
     HANDLE StandardError;
 } RTL_USER_PROCESS_PARAMETERS;
 
-typedef struct _PEB {
-    unsigned char Reserved1[24];
-    RTL_USER_PROCESS_PARAMETERS *ProcessParameters;
+typedef struct PEB
+{
+    BYTE Reserved1[2];
+    BYTE BeingDebugged;
+    BYTE Reserved2[21];
+    void* LoaderData;
+    PRTL_USER_PROCESS_PARAMETERS ProcessParameters;
+    BYTE Reserved3[520];
+    void* PostProcessInitRoutine;
+    BYTE Reserved4[136];
+    ULONG SessionId;
 } PEB;
 
-static PEB *get_peb(void)
+static PEB *get_peb()
 {
     PEB *peb;
-    __asm__ volatile (
+    asm volatile(
         "movq %%gs:0x60, %0"
         : "=r"(peb)
     );
     return peb;
 }
 
-i32 main(const i32, const c08**)
+static HANDLE get_std(u64 id)
 {
-    static char msg[] = "Hello, world!\n";
-
     PEB *peb = get_peb();
 
-    HANDLE stdout_handle =
-        peb->ProcessParameters->StandardOutput;
+    if (!peb || !peb->ProcessParameters)
+        return 0;
 
-    IO_STATUS_BLOCK iosb;
+    switch (id)
+    {
+        case STD_INPUT_HANDLE:
+            return peb->ProcessParameters->StandardInput;
 
-    NtWriteFile(
-        stdout_handle,
+        case STD_OUTPUT_HANDLE:
+            return peb->ProcessParameters->StandardOutput;
+
+        case STD_ERROR_HANDLE:
+            return peb->ProcessParameters->StandardError;
+    }
+
+    return (HANDLE)4;
+}
+
+void write(const char* _text)
+{
+    s64 _length = 0;
+    while (_text[_length] != '\0') {++_length;}
+
+    IO_STATUS_BLOCK iosb { };
+
+    NtWriteFile
+    (
+        get_std(STD_OUTPUT_HANDLE),
         0,
         0,
         0,
         &iosb,
-        msg,
-        sizeof(msg) - 1,
+        (PVOID)_text,
+        _length,
         0,
         0
     );
+}
 
+i32 main(const i32, const c08**)
+{
+    write("Hello, world!\n");
 
-    return 1;
+    return 0;
 }
 #elif CMN_SYSTEM_OS_MAC
 #include "system/xnu/Call.hpp"

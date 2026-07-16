@@ -1,5 +1,3 @@
-# Simple build script (PowerShell equivalent)
-
 $ErrorActionPreference = "Stop"
 
 Write-Host "Setting constants..."
@@ -16,9 +14,8 @@ $PATH_EXE = Join-Path $PATH_BIN "common.exe"
 # Flags
 $COMPILE_VERSION = "-std=c++23"
 $FLAGS_BOTH = "-g3", "-O0", "-ffreestanding"
-$FLAGS_COMP = "-fno-exceptions", "-fno-rtti", "-fno-stack-protector",
-              "-fno-asynchronous-unwind-tables", "-fno-unwind-tables"
-$FLAGS_LINK = "-nostdlib", "-nostartfiles", "-nodefaultlibs", "-static"
+$FLAGS_COMP = "-fno-exceptions", "-fno-rtti", "-fno-stack-protector", "-fno-asynchronous-unwind-tables", "-fno-unwind-tables"
+$FLAGS_LINK = "-nostdlib", "-static"
 
 # Recreate object directory
 Remove-Item -Recurse -Force $PATH_OBJ -ErrorAction SilentlyContinue

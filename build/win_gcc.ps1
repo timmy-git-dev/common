@@ -1,5 +1,3 @@
-# Simple build script (PowerShell equivalent using GCC)
-
 $ErrorActionPreference = "Stop"
 
 Write-Host "Setting constants..."
@@ -13,18 +11,17 @@ $PATH_BIN = Join-Path $PATH_PWD "bin"
 $PATH_OBJ = Join-Path $PATH_BIN "obj"
 $PATH_EXE = Join-Path $PATH_BIN "common.exe"
 
-# Flags (GCC)
+# Flags
 $COMPILE_VERSION = "-std=c++23"
 $FLAGS_BOTH = "-g3", "-O0", "-ffreestanding"
-$FLAGS_COMP = "-fno-exceptions", "-fno-rtti", "-fno-stack-protector",
-              "-fno-asynchronous-unwind-tables", "-fno-unwind-tables"
-$FLAGS_LINK = "-nostdlib", "-nostartfiles", "-nodefaultlibs", "-static"
+$FLAGS_COMP = "-fno-exceptions", "-fno-rtti", "-fno-stack-protector", "-fno-asynchronous-unwind-tables", "-fno-unwind-tables"
+$FLAGS_LINK = "-nostdlib", "-static"
 
 # Recreate object directory
 Remove-Item -Recurse -Force $PATH_OBJ -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $PATH_OBJ | Out-Null
 
-Write-Host "Writing .clangd..."
+Write-Host "Editing .clangd..."
 
 @"
 CompileFlags:
