@@ -37,7 +37,6 @@ COMPILE_FLAGS=(
 
 LINK_FLAGS=(
     -nostdlib
-    -static
     -lSystem
 )
 
