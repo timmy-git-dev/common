@@ -34,7 +34,7 @@ jobs:
             target: arm64-apple-darwin
             flags: "--target=arm64-apple-darwin"
           - name: mac-x64-clg
-            os: macos-latest-large
+            os: macos-15-intel
             script: build/mac.sh
             compiler: clang++
             target: x86_64-apple-darwin

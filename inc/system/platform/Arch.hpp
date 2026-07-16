@@ -13,10 +13,4 @@ namespace cmn::system::platform
     #else
         #define CMN_SYSTEM_ARCH_ARM64 0
     #endif
-
-    #if defined(__riscv)
-        #define CMN_SYSTEM_ARCH_RISCV 1
-    #else
-        #define CMN_SYSTEM_ARCH_RISCV 0
-    #endif
 }

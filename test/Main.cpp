@@ -11,6 +11,7 @@ i32 main(const i32, const c08**)
     return 0;
 }
 #elif CMN_SYSTEM_OS_WIN
+#include "system/platform/Arch.hpp"
 #include "system/nt/Func.hpp"
 typedef struct _IO_STATUS_BLOCK {
     union {
@@ -66,7 +67,7 @@ static PEB *get_peb()
         : "=r"(teb)
     );
 
-    peb = *(PEB **)((u64)teb + 0x60);
+    peb = *(PEB **)((s64)teb + 0x60);
 
     return peb;
 }
