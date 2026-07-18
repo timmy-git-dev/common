@@ -3059,6 +3059,7 @@ namespace cmn::syscall::win
     NTSTATUS nt_terminate_process(HANDLE _processHandle, NTSTATUS _exitStatus)
     {
         if (!ntTerminateProcess) ntTerminateProcess = win_::resolve_proc_address("NtTerminateProcess", 18);
+        if (!ntTerminateProcess) return 4;
         return reinterpret_cast<NTSTATUS(*)(HANDLE, NTSTATUS)>(ntTerminateProcess)(_processHandle, _exitStatus);
     }
     NTSTATUS nt_terminate_thread(HANDLE _threadHandle, NTSTATUS _exitStatus)

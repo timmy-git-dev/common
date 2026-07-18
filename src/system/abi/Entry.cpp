@@ -50,9 +50,9 @@ namespace cmn::system::abi_
     }
 }
 #elif CMN_SYSTEM_OS_WIN
-#include "syscall/win/Resolve.hpp"
-// #include "syscall/win/Type.hpp"
-// #include "syscall/win/Nt.hpp"
+// #include "syscall/win/Resolve.hpp"
+#include "syscall/win/Type.hpp"
+#include "syscall/win/Nt.hpp"
 
 namespace cmn::system::abi_
 {
@@ -96,8 +96,8 @@ namespace cmn::system::abi_
         // __cxa_finalize(nullptr);
         // fini_dtors();
 
-        cmn::syscall::win_::resolve_proc_address("NtTerminateProcess", 18);
-        // syscall::win::nt_terminate_process((void*)-1, 0);
+        // cmn::syscall::win_::resolve_proc_address("NtTerminateProcess", 18);
+        syscall::win::nt_terminate_process((void*)-1, 7);
     }
 }
 #elif CMN_SYSTEM_OS_MAC
