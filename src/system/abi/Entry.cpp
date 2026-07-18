@@ -103,7 +103,7 @@ namespace cmn::system::abi_
 
         // cmn::syscall::win_::resolve_proc_address("NtTerminateProcess", 18);
         test(_result);
-        syscall::win::nt_terminate_process((void*)-1, 7);
+        // syscall::win::nt_terminate_process((void*)-1, 7);
     }
 }
 #elif CMN_SYSTEM_OS_MAC
