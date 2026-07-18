@@ -87,7 +87,6 @@ struct IMAGE_EXPORT_DIRECTORY
     u32 AddressOfNameOrdinals;
 };
 
-struct _TEB;
 using NTSTATUS = long;
 using PVOID = void *;
 using ULONG = unsigned long;
@@ -552,3 +551,16 @@ typedef struct _IO_STATUS_BLOCK {
     };
     unsigned long long Information;
 } IO_STATUS_BLOCK;
+
+struct TEB {
+    PVOID Reserved1[12];
+    PEB  *ProcessEnvironmentBlock;
+    PVOID Reserved2[399];
+    BYTE  Reserved3[1952];
+    PVOID TlsSlots[64];
+    BYTE  Reserved4[8];
+    PVOID Reserved5[26];
+    PVOID ReservedForOle;
+    PVOID Reserved6[4];
+    PVOID TlsExpansionSlots;
+};

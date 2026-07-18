@@ -29,21 +29,6 @@ namespace cmn::syscall::win_
     u16                    *EXPORT_ORDINALS   = nullptr;
     u32                     EXPORT_COUNT      = 0;
 
-
-    struct TEB {
-      PVOID Reserved1[12];
-      PEB  *ProcessEnvironmentBlock;
-      PVOID Reserved2[399];
-      BYTE  Reserved3[1952];
-      PVOID TlsSlots[64];
-      BYTE  Reserved4[8];
-      PVOID Reserved5[26];
-      PVOID ReservedForOle;
-      PVOID Reserved6[4];
-      PVOID TlsExpansionSlots;
-    };
-
-
     PEB *resolve_peb()
     {
         #if CMN_SYSTEM_ARCH_X64
@@ -55,6 +40,7 @@ namespace cmn::syscall::win_
         );
         return _peb;
         #elif CMN_SYSTEM_ARCH_ARM64
+        // TODO: fuck windows.
         volatile TEB* _teb;
         asm volatile
         (
@@ -62,6 +48,7 @@ namespace cmn::syscall::win_
             : "=r"(_teb)
         );
         return (PEB*)_teb->ProcessEnvironmentBlock;
+
         #endif
     };
 
@@ -105,19 +92,12 @@ namespace cmn::syscall::win_
         if (!PROCESS_ENV_BLOCK)
         {
             PROCESS_ENV_BLOCK = resolve_peb();
-            // if (!PROCESS_ENV_BLOCK      ) return (void*)1;
             NTDLL             = resolve_library("ntdll.dll");
-            // if (!PROCESS_ENV_BLOCK      ) return (void*)2;
             EXPORT_DIRECTORY = (IMAGE_EXPORT_DIRECTORY*)((u08*)NTDLL + ((IMAGE_NT_HEADERS64*)((u08*)NTDLL + ((IMAGE_DOS_HEADER*)NTDLL)->e_lfanew))->OptionalHeader.DataDirectory[0].VirtualAddress);
-            // if (!PROCESS_ENV_BLOCK      ) return (void*)3;
             EXPORT_NAMES     = (u32*)((u08*)NTDLL + EXPORT_DIRECTORY->AddressOfNames);
-            // if (!PROCESS_ENV_BLOCK      ) return (void*)4;
             EXPORT_FUNCTIONS = (u32*)((u08*)NTDLL + EXPORT_DIRECTORY->AddressOfFunctions);
-            // if (!PROCESS_ENV_BLOCK      ) return (void*)5;
             EXPORT_ORDINALS  = (u16*)((u08*)NTDLL + EXPORT_DIRECTORY->AddressOfNameOrdinals);
-            // if (!PROCESS_ENV_BLOCK      ) return (void*)6;
             EXPORT_COUNT     =                      EXPORT_DIRECTORY->NumberOfNames;
-            // if (!PROCESS_ENV_BLOCK      ) return (void*)7;
         }
 
         for (u32 _i = 0; _i < EXPORT_COUNT; ++_i)

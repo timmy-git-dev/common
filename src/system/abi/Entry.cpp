@@ -1,5 +1,5 @@
 #include "system/abi/Entry.hpp"
-// #include "system/abi/Cxx.hpp"
+#include "system/abi/Cxx.hpp"
 #include "system/platform/OS.hpp"
 
 #if CMN_SYSTEM_OS_LIN
@@ -50,9 +50,7 @@ namespace cmn::system::abi_
     }
 }
 #elif CMN_SYSTEM_OS_WIN
-// #include "syscall/win/Resolve.hpp"
-#include "syscall/win/Type.hpp"
-// #include "syscall/win/Nt.hpp"
+#include "syscall/win/Nt.hpp"
 
 namespace cmn::system::abi_
 {
@@ -94,17 +92,14 @@ namespace cmn::system::abi_
 
     extern "C" void start__()
     {
-        // init_ctors();
+        init_ctors();
 
         NTSTATUS _result = main(0, nullptr);
 
-        // __cxa_finalize(nullptr);
-        // fini_dtors();
+        __cxa_finalize(nullptr);
+        fini_dtors();
 
-        // cmn::syscall::win_::resolve_proc_address("NtTerminateProcess", 18);
-        // read_teb();
-        test(_result);
-        // syscall::win::nt_terminate_process((void*)-1, 7);
+        syscall::win::nt_terminate_process((void*)-1, _result);
     }
 }
 #elif CMN_SYSTEM_OS_MAC
