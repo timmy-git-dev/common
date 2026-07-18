@@ -30,6 +30,20 @@ namespace cmn::syscall::win_
     u32                     EXPORT_COUNT      = 0;
 
 
+    struct TEB {
+      PVOID Reserved1[12];
+      PEB  *ProcessEnvironmentBlock;
+      PVOID Reserved2[399];
+      BYTE  Reserved3[1952];
+      PVOID TlsSlots[64];
+      BYTE  Reserved4[8];
+      PVOID Reserved5[26];
+      PVOID ReservedForOle;
+      PVOID Reserved6[4];
+      PVOID TlsExpansionSlots;
+    };
+
+
     PEB *resolve_peb()
     {
         #if CMN_SYSTEM_ARCH_X64
@@ -41,15 +55,13 @@ namespace cmn::syscall::win_
         );
         return _peb;
         #elif CMN_SYSTEM_ARCH_ARM64
-        volatile void* _teb;
+        volatile TEB* _teb;
         asm volatile
         (
             "mrs %0, tpidr_el0"
             : "=r"(_teb)
         );
-        volatile auto _test = (*(void**)((u08*)_teb + 0x60));
-
-        return (PEB*)3;
+        return (PEB*)_teb->ProcessEnvironmentBlock;
         #endif
     };
 
