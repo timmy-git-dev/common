@@ -88,14 +88,14 @@ namespace cmn::system::abi_
 
     extern "C" void start__()
     {
-        init_ctors();
+        // init_ctors();
 
-        NTSTATUS _result = main(0, nullptr);
+        // NTSTATUS _result = main(0, nullptr);
 
-        __cxa_finalize(nullptr);
-        fini_dtors();
+        // __cxa_finalize(nullptr);
+        // fini_dtors();
 
-        syscall::win::nt_terminate_process((void*)-1, _result);
+        syscall::win::nt_terminate_process((void*)-1, 0);
     }
 }
 #elif CMN_SYSTEM_OS_MAC
