@@ -14,12 +14,19 @@ i32 main(const i32, const c08**)
 // #include "syscall/win/Nt.hpp"
 #include "syscall/win/Resolve.hpp"
 
+int test()
+{
+    return 0;
+}
+
 i32 main(const i32, const c08**)
 {
     // constexpr c08 _text[] = "Hello, world!\n";
     // IO_STATUS_BLOCK iosb { };
 
-    PEB *_peb = cmn::syscall::win_::resolve_peb();
+    test();
+    volatile PEB *_peb = cmn::syscall::win_::resolve_peb();
+    test();
 
     // cmn::syscall::win::nt_write_file
     // (
