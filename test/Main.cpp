@@ -20,7 +20,6 @@ i32 main(const i32, const c08**)
     // IO_STATUS_BLOCK iosb { };
 
     PEB *_peb = cmn::syscall::win_::resolve_peb();
-    if (!_peb) return 1;
 
     // cmn::syscall::win::nt_write_file
     // (
@@ -35,7 +34,7 @@ i32 main(const i32, const c08**)
     //     0
     // );
 
-    return 0;
+    return reinterpret_cast<s64>(_peb);
 }
 #elif CMN_SYSTEM_OS_MAC
 #include "system/xnu/Call.hpp"

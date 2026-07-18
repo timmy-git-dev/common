@@ -41,18 +41,16 @@ namespace cmn::syscall::win_
         );
         return _peb;
         #elif CMN_SYSTEM_ARCH_ARM64
-        void* _teb;
-
+        volatile void* _teb;
         asm volatile
         (
             "mrs %0, tpidr_el0"
             : "=r"(_teb)
         );
+        volatile auto _test = (*(void**)((u08*)_teb + 0x60));
 
-        return (PEB*)7;
-        // return (PEB*)(*(void**)((u08*)_teb + 0x60));
+        return (PEB*)3;
         #endif
-
     };
 
     void *resolve_library(const c08 *_libraryName)
