@@ -32,26 +32,26 @@ namespace cmn::syscall::win_
 
     PEB *resolve_peb()
     {
-        PEB *_peb;
-
         #if CMN_SYSTEM_ARCH_X64
+        PEB *_peb;
         asm volatile
         (
             "mov %%gs:0x60, %0"
             : "=r"(_peb)
         );
+        return _peb;
         #elif CMN_SYSTEM_ARCH_ARM64
+        void* _teb;
+
         asm volatile
         (
-            "mrs %0, tpidr_el0\n"
-            "ldr %0, [%0, #0x60]"
-            : "=&r"(_peb)
-            :
-            : "memory"
+            "mrs %0, tpidr_el0"
+            : "=r"(_teb)
         );
+
+        return (PEB*)(*(void**)((u08*)_teb + 0x60));
         #endif
 
-        return (PEB*)0;
     };
 
     void *resolve_library(const c08 *_libraryName)

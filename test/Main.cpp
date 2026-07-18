@@ -11,29 +11,29 @@ i32 main(const i32, const c08**)
     return 0;
 }
 #elif CMN_SYSTEM_OS_WIN
-#include "syscall/win/Nt.hpp"
+// #include "syscall/win/Nt.hpp"
 #include "syscall/win/Resolve.hpp"
 
 i32 main(const i32, const c08**)
 {
-    constexpr c08 _text[] = "Hello, world!\n";
-    IO_STATUS_BLOCK iosb { };
+    // constexpr c08 _text[] = "Hello, world!\n";
+    // IO_STATUS_BLOCK iosb { };
 
     PEB *_peb = cmn::syscall::win_::resolve_peb();
     if (!_peb) return 1;
 
-    cmn::syscall::win::nt_write_file
-    (
-        _peb->ProcessParameters->StandardOutput,
-        0,
-        0,
-        0,
-        &iosb,
-        (PVOID)_text,
-        sizeof(_text) - 1,
-        0,
-        0
-    );
+    // cmn::syscall::win::nt_write_file
+    // (
+    //     _peb->ProcessParameters->StandardOutput,
+    //     0,
+    //     0,
+    //     0,
+    //     &iosb,
+    //     (PVOID)_text,
+    //     sizeof(_text) - 1,
+    //     0,
+    //     0
+    // );
 
     return 0;
 }
