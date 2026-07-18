@@ -86,6 +86,11 @@ namespace cmn::system::abi_
         }
     }
 
+    int test()
+    {
+        return 4;
+    }
+
     extern "C" void start__()
     {
         // init_ctors();
@@ -96,7 +101,7 @@ namespace cmn::system::abi_
         // fini_dtors();
 
         // syscall::win::nt_terminate_process((void*)-1, 0);
-        while (true) { }
+        test();
     }
 }
 #elif CMN_SYSTEM_OS_MAC
