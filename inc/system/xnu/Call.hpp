@@ -1,3 +1,4 @@
+#pragma once
 #include "system/xnu/Func.hpp"
 #include "system/xnu/ID.hpp"
 #include "system/xnu/Type.hpp"

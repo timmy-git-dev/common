@@ -34,12 +34,6 @@ struct PEB_LDR_DATA
     LIST_ENTRY InLoadOrderModuleList;
 };
 
-struct PEB
-{
-    u08 Reserved1[24];
-    PEB_LDR_DATA* Ldr;
-};
-
 struct IMAGE_DOS_HEADER
 {
     u16 e_magic;
@@ -266,8 +260,6 @@ using PPS_ALERT_THREAD_EXTENDED_PARAMETER = struct _PS_ALERT_THREAD_EXTENDED_PAR
 struct _SECURITY_QUALITY_OF_SERVICE;
 using PSECURITY_QUALITY_OF_SERVICE = struct _SECURITY_QUALITY_OF_SERVICE *;
 using PPS_APC_ROUTINE = void (*)(void *, void *, void *);
-struct _RTL_USER_PROCESS_PARAMETERS;
-using PRTL_USER_PROCESS_PARAMETERS = struct _RTL_USER_PROCESS_PARAMETERS *;
 struct _PS_CREATE_INFO;
 using PPS_CREATE_INFO = struct _PS_CREATE_INFO *;
 struct _PS_ATTRIBUTE_LIST;
@@ -530,3 +522,33 @@ using PEXCEPTION_RECORD = EXCEPTION_RECORD *;
 struct _DOCONNECTDATA;
 struct CACHE_STATISTICS;
 struct _DONOTIFYDATA;
+
+struct RTL_USER_PROCESS_PARAMETERS
+{
+    b08 Unneeded[32];
+
+    HANDLE StandardInput;
+    HANDLE StandardOutput;
+    HANDLE StandardError;
+};
+using PRTL_USER_PROCESS_PARAMETERS = struct RTL_USER_PROCESS_PARAMETERS *;
+struct PEB
+{
+    unsigned char Reserved1[2];
+    unsigned char BeingDebugged;
+    unsigned char Reserved2[21];
+    PEB_LDR_DATA* Ldr;
+    PRTL_USER_PROCESS_PARAMETERS ProcessParameters;
+    unsigned char Reserved3[520];
+    void* PostProcessInitRoutine;
+    unsigned char Reserved4[136];
+    unsigned long SessionId;
+};
+
+typedef struct _IO_STATUS_BLOCK {
+    union {
+        NTSTATUS Status;
+        void *Pointer;
+    };
+    unsigned long long Information;
+} IO_STATUS_BLOCK;

@@ -1,3 +1,4 @@
+#pragma once
 namespace cmn::system::xnu
 {
     #define EXIT 1

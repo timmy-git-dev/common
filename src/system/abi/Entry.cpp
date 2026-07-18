@@ -1,13 +1,12 @@
 #include "system/abi/Entry.hpp"
-#include "syscall/win/Nt.hpp"
-#include "syscall/win/Type.hpp"
 #include "system/abi/Cxx.hpp"
 #include "system/platform/OS.hpp"
 
+#if CMN_SYSTEM_OS_LIN
+#include "system/syscall/Call.hpp"
+
 namespace cmn::system::abi_
 {
-    #if CMN_SYSTEM_OS_LIN
-    #include "system/syscall/Call.hpp"
 
     using ctor_t = void(*)();
     using dtor_t = void(*)();
@@ -49,7 +48,13 @@ namespace cmn::system::abi_
         cmn::system::syscall::exit(_result);
         while (true) { }
     }
-    #elif CMN_SYSTEM_OS_WIN
+}
+#elif CMN_SYSTEM_OS_WIN
+#include "syscall/win/Type.hpp"
+#include "syscall/win/Nt.hpp"
+
+namespace cmn::system::abi_
+{
     extern "C" void __main() { }
 
     using ctor_t = void(*)();
@@ -92,12 +97,12 @@ namespace cmn::system::abi_
 
         syscall::win::nt_terminate_process((void*)-1, _result);
     }
+}
+#elif CMN_SYSTEM_OS_MAC
+#include "system/xnu/Call.hpp"
 
-
-
-    #elif CMN_SYSTEM_OS_MAC
-    #include "system/xnu/Call.hpp"
-
+namespace cmn::system::abi_
+{
     extern "C" void start__()
     {
         i32 _result = main(0, nullptr);
@@ -105,5 +110,5 @@ namespace cmn::system::abi_
         cmn::system::xnu::exit(_result);
         while (true) { }
     }
-    #endif
 }
+#endif

@@ -120,7 +120,6 @@ $OBJECTS = Get-ChildItem $OBJ -Recurse -File -Filter "*.o" |
     $FLAGS_LINK `
     $OBJECTS `
     -o $EXE `
-    "-lntdll" `
     "-e" `
     "start__"
 
