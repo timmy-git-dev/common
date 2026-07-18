@@ -30,30 +30,25 @@ namespace cmn::system::xnu
         return x0;
     }
     #elif CMN_SYSTEM_ARCH_X64
-    inline long syscall(long _id, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0, long _arg6 = 0, long _arg7 = 0)
+    inline long syscall(long id, long a0 = 0, long a1 = 0, long a2 = 0, long a3 = 0, long a4 = 0, long a5 = 0, long a6 = 0, long a7 = 0)
     {
-        register long _rax asm("rax") = _id;
-        register long _rdi asm("rdi") = _arg0;
-        register long _rsi asm("rsi") = _arg1;
-        register long _rdx asm("rdx") = _arg2;
-        register long _r10 asm("r10") = _arg3;
-        register long _r8  asm("r8" ) = _arg4;
-        register long _r9  asm("r9" ) = _arg5;
+        id |= 0x2000000;
 
-        asm volatile
-        (
+        register long r10 asm("r10") = a3;
+
+        asm volatile(
             "syscall"
-            : "+a"(_rax)
-            :  "D"(_rdi),
-               "S"(_rsi),
-               "d"(_rdx),
-               "r"(_r10),
-               "r"(_r8 ),
-               "r"(_r9 )
+            : "+a"(id)
+            : "D"(a0),
+              "S"(a1),
+              "d"(a2),
+              "r"(r10),
+              "r"(a4),
+              "r"(a5)
             : "rcx", "r11", "memory"
         );
 
-        return _rax;
+        return id;
     }
     #endif
 }
