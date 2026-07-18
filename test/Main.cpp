@@ -34,7 +34,7 @@ i32 main(const i32, const c08**)
     //     0
     // );
 
-    return reinterpret_cast<s64>(_peb);
+    return 0;
 }
 #elif CMN_SYSTEM_OS_MAC
 #include "system/xnu/Call.hpp"
