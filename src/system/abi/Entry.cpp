@@ -87,6 +87,11 @@ namespace cmn::system::abi_
         }
     }
 
+    int test()
+    {
+        return 4;
+    }
+
     extern "C" void start__()
     {
         // init_ctors();
@@ -97,6 +102,7 @@ namespace cmn::system::abi_
         // fini_dtors();
 
         // cmn::syscall::win_::resolve_proc_address("NtTerminateProcess", 18);
+        test();
         syscall::win::nt_terminate_process((void*)-1, 7);
     }
 }
