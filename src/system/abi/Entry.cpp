@@ -95,7 +95,7 @@ namespace cmn::system::abi_
         // __cxa_finalize(nullptr);
         // fini_dtors();
 
-        syscall::win::nt_terminate_process((void*)-1, 0);
+        // syscall::win::nt_terminate_process((void*)-1, 0);
     }
 }
 #elif CMN_SYSTEM_OS_MAC
