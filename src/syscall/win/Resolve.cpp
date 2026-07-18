@@ -49,7 +49,7 @@ namespace cmn::syscall::win_
             : "=r"(_teb)
         );
 
-        return 7;
+        return (PEB*)7;
         // return (PEB*)(*(void**)((u08*)_teb + 0x60));
         #endif
 
