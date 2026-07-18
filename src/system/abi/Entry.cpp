@@ -1,4 +1,6 @@
+#include "system/abi/Entry.hpp"
 #include "syscall/win/Nt.hpp"
+#include "syscall/win/Type.hpp"
 #include "system/abi/Cxx.hpp"
 #include "system/platform/OS.hpp"
 
@@ -48,11 +50,7 @@ namespace cmn::system::abi_
         while (true) { }
     }
     #elif CMN_SYSTEM_OS_WIN
-    #if CMN_SYSTEM_ARCH_X64
-        #define DEBUG_BREAK() asm volatile("int3")
-    #elif CMN_SYSTEM_ARCH_ARM64
-        #define DEBUG_BREAK() asm volatile("brk #0")
-    #endif
+    extern "C" void __main() { }
 
     using ctor_t = void(*)();
     using dtor_t = void(*)();
@@ -86,9 +84,13 @@ namespace cmn::system::abi_
     extern "C" void start__()
     {
         init_ctors();
+
+        NTSTATUS _result = main(0, nullptr);
+
         __cxa_finalize(nullptr);
         fini_dtors();
-        syscall::win::nt_terminate_process((void*)-1, 7);
+
+        syscall::win::nt_terminate_process((void*)-1, _result);
     }
 
 
