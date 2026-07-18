@@ -92,12 +92,19 @@ namespace cmn::syscall::win_
         if (!PROCESS_ENV_BLOCK)
         {
             PROCESS_ENV_BLOCK = resolve_peb();
+            if (!PROCESS_ENV_BLOCK      ) return (void*)1;
             NTDLL             = resolve_library("ntdll.dll");
+            if (!PROCESS_ENV_BLOCK      ) return (void*)2;
             EXPORT_DIRECTORY = (IMAGE_EXPORT_DIRECTORY*)((u08*)NTDLL + ((IMAGE_NT_HEADERS64*)((u08*)NTDLL + ((IMAGE_DOS_HEADER*)NTDLL)->e_lfanew))->OptionalHeader.DataDirectory[0].VirtualAddress);
+            if (!PROCESS_ENV_BLOCK      ) return (void*)3;
             EXPORT_NAMES     = (u32*)((u08*)NTDLL + EXPORT_DIRECTORY->AddressOfNames);
+            if (!PROCESS_ENV_BLOCK      ) return (void*)4;
             EXPORT_FUNCTIONS = (u32*)((u08*)NTDLL + EXPORT_DIRECTORY->AddressOfFunctions);
+            if (!PROCESS_ENV_BLOCK      ) return (void*)5;
             EXPORT_ORDINALS  = (u16*)((u08*)NTDLL + EXPORT_DIRECTORY->AddressOfNameOrdinals);
+            if (!PROCESS_ENV_BLOCK      ) return (void*)6;
             EXPORT_COUNT     =                      EXPORT_DIRECTORY->NumberOfNames;
+            if (!PROCESS_ENV_BLOCK      ) return (void*)7;
         }
 
         for (u32 _i = 0; _i < EXPORT_COUNT; ++_i)
