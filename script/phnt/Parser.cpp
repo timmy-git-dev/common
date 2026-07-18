@@ -102,7 +102,7 @@ static bool define_type(CXType _type, CXCursor _baseCursor)
     return true;
 }
 
-static void emit_param(std::ostream& out, CXType type, const std::string& name)
+void emit_param(std::ostream& out, CXType type, const std::string& name)
 {
     type = clang_getUnqualifiedType(type);
 

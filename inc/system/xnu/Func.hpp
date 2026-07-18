@@ -1,7 +1,6 @@
 #pragma once
 #include "system/platform/Arch.hpp"
 
-// TODO: Implement actual mac-os syscall funcs.
 namespace cmn::system::xnu
 {
     #if CMN_SYSTEM_ARCH_ARM64

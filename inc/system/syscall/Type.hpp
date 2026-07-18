@@ -40,7 +40,7 @@ namespace cmn::system::syscall
     typedef __kernel_rwf_t              rwf_t;
     typedef __kernel_uid32_t            qid_t;
 
-    // TODO: Maybe automate if possible/get all defines + maybe separate.
+    // TODO: maybe automate if possible/get all defines + maybe separate files.
     #define PROT_NONE           0x0
     #define PROT_READ           0x1
     #define PROT_WRITE          0x2

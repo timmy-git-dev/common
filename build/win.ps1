@@ -30,6 +30,7 @@ $FLAGS_COMP = @(
     "-fno-stack-protector"
     "-fno-asynchronous-unwind-tables"
     "-fno-unwind-tables"
+    "-fno-threadsafe-statics"
 )
 
 $FLAGS_LINK = @(

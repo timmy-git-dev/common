@@ -1,4 +1,97 @@
 #pragma once
+#include "type/Alias.hpp"
+
+struct LIST_ENTRY
+{
+    LIST_ENTRY* Flink;
+    LIST_ENTRY* Blink;
+};
+
+struct UNICODE_STRING
+{
+    u16 Length;
+    u16 MaximumLength;
+    u16* Buffer;
+};
+
+struct LDR_DATA_TABLE_ENTRY
+{
+    LIST_ENTRY     InLoadOrderLinks;
+    LIST_ENTRY     InMemoryOrderLinks;
+    LIST_ENTRY     InInitializationOrderLinks;
+    void*          DllBase;
+    void*          EntryPoint;
+    u32            SizeOfImage;
+    UNICODE_STRING FullDllName;
+    UNICODE_STRING BaseDllName;
+};
+
+struct PEB_LDR_DATA
+{
+    u32 Length;
+    u32 Initialized;
+    void* SsHandle;
+    LIST_ENTRY InLoadOrderModuleList;
+};
+
+struct PEB
+{
+    u08 Reserved1[24];
+    PEB_LDR_DATA* Ldr;
+};
+
+struct IMAGE_DOS_HEADER
+{
+    u16 e_magic;
+    u16 pad1[29];
+    i32 e_lfanew;
+};
+
+struct IMAGE_DATA_DIRECTORY
+{
+    u32 VirtualAddress;
+    u32 Size;
+};
+
+struct IMAGE_OPTIONAL_HEADER64
+{
+    u16 pad0;
+    u08 pad1[110];
+    IMAGE_DATA_DIRECTORY DataDirectory[16];
+};
+
+struct IMAGE_FILE_HEADER
+{
+    u16 pad0;
+    u16 pad1;
+    u32 pad2;
+    u32 pad3;
+    u32 pad4;
+    u16 pad5;
+    u16 pad6;
+};
+
+struct IMAGE_NT_HEADERS64
+{
+    u32 Signature;
+    IMAGE_FILE_HEADER FileHeader;
+    IMAGE_OPTIONAL_HEADER64 OptionalHeader;
+};
+
+struct IMAGE_EXPORT_DIRECTORY
+{
+    u32 Characteristics;
+    u32 TimeDateStamp;
+    u16 MajorVersion;
+    u16 MinorVersion;
+    u32 Name;
+    u32 Base;
+    u32 NumberOfFunctions;
+    u32 NumberOfNames;
+    u32 AddressOfFunctions;
+    u32 AddressOfNames;
+    u32 AddressOfNameOrdinals;
+};
 
 struct _TEB;
 using NTSTATUS = long;
@@ -10,7 +103,6 @@ union _LARGE_INTEGER;
 using LARGE_INTEGER = union _LARGE_INTEGER;
 using PLARGE_INTEGER = LARGE_INTEGER *;
 struct _UNICODE_STRING;
-using UNICODE_STRING = struct _UNICODE_STRING;
 using PCUNICODE_STRING = const UNICODE_STRING *;
 using WCHAR = wchar_t;
 using PWSTR = WCHAR *;
@@ -329,7 +421,10 @@ struct tagPAINTSTRUCT;
 using LPPAINTSTRUCT = struct tagPAINTSTRUCT *;
 struct HWINSTA__;
 using HWINSTA = struct HWINSTA__ *;
-struct tagPOINT;
+struct tagPOINT {
+  LONG x;
+  LONG y;
+};
 using POINT = struct tagPOINT;
 struct tagSIZE;
 using SIZE = struct tagSIZE;
@@ -432,3 +527,6 @@ using ETWTRACECONTROLCODE = enum _ETWTRACECONTROLCODE;
 struct _EXCEPTION_RECORD;
 using EXCEPTION_RECORD = struct _EXCEPTION_RECORD;
 using PEXCEPTION_RECORD = EXCEPTION_RECORD *;
+struct _DOCONNECTDATA;
+struct CACHE_STATISTICS;
+struct _DONOTIFYDATA;

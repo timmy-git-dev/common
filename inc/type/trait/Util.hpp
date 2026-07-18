@@ -1,6 +1,6 @@
 #pragma once
 #include "type/Alias.hpp"
-// TODO: Might need more work?
+// TODO: might need more work?
 namespace cmn::type::trait_
 {
     template<typename T>                    struct underlying_type          {using type = __underlying_type(T);};
