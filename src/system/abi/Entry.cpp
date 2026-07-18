@@ -92,17 +92,31 @@ namespace cmn::system::abi_
         return _result;
     }
 
+    u64 read_teb()
+    {
+        u64 teb;
+
+        asm volatile(
+            "mrs %0, tpidr_el0"
+            : "=r"(teb)
+        );
+
+        return 2;
+        // return teb;
+    }
+
     extern "C" void start__()
     {
         // init_ctors();
 
-        NTSTATUS _result = main(0, nullptr);
+        // NTSTATUS _result = main(0, nullptr);
 
         // __cxa_finalize(nullptr);
         // fini_dtors();
 
         // cmn::syscall::win_::resolve_proc_address("NtTerminateProcess", 18);
-        test(_result);
+        read_teb();
+        // test(_result);
         // syscall::win::nt_terminate_process((void*)-1, 7);
     }
 }

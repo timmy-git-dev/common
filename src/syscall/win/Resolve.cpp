@@ -46,6 +46,8 @@ namespace cmn::syscall::win_
             "mrs %0, tpidr_el0\n"
             "ldr %0, [%0, #0x60]"
             : "=&r"(_peb)
+            :
+            : "memory"
         );
         #endif
 
