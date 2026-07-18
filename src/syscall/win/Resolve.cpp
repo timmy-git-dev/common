@@ -49,7 +49,7 @@ namespace cmn::syscall::win_
         );
         #endif
 
-        return (PEB*)2;
+        return (PEB*)0;
     };
 
     void *resolve_library(const c08 *_libraryName)
