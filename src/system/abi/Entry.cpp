@@ -87,22 +87,22 @@ namespace cmn::system::abi_
         }
     }
 
-    int test()
+    int test(int _result)
     {
-        return 4;
+        return _result;
     }
 
     extern "C" void start__()
     {
         // init_ctors();
 
-        // NTSTATUS _result = main(0, nullptr);
+        NTSTATUS _result = main(0, nullptr);
 
         // __cxa_finalize(nullptr);
         // fini_dtors();
 
         // cmn::syscall::win_::resolve_proc_address("NtTerminateProcess", 18);
-        test();
+        test(_result);
         syscall::win::nt_terminate_process((void*)-1, 7);
     }
 }
