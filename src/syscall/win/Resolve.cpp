@@ -40,11 +40,10 @@ namespace cmn::syscall::win_
         );
         return _peb;
         #elif CMN_SYSTEM_ARCH_ARM64
-        // TODO: fuck windows.
         volatile TEB* _teb;
         asm volatile
         (
-            "mrs %0, tpidr_el0"
+            "mov %0, x18"
             : "=r"(_teb)
         );
         return (PEB*)_teb->ProcessEnvironmentBlock;
