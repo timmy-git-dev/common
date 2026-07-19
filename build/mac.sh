@@ -17,7 +17,7 @@ PATH_EXE="$PATH_BIN/common.exe"
 COMPILE_VERSION="-std=c++23"
 FLAGS_BOTH="-g3 -O0 -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
-FLAGS_LINK="-nostdlib -lSystem"
+FLAGS_LINK="-nostdlib"
 
 # Re-create the object directory.
 rm -rf $PATH_OBJ
