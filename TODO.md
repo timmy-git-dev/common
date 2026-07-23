@@ -1,4 +1,15 @@
-type:
+- implement universal syscalls for lin/win/mac. (exit, write, mmap, etc.)
+
+
+
+
+
+
+
+
+
+
+<!--type:
 ├─ alias
 ├─ cast
 └─ trait
@@ -7,7 +18,7 @@ type:
    ├─ util
    └─ value
 
-    system
+    sys
     ├─ platform
     │  ├─ os
     │  ├─ compiler
@@ -30,7 +41,7 @@ type:
        ├─ alloc
        └─ layout
 
-    error: type, system
+    error: type, sys
     ├─ result
     ├─ panic
     ├─ abort
@@ -47,34 +58,34 @@ type:
     hash: type
     ├─ fnv1a
     └─ wyhash
-    time: type, system
+    time: type, sys
     ├─ duration
     ├─ clock
     ├─ timer
     ├─ sleep
     └─ date
-    sync: type, system
+    sync: type, sys
     ├─ atomic
     ├─ thread
     ├─ mutex
     ├─ lock
     ├─ condition
     └─ semaphore
-    process: type, system
+    process: type, sys
     ├─ process
     ├─ env
     ├─ spawn
     ├─ exec
     ├─ exit
     └─ wait
-    net: type, system
+    net: type, sys
     ├─ address
     ├─ endpoint
     ├─ socket
     ├─ poll
     └─ dns
 
-      allocator: type, system, error
+      allocator: type, sys, error
       ├─ arena
       ├─ region
       ├─ pool
@@ -94,9 +105,9 @@ type:
         ├─ set
         └─ bitset
 
-          fs: type, system, container
+          fs: type, sys, container
           ├─ path
           ├─ file
           └─ directory
           io: type, container, fs
-          └─ terminal
+          └─ terminal-->

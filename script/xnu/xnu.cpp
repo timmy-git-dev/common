@@ -15,9 +15,9 @@ constexpr const char* PATH_BSD      = "script/bin/xnu/repo/bsd";
 constexpr const char* PATH_CLANGD   = "script/bin/xnu/.clangd";
 constexpr const char* PATH_INCLUDES = "script/bin/xnu/Includes.cpp";
 constexpr const char* PATH_SYSCALLS = "script/bin/xnu/repo/bsd/kern/syscalls.master";
-constexpr const char* PATH_FUNCS    = "inc/system/xnu/Call.hpp";
-constexpr const char* PATH_IDS      = "inc/system/xnu/ID.hpp";
-constexpr const char* PATH_TYPES    = "inc/system/xnu/Type.hpp";
+constexpr const char* PATH_FUNCS    = "inc/sys/xnu/Call.hpp";
+constexpr const char* PATH_IDS      = "inc/sys/xnu/ID.hpp";
+constexpr const char* PATH_TYPES    = "inc/sys/xnu/Type.hpp";
 
 static std::unordered_set<std::string> typeAliases;
 static std::unordered_set<std::string> definedTypes;
@@ -360,14 +360,14 @@ int main()
               "    - -static\n"
               "    - -no-pie\n";
 
-    funcs << "#include \"system/xnu/Func.hpp\"\n"
-             "#include \"system/xnu/ID.hpp\"\n"
-             "#include \"system/xnu/Type.hpp\"\n"
+    funcs << "#include \"sys/xnu/Func.hpp\"\n"
+             "#include \"sys/xnu/ID.hpp\"\n"
+             "#include \"sys/xnu/Type.hpp\"\n"
              "\n"
-             "namespace cmn::system::xnu\n"
+             "namespace cmn::sys::xnu\n"
              "{\n";
 
-    ids << "namespace cmn::system::xnu\n"
+    ids << "namespace cmn::sys::xnu\n"
            "{\n";
 
     bool _inElse = false;

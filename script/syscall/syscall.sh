@@ -5,14 +5,14 @@ readonly LINK_REPO="https://syscalls.mebeim.net/db"
 readonly LINK_ARM="$LINK_REPO/arm64/64/aarch64/latest/table.json"
 readonly LINK_X86="$LINK_REPO/x86/64/x64/latest/table.json"
 
-readonly PATH_OUT_ID="inc/system/syscall/ID.hpp"
-readonly PATH_OUT_CALL="inc/system/syscall/Call.hpp"
+readonly PATH_OUT_ID="inc/sys/syscall/ID.hpp"
+readonly PATH_OUT_CALL="inc/sys/syscall/Call.hpp"
 readonly PATH_BIN="script/bin/syscall"
 readonly PATH_ARM="$PATH_BIN/arm.json"
 readonly PATH_X86="$PATH_BIN/x86.json"
 
-readonly DEF_ARM="CMN_SYSTEM_ARCH_ARM64"
-readonly DEF_X86="CMN_SYSTEM_ARCH_X64"
+readonly DEF_ARM="CMN_SYS_ARCH_ARM64"
+readonly DEF_X86="CMN_SYS_ARCH_X64"
 
 # Ensure paths & download syscall tables.
 mkdir -p "$PATH_BIN"
@@ -76,18 +76,18 @@ readonly ignored_names="$(cut -d '|' -f1 <<< "$arm_syscalls"$'\n'"$x86_syscalls"
 # Write syscalls to file.
 printf '// AUTO-GENERATED SCRIPT
 #pragma once
-#include "system/platform/Arch.hpp"
+#include "sys/platform/Arch.hpp"
 
-namespace cmn::system::syscall
+namespace cmn::sys::syscall
 {
 ' > "$PATH_OUT_ID"
 printf '// AUTO-GENERATED SCRIPT
 #pragma once
-#include "system/syscall/Func.hpp"
-#include "system/syscall/ID.hpp"
-#include "system/syscall/Type.hpp"
+#include "sys/syscall/Func.hpp"
+#include "sys/syscall/ID.hpp"
+#include "sys/syscall/Type.hpp"
 
-namespace cmn::system::syscall
+namespace cmn::sys::syscall
 {
 ' > "$PATH_OUT_CALL"
 

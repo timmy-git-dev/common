@@ -3,7 +3,7 @@
 #include <linux/signal.h>
 #include <asm-generic/posix_types.h>
 
-namespace cmn::system::syscall
+namespace cmn::sys::syscall
 {
     struct __user_cap_header_struct;
     struct __user_cap_data_struct;

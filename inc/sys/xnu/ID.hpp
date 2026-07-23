@@ -1,5 +1,5 @@
 #pragma once
-namespace cmn::system::xnu
+namespace cmn::sys::xnu
 {
     #define EXIT 1
     #define FORK 2

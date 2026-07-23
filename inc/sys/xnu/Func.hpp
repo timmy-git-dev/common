@@ -1,9 +1,9 @@
 #pragma once
-#include "system/platform/Arch.hpp"
+#include "sys/platform/Arch.hpp"
 
-namespace cmn::system::xnu
+namespace cmn::sys::xnu
 {
-    #if CMN_SYSTEM_ARCH_ARM64
+    #if CMN_SYS_ARCH_ARM64
     inline long syscall(long _id, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0, long _arg6 = 0, long _arg7 = 0)
     {
         register long x16 __asm__("x16") = _id;
@@ -29,7 +29,7 @@ namespace cmn::system::xnu
 
         return x0;
     }
-    #elif CMN_SYSTEM_ARCH_X64
+    #elif CMN_SYS_ARCH_X64
     inline long syscall(long id, long a0 = 0, long a1 = 0, long a2 = 0, long a3 = 0, long a4 = 0, long a5 = 0, long a6 = 0, long a7 = 0)
     {
         id |= 0x2000000;

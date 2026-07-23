@@ -1,10 +1,10 @@
 // AUTO-GENERATED SCRIPT
 #pragma once
-#include "system/syscall/Func.hpp"
-#include "system/syscall/ID.hpp"
-#include "system/syscall/Type.hpp"
+#include "sys/syscall/Func.hpp"
+#include "sys/syscall/ID.hpp"
+#include "sys/syscall/Type.hpp"
 
-namespace cmn::system::syscall
+namespace cmn::sys::syscall
 {
     inline long accept                  (int fd, struct sockaddr *upeer_sockaddr, int *upeer_addrlen) {return syscall(ACCEPT, (long)fd, (long)upeer_sockaddr, (long)upeer_addrlen);};
     inline long accept4                 (int fd, struct sockaddr *upeer_sockaddr, int *upeer_addrlen, int flags) {return syscall(ACCEPT4, (long)fd, (long)upeer_sockaddr, (long)upeer_addrlen, (long)flags);};

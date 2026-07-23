@@ -1,10 +1,10 @@
 // AUTO-GENERATED SCRIPT
 #pragma once
-#include "system/platform/Arch.hpp"
+#include "sys/platform/Arch.hpp"
 
-namespace cmn::system::syscall
+namespace cmn::sys::syscall
 {
-    #if CMN_SYSTEM_ARCH_ARM64
+    #if CMN_SYS_ARCH_ARM64
     #define ACCEPT                   202
     #define ACCEPT4                  242
     #define ACCT                      89
@@ -328,7 +328,7 @@ namespace cmn::system::syscall
     #define WRITE                     64
     #define WRITEV                    66
     #endif
-    #if CMN_SYSTEM_ARCH_X64
+    #if CMN_SYS_ARCH_X64
     #define ACCEPT4                  288
     #define ACCEPT                    43
     #define ACCESS                    21

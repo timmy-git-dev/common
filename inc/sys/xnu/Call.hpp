@@ -1,9 +1,9 @@
 #pragma once
-#include "system/xnu/Func.hpp"
-#include "system/xnu/ID.hpp"
-#include "system/xnu/Type.hpp"
+#include "sys/xnu/Func.hpp"
+#include "sys/xnu/ID.hpp"
+#include "sys/xnu/Type.hpp"
 
-namespace cmn::system::xnu
+namespace cmn::sys::xnu
 {
     inline void exit(int rval) {syscall(EXIT,(long)rval);}
     inline int fork(void) {return syscall(FORK);}

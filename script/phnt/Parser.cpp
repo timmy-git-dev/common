@@ -249,8 +249,8 @@ int main()
 
     CXCursor _rootCursor = clang_getTranslationUnitCursor(_translationUnit);
 
-    outputTypes = std::ofstream("inc/system/nt/Type.hpp");
-    outputFuncs = std::ofstream("inc/system/nt/Func.hpp");
+    outputTypes = std::ofstream("inc/sys/nt/Type.hpp");
+    outputFuncs = std::ofstream("inc/sys/nt/Func.hpp");
 
     outputTypes << "#pragma once\n\n";
     outputFuncs << "#pragma once\n#include \"Type.hpp\"\n\nextern \"C\"\n{\n";

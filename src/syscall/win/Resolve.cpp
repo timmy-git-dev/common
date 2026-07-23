@@ -1,5 +1,5 @@
 #include "syscall/win/Resolve.hpp"
-#include "system/platform/Arch.hpp"
+#include "sys/platform/Arch.hpp"
 
 namespace cmn::syscall::win_
 {
@@ -31,7 +31,7 @@ namespace cmn::syscall::win_
 
     PEB *resolve_peb()
     {
-        #if CMN_SYSTEM_ARCH_X64
+        #if CMN_SYS_ARCH_X64
         PEB *_peb;
         asm volatile
         (
@@ -39,7 +39,7 @@ namespace cmn::syscall::win_
             : "=r"(_peb)
         );
         return _peb;
-        #elif CMN_SYSTEM_ARCH_ARM64
+        #elif CMN_SYS_ARCH_ARM64
         volatile TEB* _teb;
         asm volatile
         (
