@@ -1,8 +1,8 @@
-#include "sys/abi/Entry.hpp"
-#include "sys/abi/Cxa.hpp"
-#include "sys/abi/InitFini.hpp"
+#include "abi/Entry.hpp"
+#include "abi/Cxa.hpp"
+#include "abi/InitFini.hpp"
 
-#include "sys/syscall/Call.hpp" // TODO: replace syscall with universal "exit".
+#include "syscall/lin/Call.hpp" // TODO: replace syscall with universal "exit".
 
 extern "C" void start__()
 {

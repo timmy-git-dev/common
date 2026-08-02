@@ -1,5 +1,5 @@
 #pragma once
-namespace cmn::sys::xnu
+namespace cmn::syscall::mac
 {
     #define EXIT 1
     #define FORK 2

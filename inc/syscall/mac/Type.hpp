@@ -12,7 +12,7 @@ struct msghdr_x;
 using __uint8_t = unsigned char;
 using uint8_t = __uint8_t;
 using mach_port_name_t = int;
-struct mac;
+struct Mac;
 struct kevent_qos_s;
 struct necp_aggregate_result;
 struct kevent64_s;

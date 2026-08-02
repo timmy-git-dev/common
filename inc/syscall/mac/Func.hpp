@@ -1,7 +1,7 @@
 #pragma once
 #include "sys/platform/Arch.hpp"
 
-namespace cmn::sys::xnu
+namespace cmn::syscall::mac
 {
     #if CMN_SYS_ARCH_ARM64
     inline long syscall(long _id, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0, long _arg6 = 0, long _arg7 = 0)

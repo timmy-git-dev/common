@@ -1,8 +1,8 @@
-#include "sys/abi/Entry.hpp"
+#include "abi/Entry.hpp"
 #include "sys/platform/OS.hpp"
 
 #if CMN_SYS_OS_LIN
-#include "sys/syscall/Call.hpp"
+#include "syscall/lin/Call.hpp"
 i32 main(const i32, const c08**)
 {
     c08 _buffer[15] = "Hello, world!\n";

@@ -1,8 +1,8 @@
 // AUTO-GENERATED SCRIPT
 #pragma once
-#include "sys/syscall/Func.hpp"
-#include "sys/syscall/ID.hpp"
-#include "sys/syscall/Type.hpp"
+#include "syscall/lin/Func.hpp"
+#include "syscall/lin/ID.hpp"
+// #include "syscall/lin/Type.hpp"
 
 namespace cmn::sys::syscall
 {

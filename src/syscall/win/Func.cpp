@@ -1,4 +1,4 @@
-#include "syscall/win/Resolve.hpp"
+#include "syscall/win/Func.hpp"
 #include "sys/platform/Arch.hpp"
 
 namespace cmn::syscall::win_

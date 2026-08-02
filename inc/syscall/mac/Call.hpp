@@ -1,9 +1,9 @@
 #pragma once
-#include "sys/xnu/Func.hpp"
-#include "sys/xnu/ID.hpp"
-#include "sys/xnu/Type.hpp"
+#include "syscall/mac/Func.hpp"
+#include "syscall/mac/ID.hpp"
+#include "syscall/mac/Type.hpp"
 
-namespace cmn::sys::xnu
+namespace cmn::syscall::mac
 {
     inline void exit(int rval) {syscall(EXIT,(long)rval);}
     inline int fork(void) {return syscall(FORK);}
@@ -289,17 +289,17 @@ namespace cmn::sys::xnu
     inline int ledger(int cmd,caddr_t arg1,caddr_t arg2,caddr_t arg3) {return syscall(LEDGER,(long)cmd,(long)arg1,(long)arg2,(long)arg3);}
     inline int kevent_qos(int fd,const  kevent_qos_s *changelist,int nchanges, kevent_qos_s *eventlist,int nevents,void *data_out,size_t *data_available,unsigned int flags) {return syscall(KEVENT_QOS,(long)fd,(long)changelist,(long)nchanges,(long)eventlist,(long)nevents,(long)data_out,(long)data_available,(long)flags);}
     inline int kevent_id(uint64_t id,const  kevent_qos_s *changelist,int nchanges, kevent_qos_s *eventlist,int nevents,void *data_out,size_t *data_available,unsigned int flags) {return syscall(KEVENT_ID,(long)id,(long)changelist,(long)nchanges,(long)eventlist,(long)nevents,(long)data_out,(long)data_available,(long)flags);}
-    inline int __mac_execve(char *fname,char **argp,char **envp, mac *mac_p) {return syscall(__MAC_EXECVE,(long)fname,(long)argp,(long)envp,(long)mac_p);}
+    inline int __mac_execve(char *fname,char **argp,char **envp, Mac *mac_p) {return syscall(__MAC_EXECVE,(long)fname,(long)argp,(long)envp,(long)mac_p);}
     inline int __mac_syscall(char *policy,int call,user_addr_t arg) {return syscall(__MAC_SYSCALL,(long)policy,(long)call,(long)arg);}
-    inline int __mac_get_file(char *path_p, mac *mac_p) {return syscall(__MAC_GET_FILE,(long)path_p,(long)mac_p);}
-    inline int __mac_set_file(char *path_p, mac *mac_p) {return syscall(__MAC_SET_FILE,(long)path_p,(long)mac_p);}
-    inline int __mac_get_link(char *path_p, mac *mac_p) {return syscall(__MAC_GET_LINK,(long)path_p,(long)mac_p);}
-    inline int __mac_set_link(char *path_p, mac *mac_p) {return syscall(__MAC_SET_LINK,(long)path_p,(long)mac_p);}
-    inline int __mac_get_proc( mac *mac_p) {return syscall(__MAC_GET_PROC,(long)mac_p);}
-    inline int __mac_set_proc( mac *mac_p) {return syscall(__MAC_SET_PROC,(long)mac_p);}
-    inline int __mac_get_fd(int fd, mac *mac_p) {return syscall(__MAC_GET_FD,(long)fd,(long)mac_p);}
-    inline int __mac_set_fd(int fd, mac *mac_p) {return syscall(__MAC_SET_FD,(long)fd,(long)mac_p);}
-    inline int __mac_get_pid(pid_t pid, mac *mac_p) {return syscall(__MAC_GET_PID,(long)pid,(long)mac_p);}
+    inline int __mac_get_file(char *path_p, Mac *mac_p) {return syscall(__MAC_GET_FILE,(long)path_p,(long)mac_p);}
+    inline int __mac_set_file(char *path_p, Mac *mac_p) {return syscall(__MAC_SET_FILE,(long)path_p,(long)mac_p);}
+    inline int __mac_get_link(char *path_p, Mac *mac_p) {return syscall(__MAC_GET_LINK,(long)path_p,(long)mac_p);}
+    inline int __mac_set_link(char *path_p, Mac *mac_p) {return syscall(__MAC_SET_LINK,(long)path_p,(long)mac_p);}
+    inline int __mac_get_proc( Mac *mac_p) {return syscall(__MAC_GET_PROC,(long)mac_p);}
+    inline int __mac_set_proc( Mac *mac_p) {return syscall(__MAC_SET_PROC,(long)mac_p);}
+    inline int __mac_get_fd(int fd, Mac *mac_p) {return syscall(__MAC_GET_FD,(long)fd,(long)mac_p);}
+    inline int __mac_set_fd(int fd, Mac *mac_p) {return syscall(__MAC_SET_FD,(long)fd,(long)mac_p);}
+    inline int __mac_get_pid(pid_t pid, Mac *mac_p) {return syscall(__MAC_GET_PID,(long)pid,(long)mac_p);}
     inline int pselect(int nd,u_int32_t *in,u_int32_t *ou,u_int32_t *ex,const  timespec *ts,const sigset_t *mask) {return syscall(PSELECT,(long)nd,(long)in,(long)ou,(long)ex,(long)ts,(long)mask);}
     inline int pselect_nocancel(int nd,u_int32_t *in,u_int32_t *ou,u_int32_t *ex,const  timespec *ts,const sigset_t *mask) {return syscall(PSELECT_NOCANCEL,(long)nd,(long)in,(long)ou,(long)ex,(long)ts,(long)mask);}
     inline user_ssize_t read_nocancel(int fd,user_addr_t cbuf,user_size_t nbyte) {return syscall(READ_NOCANCEL,(long)fd,(long)cbuf,(long)nbyte);}
@@ -330,8 +330,8 @@ namespace cmn::sys::xnu
     inline int aio_suspend_nocancel(user_addr_t aiocblist,int nent,user_addr_t timeoutp) {return syscall(AIO_SUSPEND_NOCANCEL,(long)aiocblist,(long)nent,(long)timeoutp);}
     inline int __sigwait_nocancel(user_addr_t set,user_addr_t sig) {return syscall(__SIGWAIT_NOCANCEL,(long)set,(long)sig);}
     inline int __semwait_signal_nocancel(int cond_sem,int mutex_sem,int timeout,int relative,int64_t tv_sec,int32_t tv_nsec) {return syscall(__SEMWAIT_SIGNAL_NOCANCEL,(long)cond_sem,(long)mutex_sem,(long)timeout,(long)relative,(long)tv_sec,(long)tv_nsec);}
-    inline int __mac_mount(char *type,char *path,int flags,caddr_t data, mac *mac_p) {return syscall(__MAC_MOUNT,(long)type,(long)path,(long)flags,(long)data,(long)mac_p);}
-    inline int __mac_get_mount(char *path, mac *mac_p) {return syscall(__MAC_GET_MOUNT,(long)path,(long)mac_p);}
+    inline int __mac_mount(char *type,char *path,int flags,caddr_t data, Mac *mac_p) {return syscall(__MAC_MOUNT,(long)type,(long)path,(long)flags,(long)data,(long)mac_p);}
+    inline int __mac_get_mount(char *path, Mac *mac_p) {return syscall(__MAC_GET_MOUNT,(long)path,(long)mac_p);}
     inline int __mac_getfsstat(user_addr_t buf,int bufsize,user_addr_t mac,int macsize,int flags) {return syscall(__MAC_GETFSSTAT,(long)buf,(long)bufsize,(long)mac,(long)macsize,(long)flags);}
     inline user_ssize_t fsgetpath(user_addr_t buf,size_t bufsize,user_addr_t fsid,uint64_t objid) {return syscall(FSGETPATH,(long)buf,(long)bufsize,(long)fsid,(long)objid);}
     inline mach_port_name_t audit_session_self(void) {return syscall(AUDIT_SESSION_SELF);}

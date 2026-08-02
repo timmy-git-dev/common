@@ -11,7 +11,7 @@ struct UNICODE_STRING
 {
     u16 Length;
     u16 MaximumLength;
-    u16* Buffer;
+    c16* Buffer;
 };
 
 struct LDR_DATA_TABLE_ENTRY
@@ -129,7 +129,15 @@ struct _RTL_SRWLOCK;
 using PRTL_SRWLOCK = struct _RTL_SRWLOCK *;
 enum _EVENT_INFORMATION_CLASS { };
 using EVENT_INFORMATION_CLASS = enum _EVENT_INFORMATION_CLASS;
-using OBJECT_ATTRIBUTES = struct _OBJECT_ATTRIBUTES;
+struct OBJECT_ATTRIBUTES
+{
+    u32 Length;
+    void* RootDirectory;
+    UNICODE_STRING* ObjectName;
+    u32 Attributes;
+    void* SecurityDescriptor;
+    void* SecurityQualityOfService;
+};
 using PCOBJECT_ATTRIBUTES = const OBJECT_ATTRIBUTES *;
 enum _MUTANT_INFORMATION_CLASS { };
 using MUTANT_INFORMATION_CLASS = enum _MUTANT_INFORMATION_CLASS;
@@ -282,8 +290,20 @@ enum _FSINFOCLASS { };
 using FSINFOCLASS = enum _FSINFOCLASS;
 union _FILE_SEGMENT_ELEMENT;
 using PFILE_SEGMENT_ELEMENT = union _FILE_SEGMENT_ELEMENT *;
-struct _FILE_BASIC_INFORMATION;
-using PFILE_BASIC_INFORMATION = struct _FILE_BASIC_INFORMATION *;
+typedef struct _FILETIME
+{
+  DWORD dwLowDateTime;
+  DWORD dwHighDateTime;
+} FILETIME, *PFILETIME, *LPFILETIME;
+struct FILE_BASIC_INFORMATION
+{
+    FILETIME CreationTime;
+    FILETIME LastAccessTime;
+    FILETIME LastWriteTime;
+    FILETIME ChangeTime;
+    u32 FileAttributes;
+};
+using PFILE_BASIC_INFORMATION = struct FILE_BASIC_INFORMATION *;
 struct _FILE_NETWORK_OPEN_INFORMATION;
 using PFILE_NETWORK_OPEN_INFORMATION = struct _FILE_NETWORK_OPEN_INFORMATION *;
 enum _DIRECTORY_NOTIFY_INFORMATION_CLASS { };

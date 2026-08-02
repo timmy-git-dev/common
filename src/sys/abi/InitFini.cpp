@@ -1,4 +1,4 @@
-#include "sys/abi/InitFini.hpp"
+#include "abi/InitFini.hpp"
 #include "sys/platform/OS.hpp"
 
 #if CMN_SYS_OS_LIN
