@@ -100,8 +100,8 @@ struct sf_hdtr;
 using sae_connid_t = __uint32_t;
 using guardid_t = __uint64_t;
 union semun {
-	int             val;            /* value for SETVAL */
-	struct semid_ds *buf;           /* buffer for IPC_STAT & IPC_SET */
-	unsigned short  *array;         /* array for GETALL & SETALL */
+    int             val;            /* value for SETVAL */
+    struct semid_ds *buf;           /* buffer for IPC_STAT & IPC_SET */
+    unsigned short  *array;         /* array for GETALL & SETALL */
 };
 typedef union semun semun_t;

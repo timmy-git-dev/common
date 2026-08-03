@@ -1,45 +1,135 @@
 #pragma once
-#include <linux/fs.h>
-#include <linux/signal.h>
-#include <asm-generic/posix_types.h>
-#include <sys/stat.h>
+#include "sys/platform/Arch.hpp"
+#include "type/Alias.hpp"
 
-namespace cmn::sys::syscall
+namespace cmn::syscall
 {
-    struct __user_cap_header_struct;
-    struct __user_cap_data_struct;
+    typedef u64             AsyncIoContext;
+    typedef u08             FileMode;
+    typedef i64             FileOffset;
+    typedef i32             ProcessId;
+    typedef i32             IpcKey;
+    typedef i32             TimerId;
+    typedef i32             ClockId;
+    typedef i32             MessageQueueDescriptor;
+    typedef u32             UserId;
+    typedef u32             GroupId;
+    typedef i64             FileOffset;
+    typedef int             KeySerialId;
+    typedef i32             ReadWriteFlags;
+    typedef u32             QuotaId;
 
-    enum landlock_rule_type {};
+    // TODO: Remove all struct ptr-aliases.
+    typedef struct __user_cap_header_struct
+    {
+        u32 version;
+        i32 pid;
+    } *cap_user_header_t;
+    typedef struct __user_cap_data_struct
+    {
+        u32 effective;
+        u32 permitted;
+        u32 inheritable;
+    } *cap_user_data_t;
 
-    typedef unsigned char      uint8_t;
-    typedef unsigned short     uint16_t;
-    typedef unsigned int       uint32_t;
-    typedef unsigned long long uint64_t;
+    enum landlock_rule_type
+    {
+        LANDLOCK_RULE_PATH_BENEATH = 1,
+        LANDLOCK_RULE_NET_PORT     = 2,
+    };
 
-    typedef uint8_t   u8;
-    typedef uint16_t  u16;
-    typedef uint32_t  u32;
-    typedef uint64_t  u64;
+    #define __FD_SETSIZE 1024
+    struct FileDescriptorSet
+    {
+        unsigned long fds_bits[__FD_SETSIZE / (8 * sizeof(long))];
+    };
 
-    typedef __user_cap_header_struct   *cap_user_header_t;
-    typedef __user_cap_data_struct     *cap_user_data_t;
-    typedef __kernel_ulong_t            aio_context_t;
-    typedef __u32                       __kernel_dev_t;
-    typedef __kernel_fd_set             fd_set;
-    typedef unsigned short              umode_t;
-    typedef __kernel_off_t              off_t;
-    typedef __kernel_pid_t              pid_t;
-    typedef __kernel_key_t              key_t;
-    typedef __kernel_timer_t            timer_t;
-    typedef __kernel_clockid_t          clockid_t;
-    typedef __kernel_mqd_t              mqd_t;
-    typedef __kernel_uid32_t            uid_t;
-    typedef __kernel_gid32_t            gid_t;
-    typedef __kernel_loff_t             loff_t;
-    typedef __kernel_size_t             size_t;
-    typedef __s32                       key_serial_t;
-    typedef __kernel_rwf_t              rwf_t;
-    typedef __kernel_uid32_t            qid_t;
+    struct FileTime
+    {
+        i64 seconds;
+        i64 nanoseconds;
+    };
+
+    struct FileStatus
+    {
+        #ifdef CMN_SYS_ARCH_X64
+            u64      device;
+            u64      inode;
+            u64      linkCount;
+            u32      mode;
+            u32      user;
+            u32      group;
+            u32 : 32;
+            u64      rawDevice;
+            i64      size;
+            i64      blockSize;
+            i64      blockCount;
+            FileTime accessTime;
+            FileTime modificationTime;
+            FileTime changeTime;
+            u64 : 64;
+            u64 : 64;
+            u64 : 64;
+        #elif CMN_SYS_ARCH_ARM
+            u64      device;
+            u64      inode;
+            u32      mode;
+            u32      linkCount;
+            u32      user;
+            u32      group;
+            u64      rawDevice;
+            u64 : 64;
+            i64      size;
+            i32      blockSize;
+            u32 : 32;
+            i64      blockCount;
+            FileTime accessTime;
+            FileTime modificationTime;
+            FileTime changeTime;
+            u32 : 32;
+            u32 : 32;
+        #endif
+    };
+    // struct stat
+    // {
+    //     #ifdef CMN_SYS_ARCH_X64
+    //         u64    st_dev;
+    //         u64    st_ino;
+    //         u64    st_nlink;
+    //         unsigned int        st_mode;
+    //         unsigned int        st_uid;
+    //         unsigned int        st_gid;
+    //         unsigned int        padding_;
+    //         u64    st_rdev;
+    //         i64     st_size;
+    //         i64     st_blksize;
+    //         i64     st_blocks;
+    //         timespec            st_atime;
+    //         timespec            st_mtime;
+    //         timespec            st_ctime;
+    //         long                __pad3;
+    //         long                __pad4;
+    //         long                __pad5;
+    //     #elif CMN_SYS_ARCH_ARM
+    //         unsigned long       st_dev;
+    //         unsigned long       st_ino;
+    //         unsigned int        st_mode;
+    //         unsigned int        st_nlink;
+    //         unsigned int        st_uid;
+    //         unsigned int        st_gid;
+    //         unsigned long       st_rdev;
+    //         unsigned long       __pad1;
+    //         long                st_size;
+    //         int                 st_blksize;
+    //         int                 __pad2;
+    //         long                st_blocks;
+    //         timespec            st_atime;
+    //         timespec            st_mtime;
+    //         timespec            st_ctime;
+    //         unsigned int        __pad3;
+    //         unsigned int        __pad4;
+    //     #endif
+    // };
 
     #define EPERM            1 // Operation not permitted.
     #define ENOENT           2 // No such file or directory.

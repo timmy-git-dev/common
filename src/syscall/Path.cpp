@@ -1,5 +1,6 @@
 #include "sys/platform/OS.hpp"
 #include "syscall/Path.hpp"
+#include "syscall/lin/Type.hpp"
 #include "type/Alias.hpp"
 
 #if CMN_SYS_OS_LIN
@@ -8,54 +9,38 @@
 namespace cmn::syscall
 {
     constexpr i64 EPOCH_LIN = i64(719528) * 86400;
-    Timestamp from_lin(timespec _time)
+    Timestamp from_lin(FileTime _time)
     {
         return Timestamp
         {
-            .seconds     =     _time.tv_sec + EPOCH_LIN,
-            .nanoseconds = u32(_time.tv_nsec)
+            .seconds     =     _time.seconds + EPOCH_LIN,
+            .nanoseconds = u32(_time.nanoseconds)
         };
     }
 
-    timespec to_lin(Timestamp _time)
+    FileTime to_lin(Timestamp _time)
     {
-        return timespec
+        return FileTime
         {
-            .tv_sec  =     _time.seconds - EPOCH_LIN,
-            .tv_nsec = i64(_time.nanoseconds)
+            .seconds  =     _time.seconds - EPOCH_LIN,
+            .nanoseconds = i64(_time.nanoseconds)
         };
     }
 
     FileInfo query(const c08* _path) // NtQueryAttributesFile        : stat                         : stat
     {
-        struct stat _stat;
-        // {
-        //     .st_dev     = 0,
-        //     .st_ino     = 0,
-        //     .st_mode    = 0,
-        //     .st_nlink   = 0,
-        //     .st_uid     = 0,
-        //     .st_gid     = 0,
-        //     .st_rdev    = 0,
-        //     .st_size    = 0,
-        //     .st_blksize = 0,
-        //     .st_blocks  = 0,
+        FileStatus _stat;
 
-        //     .st_atim    = nullptr,
-        //     .st_mtim    = nullptr,
-        //     .st_ctim    = nullptr,
-        // };
-
-        sys::syscall::newfstatat(-100, _path, &_stat, 0);
+        newfstatat(-100, _path, &_stat, 0);
 
         return FileInfo
         {
-            .accessTime = from_lin(_stat.st_atim),
-            .modifyTime = from_lin(_stat.st_mtim),
-            .changeTime = from_lin(_stat.st_ctim),
+            .accessTime = from_lin(_stat.accessTime),
+            .modifyTime = from_lin(_stat.modificationTime),
+            .changeTime = from_lin(_stat.changeTime),
 
-            .size       = _stat.st_size          ,
-            .mode       = _stat.st_mode          ,
+            .size       = _stat.size,
+            .mode       = _stat.mode   ,
             .attributes = 0
         };
 
@@ -85,7 +70,7 @@ namespace cmn::syscall
     }
     void move (const c08* _pathSrc, const c08* _pathDst) // NtSetInformationFile         : renameat                     : renameat
     {
-        sys::syscall::renameat(-100, _pathSrc, -100, _pathDst);
+        cmn::syscall::renameat(-100, _pathSrc, -100, _pathDst);
     }
 }
 #elif CMN_SYS_OS_MAC

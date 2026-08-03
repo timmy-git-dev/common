@@ -13,7 +13,7 @@ extern "C" void start__()
     cmn::sys::abi::destruct_static_funcs(       );
     cmn::sys::abi::destruct_static_vars (nullptr);
 
-    cmn::sys::syscall::exit(_result);
+    cmn::syscall::exit(_result);
     while (true) { }
 }
 

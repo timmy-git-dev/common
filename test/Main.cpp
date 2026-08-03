@@ -6,7 +6,7 @@
 i32 main(const i32, const c08**)
 {
     c08 _buffer[15] = "Hello, world!\n";
-    cmn::sys::syscall::write(1, _buffer, 14);
+    cmn::syscall::write(1, _buffer, 14);
 
     return 0;
 }

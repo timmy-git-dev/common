@@ -35,6 +35,7 @@ $FLAGS_COMP = @(
 
 $FLAGS_LINK = @(
     "-nostdlib"
+    "-nostdinc"
     "-static"
 )
 
@@ -66,6 +67,7 @@ CompileFlags:
         - -fno-asynchronous-unwind-tables
         - -fno-unwind-tables
         - -nostdlib
+        - -nostdinc
         - -static
         - -no-pie
 "@ | Set-Content "$ROOT/.clangd"
