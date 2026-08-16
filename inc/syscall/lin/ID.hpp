@@ -2,7 +2,7 @@
 #pragma once
 #include "sys/platform/Arch.hpp"
 
-namespace cmn::sys::syscall
+namespace cmn::syscall
 {
     #if CMN_SYS_ARCH_ARM64
         #define ACCEPT                   202
@@ -327,7 +327,8 @@ namespace cmn::sys::syscall
         #define WAITID                    95
         #define WRITE                     64
         #define WRITEV                    66
-    #elif CMN_SYS_ARCH_X64
+        #endif
+    #if CMN_SYS_ARCH_X64
         #define ACCEPT4                  288
         #define ACCEPT                    43
         #define ACCESS                    21

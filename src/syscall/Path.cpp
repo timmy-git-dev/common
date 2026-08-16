@@ -8,65 +8,32 @@
 
 namespace cmn::syscall
 {
-    constexpr i64 EPOCH_LIN = i64(719528) * 86400;
-    Timestamp from_lin(FileTime _time)
+    constexpr i64 EPOCH = i64(1970) * 31556952;
+    Timestamp convert_time(timespec _time)
     {
         return Timestamp
         {
-            .seconds     =     _time.seconds + EPOCH_LIN,
-            .nanoseconds = u32(_time.nanoseconds)
-        };
-    }
-
-    FileTime to_lin(Timestamp _time)
-    {
-        return FileTime
-        {
-            .seconds  =     _time.seconds - EPOCH_LIN,
-            .nanoseconds = i64(_time.nanoseconds)
+            .seconds     =     _time.tv_sec + EPOCH,
+            .nanoseconds = u32(_time.tv_nsec)
         };
     }
 
     FileInfo query(const c08* _path) // NtQueryAttributesFile        : stat                         : stat
     {
-        FileStatus _stat;
+        stat _stat;
 
         newfstatat(-100, _path, &_stat, 0);
 
         return FileInfo
         {
-            .accessTime = from_lin(_stat.accessTime),
-            .modifyTime = from_lin(_stat.modificationTime),
-            .changeTime = from_lin(_stat.changeTime),
+            .accessTime = convert_time(_stat.st_atim),
+            .modifyTime = convert_time(_stat.st_mtim),
+            .changeTime = convert_time(_stat.st_ctim),
 
-            .size       = _stat.size,
-            .mode       = _stat.mode   ,
+            .size       = _stat.st_size,
+            .mode       = _stat.st_mode,
             .attributes = 0
         };
-
-        // S_IFMT;     //0170000   bitmask for the file type bitfields
-        // S_IFSOCK;   //0140000   socket
-        // S_IFLNK;    //0120000   symbolic link
-        // S_IFREG;    //0100000   regular file
-        // S_IFBLK;    //0060000   block device
-        // S_IFDIR;    //0040000   directory
-        // S_IFCHR;    //0020000   character device
-        // S_IFIFO;    //0010000   fifo
-        // S_ISUID;    //0004000   set UID bit
-        // S_ISGID;    //0002000   set GID bit (see below)
-        // S_ISVTX;    //0001000   sticky bit (see below)
-        // S_IRWXU;    //00700     mask for file owner permissions
-        // S_IRUSR;    //00400     owner has read permission
-        // S_IWUSR;    //00200     owner has write permission
-        // S_IXUSR;    //00100     owner has execute permission
-        // S_IRWXG;    //00070     mask for group permissions
-        // S_IRGRP;    //00040     group has read permission
-        // S_IWGRP;    //00020     group has write permission
-        // S_IXGRP;    //00010     group has execute permission
-        // S_IRWXO;    //00007     mask for permissions for others (not in group)
-        // S_IROTH;    //00004     others have read permission
-        // S_IWOTH;    //00002     others have write permisson
-        // S_IXOTH;    //00001     others have execute permission
     }
     void move (const c08* _pathSrc, const c08* _pathDst) // NtSetInformationFile         : renameat                     : renameat
     {

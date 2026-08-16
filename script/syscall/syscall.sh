@@ -5,8 +5,8 @@ readonly LINK_REPO="https://syscalls.mebeim.net/db"
 readonly LINK_ARM="$LINK_REPO/arm64/64/aarch64/latest/table.json"
 readonly LINK_X86="$LINK_REPO/x86/64/x64/latest/table.json"
 
-readonly PATH_OUT_ID="inc/sys/syscall/ID.hpp"
-readonly PATH_OUT_CALL="inc/sys/syscall/Call.hpp"
+readonly PATH_OUT_ID="inc/syscall/lin/ID.hpp"
+readonly PATH_OUT_CALL="inc/syscall/lin/Call.hpp"
 readonly PATH_BIN="script/bin/syscall"
 readonly PATH_ARM="$PATH_BIN/arm.json"
 readonly PATH_X86="$PATH_BIN/x86.json"
@@ -78,16 +78,16 @@ printf '// AUTO-GENERATED SCRIPT
 #pragma once
 #include "sys/platform/Arch.hpp"
 
-namespace cmn::sys::syscall
+namespace cmn::syscall
 {
 ' > "$PATH_OUT_ID"
 printf '// AUTO-GENERATED SCRIPT
 #pragma once
-#include "sys/syscall/Func.hpp"
-#include "sys/syscall/ID.hpp"
-#include "sys/syscall/Type.hpp"
+#include "syscall/lin/Func.hpp"
+#include "syscall/lin/ID.hpp"
+#include "syscall/lin/Type.hpp"
 
-namespace cmn::sys::syscall
+namespace cmn::syscall
 {
 ' > "$PATH_OUT_CALL"
 

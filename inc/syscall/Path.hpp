@@ -10,14 +10,14 @@ namespace cmn::syscall
     };
     struct FileInfo
     {
-        Timestamp accessTime; // st_atime / LastAccessTime
-        Timestamp modifyTime; // st_mtime / LastWriteTime
-        Timestamp changeTime; // st_ctime / ChangeTime
+        Timestamp accessTime;
+        Timestamp modifyTime;
+        Timestamp changeTime;
 
-        i64       size;             // st_size
+        s64       size;
 
-        u32       mode;             // Linux/macOS st_mode
-        u32       attributes;       // Windows FILE_ATTRIBUTE_*
+        u32       mode;
+        u32       attributes;
     };
 
     FileInfo query(const c08* _path);

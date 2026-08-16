@@ -1,34 +1,20 @@
 #pragma once
 #include "sys/platform/Arch.hpp"
-#include "type/Alias.hpp"
+#include "syscall/lin/Alias.hpp"
 
 namespace cmn::syscall
 {
-    using aio_context_t = u64;
-    using mode_t        = u08;
-    using off_t         = i64;
-    using pid_t         = i32;
-    using key_t         = i32;
-    using timer_t       = i32;
-    using clockid_t     = i32;
-    using mqd_t         = i32;
-    using uid_t         = u32;
-    using gid_t         = u32;
-    using key_serial_t  = int;
-    using rwf_t         = i32;
-    using qid_t         = u32;
-
     // TODO: Remove all struct ptr-aliases.
     typedef struct __user_cap_header_struct
     {
-        u32 version;
-        i32 pid;
+        __u32 version;
+        int   pid;
     } *cap_user_header_t;
     typedef struct __user_cap_data_struct
     {
-        u32 effective;
-        u32 permitted;
-        u32 inheritable;
+        __u32 effective;
+        __u32 permitted;
+        __u32 inheritable;
     } *cap_user_data_t;
 
     enum landlock_rule_type
@@ -45,48 +31,47 @@ namespace cmn::syscall
 
     struct timespec
     {
-        i64 tv_sec;
-        i64 tv_nsec;
+        __kernel_old_time_t tv_sec;
+        long                tv_nsec;
     };
 
-    struct FileStatus
+
+    struct stat
     {
-        #ifdef CMN_SYS_ARCH_X64
-            u64      st_dev;
-            u64      st_ino;
-            u64      st_nlink;
-            u32      st_mode;
-            u32      st_uid;
-            u32      st_gid;
-            u32 : 32;
-            u64      st_rdev;
-            i64      st_size;
-            i64      st_blksize;
-            i64      st_blocks;
-            timespec st_atime;
-            timespec st_mtime;
-            timespec st_ctime;
-            u64 : 64;
-            u64 : 64;
-            u64 : 64;
-        #elif CMN_SYS_ARCH_ARM
-            u64      st_dev;
-            u64      st_ino;
-            u32      st_mode;
-            u32      st_nlink;
-            u32      st_uid;
-            u32      st_gid;
-            u64      st_rdev;
-            u64 : 64;
-            i64      st_size;
-            i32      st_blksize;
-            u32 : 32;
-            i64      st_blocks;
-            timespec st_atime;
-            timespec st_mtime;
-            timespec st_ctime;
-            u32 : 32;
-            u32 : 32;
+        #if CMN_SYS_ARCH_X64
+            dev_t           st_dev;
+            ino_t           st_ino;
+            nlink_t         st_nlink;
+            mode_t          st_mode;
+            uid_t           st_uid;
+            gid_t           st_gid;
+            unsigned int    __pad0;
+            dev_t           st_rdev;
+            size_t          st_size;
+            blksize_t       st_blksize;
+            blkcnt_t        st_blocks;
+            timespec        st_atim;
+            timespec        st_mtim;
+            timespec        st_ctim;
+            __kernel_long_t __unused[3];
+        #elif CMN_SYS_ARCH_ARM64
+            dev_t           st_dev;
+            ino_t           st_ino;
+            mode_t          st_mode;
+            nlink_t         st_nlink;
+            uid_t           st_uid;
+            gid_t           st_gid;
+            dev_t           st_rdev;
+            unsigned long   __pad1;
+            size_t          st_size;
+            blksize_t       st_blksize;
+            int             __pad2;
+            blkcnt_t        st_blocks;
+            timespec        st_atim;
+            timespec        st_mtim;
+            timespec        st_ctim;
+            unsigned int    __unused4;
+            unsigned int    __unused5;
         #endif
     };
 
@@ -105,6 +90,8 @@ namespace cmn::syscall
     struct iovec;
     struct __kernel_old_itimerval;
     struct __kernel_old_timeval;
+    struct __kernel_timespec;
+    struct __kernel_itimerspec;
     struct __kernel_timex;
     struct kexec_segment;
     struct landlock_ruleset_attr;
