@@ -327,7 +327,7 @@ namespace cmn::syscall
         #define WAITID                    95
         #define WRITE                     64
         #define WRITEV                    66
-        #endif
+    #endif
     #if CMN_SYS_ARCH_X64
         #define ACCEPT4                  288
         #define ACCEPT                    43
