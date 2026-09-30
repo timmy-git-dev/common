@@ -1,5 +1,4 @@
 #pragma once
-#include "sys/platform/Arch.hh"
 #include "type/Alias.hh"
 
 namespace cmn::syscall
@@ -37,41 +36,21 @@ namespace cmn::syscall
 
     struct DescriptorStatus
     {
-        #if CMN_SYS_ARCH_X64
-            u32      deviceId;
-            u32      inodeNumber;
-            u32      hardLinkCount;
-            u32      fileMode;
-            u32      userId;
-            u32      groupId;
-            u32      : 32;
-            u32      deviceType;
-            s64      fileSize;
-            u32      blockSize;
-            u32      allocatedBlockCount;
-            DescriptorTime accessTime;
-            DescriptorTime modificationTime;
-            DescriptorTime statusChangeTime;
-            u64      : 192;
-        #elif CMN_SYS_ARCH_ARM64
-            u32      deviceId;
-            u32      inodeNumber;
-            u32      fileMode;
-            u32      hardLinkCount;
-            u32      userId;
-            u32      groupId;
-            u32      deviceType;
-            u64      : 64;
-            s64       fileSize;
-            u32      blockSize;
-            u32      : 32;
-            u32      allocatedBlockCount;
-            timespec accessTime;
-            timespec modificationTime;
-            timespec statusChangeTime;
-            u32      : 32;
-            u32      : 32;
-        #endif
+        u32      deviceId;
+        u32      inodeNumber;
+        u32      hardLinkCount;
+        u32      fileMode;
+        u32      userId;
+        u32      groupId;
+        u32      : 32;
+        u32      deviceType;
+        s64      fileSize;
+        u32      blockSize;
+        u32      allocatedBlockCount;
+        DescriptorTime accessTime;
+        DescriptorTime modificationTime;
+        DescriptorTime statusChangeTime;
+        u64      : 192;
     };
 
     struct AioSignalSet;                     // aio_signal_set
