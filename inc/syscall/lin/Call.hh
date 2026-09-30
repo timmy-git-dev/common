@@ -1,5 +1,5 @@
 #pragma once
-#include "syscall/lin/Type.hpp"
+#include "syscall/lin/Type.hh"
 
 namespace cmn::syscall
 {

@@ -1,5 +1,5 @@
-#include "abi/Entry.hpp"
-#include "syscall/lin/Call.hpp"
+#include "abi/Entry.hh"
+#include "syscall/lin/Call.hh"
 
 i32 main(const i32, const c08**)
 {
