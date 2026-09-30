@@ -2,7 +2,8 @@ set -e
 
 echo "Setting constants..."
 
-TARGET="$1"
+# TARGET="$1"
+TARGET="x86_64-linux-gnu"
 
 # Set project directories.
 PATH_PWD="$PWD"
