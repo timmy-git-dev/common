@@ -1,10 +1,10 @@
-#include "sys/platform/OS.hpp"
-#include "syscall/Path.hpp"
-#include "syscall/lin/Type.hpp"
-#include "type/Alias.hpp"
+#include "sys/platform/OS.hh"
+#include "syscall/Path.hh"
+#include "syscall/lin/Type.hh"
+#include "type/Alias.hh"
 
 #if CMN_SYS_OS_LIN
-#include "syscall/lin/Call.hpp"
+#include "syscall/lin/Call.hh"
 
 namespace cmn::syscall
 {
@@ -74,7 +74,7 @@ namespace cmn::syscall
     }
 }
 #elif CMN_SYS_OS_MAC
-#include "syscall/mac/Call.hpp"
+#include "syscall/mac/Call.hh"
 
 namespace cmn::syscall
 {
@@ -107,7 +107,7 @@ namespace cmn::syscall
     }
 }
 #elif CMN_SYS_OS_WIN
-#include "syscall/win/Call.hpp"
+#include "syscall/win/Call.hh"
 
 s64 utf8_to_utf16(const c08* _src, c16* _dst)
 {

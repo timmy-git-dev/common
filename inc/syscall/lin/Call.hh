@@ -1,13 +1,12 @@
 // AUTO-GENERATED SCRIPT
 #pragma once
-#include "syscall/lin/Func.hpp"
-#include "syscall/lin/ID.hpp"
-#include "syscall/lin/Type.hpp"
+#include "syscall/lin/Func.hh"
+#include "syscall/lin/ID.hh"
+#include "syscall/lin/Type.hh"
 
 namespace cmn::syscall
 {
-    inline long accept                  (int _socketFileDescriptor, sockaddr *_peerSocketAddress, int *_peerSocketAddressLength) {return syscall(ACCEPT, (long)_socketFileDescriptor, (long)_peerSocketAddress, (long)_peerSocketAddressLength);};
-    // inline long accept                  (int fd, sockaddr *upeer_sockaddr, int *upeer_addrlen) {return syscall(ACCEPT, (long)fd, (long)upeer_sockaddr, (long)upeer_addrlen);};
+    inline long accept                  (int fd, sockaddr *upeer_sockaddr, int *upeer_addrlen) {return syscall(ACCEPT, (long)fd, (long)upeer_sockaddr, (long)upeer_addrlen);};
     inline long accept4                 (int fd, sockaddr *upeer_sockaddr, int *upeer_addrlen, int flags) {return syscall(ACCEPT4, (long)fd, (long)upeer_sockaddr, (long)upeer_addrlen, (long)flags);};
     inline long acct                    (const char *name) {return syscall(ACCT, (long)name);};
     inline long add_key                 (const char *_type, const char *_description, const void *_payload, s64 plen, key_serial_t ringid) {return syscall(ADD_KEY, (long)_type, (long)_description, (long)_payload, (long)plen, (long)ringid);};

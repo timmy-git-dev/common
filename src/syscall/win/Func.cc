@@ -1,5 +1,5 @@
-#include "syscall/win/Func.hpp"
-#include "sys/platform/Arch.hpp"
+#include "syscall/win/Func.hh"
+#include "sys/platform/Arch.hh"
 
 namespace cmn::syscall::win_
 {

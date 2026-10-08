@@ -1,7 +1,7 @@
 #pragma once
-#include "syscall/mac/Func.hpp"
-#include "syscall/mac/ID.hpp"
-#include "syscall/mac/Type.hpp"
+#include "syscall/mac/Func.hh"
+#include "syscall/mac/ID.hh"
+#include "syscall/mac/Type.hh"
 
 namespace cmn::syscall::mac
 {

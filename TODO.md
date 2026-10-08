@@ -1,6 +1,13 @@
-- implement universal syscalls for lin/win/mac. (exit, write, mmap, etc.)
-
-
+<!--1. rename all .hpp -> .hh & .cpp -> .cc.-->
+2. cleanup linux syscalls.
+  - separate calls h/c.
+  - separate func h/c.
+  - use enum for id.
+2. cleanup windows syscalls?
+3. cleanup mac syscalls.
+  - ensure correctness.
+  - separate calls h/c.
+  - separate func h/c.
 
 
 

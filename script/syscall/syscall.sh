@@ -76,16 +76,16 @@ readonly ignored_names="$(cut -d '|' -f1 <<< "$arm_syscalls"$'\n'"$x86_syscalls"
 # Write syscalls to file.
 printf '// AUTO-GENERATED SCRIPT
 #pragma once
-#include "sys/platform/Arch.hpp"
+#include "sys/platform/Arch.hh"
 
 namespace cmn::sys::syscall
 {
 ' > "$PATH_OUT_ID"
 printf '// AUTO-GENERATED SCRIPT
 #pragma once
-#include "sys/syscall/Func.hpp"
-#include "sys/syscall/ID.hpp"
-#include "sys/syscall/Type.hpp"
+#include "sys/syscall/Func.hh"
+#include "sys/syscall/ID.hh"
+#include "sys/syscall/Type.hh"
 
 namespace cmn::sys::syscall
 {

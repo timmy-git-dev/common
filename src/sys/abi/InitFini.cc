@@ -1,5 +1,5 @@
-#include "abi/InitFini.hpp"
-#include "sys/platform/OS.hpp"
+#include "abi/InitFini.hh"
+#include "sys/platform/OS.hh"
 
 #if CMN_SYS_OS_LIN
 namespace cmn::sys::abi

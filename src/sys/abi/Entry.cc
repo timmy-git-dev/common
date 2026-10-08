@@ -1,8 +1,8 @@
-#include "abi/Entry.hpp"
-#include "abi/Cxa.hpp"
-#include "abi/InitFini.hpp"
+#include "abi/Entry.hh"
+#include "abi/Cxa.hh"
+#include "abi/InitFini.hh"
 
-#include "syscall/lin/Call.hpp" // TODO: replace syscall with universal "exit".
+#include "syscall/lin/Call.hh" // TODO: replace syscall with universal "exit".
 
 extern "C" void start__()
 {
@@ -18,7 +18,7 @@ extern "C" void start__()
 }
 
 
-// TODO: implement mac's + windows' InitFini.cpp:
+// TODO: implement mac's + windows' InitFini.cc:
 
 // extern "C" void __main() { }
 

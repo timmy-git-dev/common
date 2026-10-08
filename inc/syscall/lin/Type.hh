@@ -1,6 +1,6 @@
 #pragma once
-#include "sys/platform/Arch.hpp"
-#include "type/Alias.hpp"
+#include "sys/platform/Arch.hh"
+#include "type/Alias.hh"
 
 namespace cmn::syscall
 {

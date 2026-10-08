@@ -1,5 +1,5 @@
-#include "syscall/win/Call.hpp"
-#include "syscall/win/Func.hpp"
+#include "syscall/win/Call.hh"
+#include "syscall/win/Func.hh"
 
 namespace cmn::syscall::win
 {

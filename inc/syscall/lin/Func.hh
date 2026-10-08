@@ -1,5 +1,5 @@
 #pragma once
-#include "sys/platform/Arch.hpp"
+#include "sys/platform/Arch.hh"
 
 namespace cmn::syscall
 {

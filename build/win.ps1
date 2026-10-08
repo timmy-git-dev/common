@@ -78,11 +78,11 @@ function CompileDir {
         [string]$DIR
     )
 
-    Get-ChildItem $DIR -Recurse -File -Filter "*.cpp" | ForEach-Object {
-        $CPP = $_.FullName
+    Get-ChildItem $DIR -Recurse -File -Filter "*.cc" | ForEach-Object {
+        $CC = $_.FullName
 
-        $REL = $CPP.Substring($DIR.Length).TrimStart("\","/")
-        $OBJ_PATH = Join-Path $OBJ ($REL -replace "\.cpp$", ".o")
+        $REL = $CC.Substring($DIR.Length).TrimStart("\","/")
+        $OBJ_PATH = Join-Path $OBJ ($REL -replace "\.cc$", ".o")
 
         Write-Host "  Compiling $REL..."
 
@@ -94,7 +94,7 @@ function CompileDir {
             $FLAGS_BOTH `
             $FLAGS_COMP `
             $INCLUDE_FLAGS `
-            -c $CPP `
+            -c $CC `
             -o $OBJ_PATH
 
         if ($LASTEXITCODE -ne 0) {

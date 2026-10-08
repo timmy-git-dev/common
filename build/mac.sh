@@ -50,30 +50,30 @@ EOF
 
 echo "Compiling objects..."
 
-# Gather all .cpp files and compile each one into it's corresponding bin/obj/ location.
-PATHS_CPP=$(find "$PATH_SRC" -type f -name "*.cpp")
-for PATH_SRC_CPP in $PATHS_CPP; do
-    PATH_REL_CPP="${PATH_SRC_CPP#$PATH_SRC}"
-    PATH_OBJ_O="$PATH_OBJ${PATH_REL_CPP%.cpp}.o"
+# Gather all .cc files and compile each one into it's corresponding bin/obj/ location.
+PATHS_CC=$(find "$PATH_SRC" -type f -name "*.cc")
+for PATH_SRC_CC in $PATHS_CC; do
+    PATH_REL_CC="${PATH_SRC_CC#$PATH_SRC}"
+    PATH_OBJ_O="$PATH_OBJ${PATH_REL_CC%.cc}.o"
     PATH_SUB_OBJ="${PATH_OBJ_O%/*}"
 
-    echo "  Compiling $PATH_REL_CPP..."
+    echo "  Compiling $PATH_REL_CC..."
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ --target=$TARGET $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CPP" -o "$PATH_OBJ_O"
+    clang++ --target=$TARGET $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_SRC_CC" -o "$PATH_OBJ_O"
 done
-PATHS_CPP=$(find "$PATH_TST" -type f -name "*.cpp")
-for PATH_TST_CPP in $PATHS_CPP; do
-    PATH_REL_CPP="${PATH_TST_CPP#$PATH_TST}"
-    PATH_OBJ_O="$PATH_OBJ${PATH_REL_CPP%.cpp}.o"
+PATHS_CC=$(find "$PATH_TST" -type f -name "*.cc")
+for PATH_TST_CC in $PATHS_CC; do
+    PATH_REL_CC="${PATH_TST_CC#$PATH_TST}"
+    PATH_OBJ_O="$PATH_OBJ${PATH_REL_CC%.cc}.o"
     PATH_SUB_OBJ="${PATH_OBJ_O%/*}"
 
-    echo "  Compiling $PATH_REL_CPP..."
+    echo "  Compiling $PATH_REL_CC..."
 
     mkdir -p "$PATH_SUB_OBJ"
 
-    clang++ --target=$TARGET $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CPP" -o "$PATH_OBJ_O"
+    clang++ --target=$TARGET $COMPILE_VERSION $FLAGS_BOTH $FLAGS_COMP -I$PATH_INC -c "$PATH_TST_CC" -o "$PATH_OBJ_O"
 done
 
 echo "Linking project..."

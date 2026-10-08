@@ -1,5 +1,5 @@
-#include "abi/Cxa.hpp"
-#include "type/Alias.hpp"
+#include "abi/Cxa.hh"
+#include "type/Alias.hh"
 
 using Destructor = void(*)(void*);
 

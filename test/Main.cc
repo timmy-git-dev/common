@@ -1,8 +1,8 @@
-#include "abi/Entry.hpp"
-#include "sys/platform/OS.hpp"
+#include "abi/Entry.hh"
+#include "sys/platform/OS.hh"
 
 #if CMN_SYS_OS_LIN
-#include "syscall/lin/Call.hpp"
+#include "syscall/lin/Call.hh"
 i32 main(const i32, const c08**)
 {
     c08 _buffer[15] = "Hello, world!\n";
@@ -11,8 +11,8 @@ i32 main(const i32, const c08**)
     return 0;
 }
 #elif CMN_SYS_OS_WIN
-#include "syscall/win/Nt.hpp"
-#include "syscall/win/Resolve.hpp"
+#include "syscall/win/Nt.hh"
+#include "syscall/win/Resolve.hh"
 
 int test(int _result)
 {
@@ -40,7 +40,7 @@ i32 main(const i32, const c08**)
     return 0;
 }
 #elif CMN_SYS_OS_MAC
-#include "sys/xnu/Call.hpp"
+#include "sys/xnu/Call.hh"
 
 i32 main(const i32, const c08**)
 {
