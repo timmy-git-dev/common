@@ -1,4 +1,15 @@
-type:
+- implement universal syscalls for lin/win/mac. (exit, write, mmap, etc.)
+
+
+
+
+
+
+
+
+
+
+<!--type:
 ├─ alias
 ├─ cast
 └─ trait
@@ -99,4 +110,4 @@ type:
           ├─ file
           └─ directory
           io: type, container, fs
-          └─ terminal
+          └─ terminal-->
