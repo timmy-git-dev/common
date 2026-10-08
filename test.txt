@@ -1,0 +1,645 @@
+
+/// accept : Removes one pending connection from a listening socket and returns a new connected socket descriptor.
+i64 accept_connection(i32 _fileDescriptor, SocketAddress* _peerSocketAddress, i32* _peerAddressLength);
+/// accept4 : Accepts a pending socket connection while atomically applying flags to the returned socket.
+i64 accept_connection_with_flags(i32 _fileDescriptor, SocketAddress* _peerSocketAddress, i32* _peerAddressLength, i32 _flags);
+/// inotify_add_watch : Adds or updates an inotify watch for a filesystem path.
+i64 add_inotify_watch(i32 _fileDescriptor, const c08* _pathName, u32 _mask);
+/// add_key : Creates or updates a kernel key and links it into the specified keyring.
+i64 add_key_to_keyring(const c08* _type, const c08* _description, const void* _payload, s64 _payloadLength, i32 _keyringId);
+/// landlock_add_rule : Adds a restriction rule to an existing Landlock ruleset.
+i64 add_landlock_rule(const i32 _rulesetFileDescriptor, const LandlockRulesetType _ruleType, const void* const _ruleAttributes, const u32 _flags);
+/// clock_adjtime : Reads or modifies synchronization and adjustment parameters for a selected kernel clock.
+i64 adjust_clock(const i32 _clockId, KernelTimeAdjustment* _timeAdjustment);
+/// adjtimex : Reads or modifies the kernel's CLOCK_REALTIME synchronization and adjustment parameters.
+i64 adjust_system_clock(KernelTimeAdjustment* _timeAdjustment);
+/// madvise : Provides the kernel with expected access behavior for a virtual-memory range.
+i64 advise_memory(u64 _startAddress, s64 _length, i32 _behavior);
+/// process_madvise : Provides memory-use advice for ranges in another process referenced by a process descriptor.
+i64 advise_process_memory(i32 _processFileDescriptor, const IoVector* _vectors, s64 _vectorCount, i32 _behavior, u32 _flags);
+/// fallocate : Allocates, deallocates, or otherwise manipulates storage space within a file.
+i64 allocate_file_space(i32 _fileDescriptor, i32 _mode, i64 _offset, i64 _length);
+/// pkey_alloc : Allocates a hardware memory-protection key and initializes its access rights.
+i64 allocate_memory_protection_key(u64 _flags, u64 _initialRights);
+/// landlock_restrict_self : Applies a Landlock ruleset to the calling thread and its subsequently created children.
+i64 apply_landlock_ruleset(const i32 _rulesetFileDescriptor, const u32 _flags);
+/// shmat : Attaches a System V shared-memory segment to the calling process's address space.
+i64 attach_shared_memory(i32 _sharedMemoryId, c08* _sharedMemoryAddress, i32 _flags);
+/// mbind : Applies a NUMA memory-placement policy to a virtual-memory range.
+i64 bind_memory_policy(u64 _startAddress, u64 _length, u64 _mode, const u64* _nodeMask, u64 _maximumNode, u32 _flags);
+/// bind : Assigns a local address to a socket.
+i64 bind_socket(i32 _fileDescriptor, SocketAddress* _socketAddress, i32 _addressLength);
+/// brk : OBSOLETE
+i64 brk(u64 _programBreak);
+/// io_cancel : Attempts to cancel an outstanding Linux AIO request and returns its completion event when successful.
+i64 cancel_async_io(u64 _contextId, IoControlBlock* _ioControlBlock, IoCompletionEvent* _result);
+/// fchmod : Changes permission and mode bits of an object referenced by a file descriptor.
+i64 change_file_mode(u32 _fileDescriptor, u16 _mode);
+/// fchmodat : Changes permission and mode bits of a path relative to a directory descriptor.
+i64 change_file_mode_at(i32 _directoryFileDescriptor, const c08* _fileName, u16 _mode);
+/// fchmodat2 : Changes permission and mode bits of a path relative to a directory descriptor with additional path-handling flags.
+i64 change_file_mode_at_with_flags(i32 _directoryFileDescriptor, const c08* _fileName, u16 _mode, u32 _flags);
+/// fchown : Changes the owner and group of an object referenced by a file descriptor.
+i64 change_file_owner(u32 _fileDescriptor, u32 _userId, u32 _groupId);
+/// fchownat : Changes the owner and group of a path relative to a directory descriptor.
+i64 change_file_owner_at(i32 _directoryFileDescriptor, const c08* _fileName, u32 _userId, u32 _groupId, i32 _flags);
+/// chroot : Changes the root directory used when resolving absolute paths for the calling process.
+i64 change_root_directory(const c08* _fileName);
+/// pivot_root : Replaces the process's root mount with another mount and moves the previous root underneath it.
+i64 change_root_mount(const c08* _newRoot, const c08* _oldRootLocation);
+/// chdir : Changes the calling process's current working directory.
+i64 change_working_directory(const c08* _fileName);
+/// fchdir : Changes the calling process's working directory to the directory referenced by a descriptor.
+i64 change_working_directory_from_descriptor(u32 _fileDescriptor);
+/// faccessat : Checks whether a file resolved relative to a directory descriptor is accessible.
+i64 check_file_access_at(i32 _directoryFileDescriptor, const c08* _fileName, i32 _mode);
+/// faccessat2 : Checks whether a file is accessible using credentials and path-resolution behavior controlled by flags.
+i64 check_file_access_at_with_flags(i32 _directoryFileDescriptor, const c08* _fileName, i32 _mode, i32 _flags);
+/// close : Releases a file descriptor from the calling process.
+i64 close_file_descriptor(u32 _fileDescriptor);
+/// close_range : Closes, marks close-on-exec, or unshares a contiguous range of file descriptors according to flags.
+i64 close_file_descriptor_range(u32 _firstFileDescriptor, u32 _maximumFileDescriptor, u32 _flags);
+/// kcmp : Compares a selected kernel resource belonging to two processes.
+i64 compare_process_resources(i32 _processId1, i32 _processId2, i32 _type, u64 _index1, u64 _index2);
+/// epoll_ctl : Adds, modifies, or removes a file descriptor from an epoll instance.
+i64 configure_epoll_watch(i32 _epollFileDescriptor, i32 _operation, i32 _fileDescriptor, EpollEventData* _event);
+/// fsconfig : Applies configuration commands to a filesystem context.
+i64 configure_filesystem_context(i32 _fileDescriptor, u32 _command, const c08* _key, const void* _value, i32 _auxiliary);
+/// io_uring_register : Registers, unregisters, updates, or queries resources and features associated with an io_uring instance.
+i64 configure_io_uring(u32 _fileDescriptor, u32 _operationCode, void* _argument, u32 _argumentCount);
+/// mq_getsetattr : Retrieves message-queue attributes and optionally replaces mutable queue flags.
+i64 configure_message_queue_attributes(i32 _messageQueueDescriptor, const MessageQueueAttributes* _newAttributes, MessageQueueAttributes* _oldAttributes);
+/// mq_notify : Registers or removes asynchronous notification for a POSIX message queue.
+i64 configure_message_queue_notification(i32 _messageQueueDescriptor, const SignalEvent* _notification);
+/// acct : Enables process accounting to a specified file, or disables it when given a null path.
+i64 configure_process_accounting(const c08* _fileName);
+/// personality : Retrieves and optionally changes execution-domain compatibility behavior for the calling process.
+i64 configure_process_personality(u32 _personality);
+/// prlimit64 : Retrieves and optionally replaces a resource limit for a specified process.
+i64 configure_process_resource_limit(i32 _processId, u32 _resource, const ResourceLimit64* _newLimit, ResourceLimit64* _oldLimit);
+/// rseq : Registers or unregisters a userspace restartable-sequence area for the calling thread.
+i64 configure_restartable_sequence(RestartableSequence* _restartableSequence, u32 _restartableSequenceLength, i32 _flags, u32 _signature);
+/// rt_sigaction : Retrieves or changes the action performed when a signal is delivered.
+i64 configure_signal_action(i32 _signal, const SignalAction* _action, SignalAction* _oldAction, s64 _signalSetSize);
+/// signalfd4 : Creates or reconfigures a file descriptor that reports selected signals as readable records.
+i64 configure_signal_descriptor(i32 _fileDescriptor, SignalSet* _signalMask, s64 _signalMaskSize, i32 _flags);
+/// rt_sigprocmask : Retrieves or changes the calling thread's blocked signal set.
+i64 configure_signal_mask(i32 _how, SignalSet* _newSignalSet, SignalSet* _oldSignalSet, s64 _signalSetSize);
+/// sigaltstack : Retrieves or changes the alternate stack used for signal handlers.
+i64 configure_signal_stack(const SignalStack* _newStack, SignalStack* _oldStack);
+/// seccomp : Configures syscall filtering or retrieves seccomp-related capabilities for the calling thread.
+i64 configure_syscall_filtering(u32 _operation, u32 _flags, void* _arguments);
+/// connect : Associates a socket with a peer address, initiating a connection where required by the socket type.
+i64 connect_socket(i32 _fileDescriptor, SocketAddress* _serverAddress, i32 _addressLength);
+/// fcntl : Performs a command-specific operation on an open file descriptor.
+i64 control_file_descriptor(u32 _fileDescriptor, u32 _command, u64 _argument);
+/// quotactl : Performs a filesystem quota-management operation using a filesystem path or special device.
+i64 control_filesystem_quota(u32 _command, const c08* _specialDevice, u32 _quotaId, void* _address);
+/// quotactl_fd : Performs a filesystem quota-management operation using an open file descriptor.
+i64 control_filesystem_quota_by_descriptor(u32 _fileDescriptor, u32 _command, u32 _quotaId, void* _address);
+/// keyctl : Performs a command-specific operation on the kernel key-management facility.
+i64 control_kernel_keys(i32 _option, u64 _argument2, u64 _argument3, u64 _argument4, u64 _argument5);
+/// syslog : Reads or controls the kernel logging buffer according to an operation code.
+i64 control_kernel_log(i32 _type, c08* _buffer, i32 _length);
+/// msgctl : Queries or modifies a System V message queue.
+i64 control_message_queue(i32 _messageQueueId, i32 _command, MessageQueueStatus* _buffer);
+/// prctl : Performs a process- or thread-specific control operation selected by an option code.
+i64 control_process(i32 _option, u64 _argument2, u64 _argument3, u64 _argument4, u64 _argument5);
+/// ptrace : Performs a tracing, debugging, or inspection operation on another thread.
+i64 control_process_trace(i64 _request, i64 _processId, u64 _address, u64 _data);
+/// semctl : Performs a control or metadata operation on a System V semaphore set.
+i64 control_semaphore_set(i32 _semaphoreId, i32 _semaphoreNumber, i32 _command, u64 _argument);
+/// shmctl : Queries or modifies a System V shared-memory segment.
+i64 control_shared_memory(i32 _sharedMemoryId, i32 _command, SharedMemoryStatus* _buffer);
+/// reboot : Performs a privileged system reboot, shutdown, suspend, or related control operation.
+i64 control_system_power(i32 _magic1, i32 _magic2, u32 _command, void* _argument);
+/// copy_file_range : Copies file data between descriptors inside the kernel without routing the data through userspace.
+i64 copy_file_data(i32 _inputFileDescriptor, i64* _inputOffset, i32 _outputFileDescriptor, i64* _outputOffset, s64 _length, u32 _flags);
+/// sendfile64 : Copies file data directly between file descriptors without routing the payload through userspace.
+i64 copy_file_to_descriptor(i32 _outputFileDescriptor, i32 _inputFileDescriptor, i64* _offset, s64 _count);
+/// io_setup : Creates a Linux asynchronous-I/O context.
+i64 create_async_io_context(u32 _eventCount, u64* _context);
+/// clone : Creates a child task while controlling which execution resources are shared with the caller.
+i64 create_child_task(u64 _cloneFlags, u64 _newStackPointer, i32* _parentThreadId, u64 _threadLocalStorage, i32* _childThreadId);
+/// clone3 : Creates a child task using an extensible argument structure with capabilities beyond clone().
+i64 create_child_task_with_options(CloneArguments* _arguments, s64 _size);
+/// fsmount : Creates a detached mount from a configured filesystem context and returns a mount file descriptor.
+i64 create_detached_mount(i32 _fileSystemFileDescriptor, u32 _flags, u32 _attributeFlags);
+/// mkdirat : Creates a directory using a path resolved relative to a directory descriptor.
+i64 create_directory_at(i32 _directoryFileDescriptor, const c08* _pathName, u16 _mode);
+/// epoll_create1 : Creates a new epoll instance and returns its file descriptor.
+i64 create_epoll(i32 _flags);
+/// eventfd2 : Creates a kernel-maintained 64-bit event counter accessible through a file descriptor.
+i64 create_event_counter(u32 _initialValue, i32 _flags);
+/// fanotify_init : Creates a fanotify notification group and returns its file descriptor.
+i64 create_fanotify_group(u32 _flags, u32 _eventFileFlags);
+/// fsopen : Creates a filesystem configuration context for a named filesystem type.
+i64 create_filesystem_context(const c08* _fileSystemName, u32 _flags);
+/// mknodat : Creates a filesystem node using a path resolved relative to a directory descriptor.
+i64 create_filesystem_node_at(i32 _directoryFileDescriptor, const c08* _fileName, u16 _mode, u32 _device);
+/// linkat : Creates a hard link between paths resolved relative to independently specified directory descriptors.
+i64 create_hard_link_at(i32 _oldDirectoryFileDescriptor, const c08* _oldName, i32 _newDirectoryFileDescriptor, const c08* _newName, i32 _flags);
+/// inotify_init1 : Creates an inotify instance and returns its file descriptor.
+i64 create_inotify(i32 _flags);
+/// io_uring_setup : Creates an io_uring instance and returns its file descriptor.
+i64 create_io_uring(u32 _entries, IoUringParameters* _parameters);
+/// landlock_create_ruleset : Creates a Landlock ruleset or queries the supported Landlock ABI according to flags.
+i64 create_landlock_ruleset(const LandlockRulesetAttributes* const _attributes, const u64 _size, const u32 _flags);
+/// memfd_create : Creates an anonymous RAM-backed file and returns its descriptor.
+i64 create_memory_file(const c08* _name, u32 _flags);
+/// pipe2 : Creates a unidirectional pipe and atomically applies descriptor flags.
+i64 create_pipe(i32* _fileDescriptors, i32 _flags);
+/// setsid : Creates a new session and process group with the caller as leader.
+i64 create_process_session();
+/// timer_create : Creates a POSIX per-process timer using a specified clock.
+i64 create_process_timer(const i32 _clockId, SignalEvent* _timerEventSpecification, i32* _createdTimerId);
+/// memfd_secret : Creates a file descriptor representing memory isolated from ordinary kernel mappings.
+i64 create_secret_memory(i32 _flags);
+/// map_shadow_stack : Creates a userspace shadow-stack memory mapping for architectures that support shadow stacks.
+i64 create_shadow_stack(u64 _address, u64 _size, u32 _flags);
+/// socket : Creates a socket endpoint and returns its file descriptor.
+i64 create_socket(i32 _family, i32 _type, i32 _protocol);
+/// socketpair : Creates a connected pair of sockets.
+i64 create_socket_pair(i32 _family, i32 _type, i32 _protocol, i32* _socketDescriptors);
+/// symlinkat : Creates a symbolic link at a path resolved relative to a directory descriptor.
+i64 create_symbolic_link_at(const c08* _oldName, i32 _newDirectoryFileDescriptor, const c08* _newName);
+/// timerfd_create : Creates a timer exposed through a readable file descriptor.
+i64 create_timer_descriptor(i32 _clockId, i32 _flags);
+/// userfaultfd : Creates a descriptor through which userspace can handle selected page faults.
+i64 create_user_fault_descriptor(i32 _flags);
+/// timer_delete : Deletes a POSIX per-process timer.
+i64 delete_process_timer(i32 _timerId);
+/// io_destroy : Destroys a Linux AIO context and handles any outstanding requests associated with it.
+i64 destroy_async_io_context(u64 _context);
+/// shmdt : Detaches a System V shared-memory segment from the calling process.
+i64 detach_shared_memory(c08* _sharedMemoryAddress);
+/// swapoff : Disables swapping to a specified swap file or device.
+i64 disable_swap(const c08* _specialFile);
+/// dup : Creates a copy of a file descriptor using the lowest available descriptor number.
+i64 duplicate_file_descriptor(u32 _fileDescriptor);
+/// dup3 : Duplicates a file descriptor into a specific descriptor number while optionally applying flags.
+i64 duplicate_file_descriptor_to(u32 _oldFileDescriptor, u32 _newFileDescriptor, i32 _flags);
+/// tee : Duplicates data between pipes without consuming it from the source pipe.
+i64 duplicate_pipe_data(i32 _inputFileDescriptor, i32 _outputFileDescriptor, s64 _length, u32 _flags);
+/// pidfd_getfd : Duplicates a file descriptor from another process referenced by a process descriptor.
+i64 duplicate_process_descriptor(i32 _processFileDescriptor, i32 _fileDescriptor, u32 _flags);
+/// swapon : Enables swapping to a specified file or device.
+i64 enable_swap(const c08* _specialFile, i32 _swapFlags);
+/// bpf : Executes a command against Linux eBPF programs, maps, links, or other BPF objects.
+i64 execute_bpf_command(i32 _command, union bpf_attr* _attributes, u32 _size);
+/// execve : Replaces the calling process image with a specified executable.
+i64 execute_program(const c08* _fileName, const c08* const* _arguments, const c08* const* _environment);
+/// execveat : Replaces the calling process image with an executable resolved relative to a directory descriptor.
+i64 execute_program_at(i32 _fileDescriptor, const c08* _fileName, const c08* const* _arguments, const c08* const* _environment, i32 _flags);
+/// exit_group : Terminates every thread in the calling process and records its exit status.
+i64 exit_process(i32 _errorCode);
+/// exit : Terminates only the calling thread and records its exit status.
+i64 exit_thread(i32 _errorCode);
+/// pkey_free : Releases a previously allocated memory-protection key.
+i64 free_memory_protection_key(i32 _protectionKey);
+/// io_getevents : Retrieves completed operations from a Linux AIO completion queue.
+i64 get_async_io_completions(u64 _contextId, i64 _minimumEvents, i64 _eventCount, IoCompletionEvent* _events, KernelTimeSpecification* _timeout);
+/// io_pgetevents : Retrieves Linux AIO completions while temporarily applying a specified signal mask during the wait.
+i64 get_async_io_completions_with_signal_mask(u64 _contextId, i64 _minimumEvents, i64 _eventCount, IoCompletionEvent* _events, KernelTimeSpecification* _timeout, const AioSignalSet* _signalSet);
+/// clock_getres : Retrieves the resolution of a selected clock.
+i64 get_clock_resolution(const i32 _clockId, KernelTimeSpecification* _resolution);
+/// clock_gettime : Retrieves the current value of a selected clock.
+i64 get_clock_time(const i32 _clockId, KernelTimeSpecification* _time);
+/// sched_getaffinity : Retrieves the CPUs on which a thread is permitted to execute.
+i64 get_cpu_affinity(i32 _processId, u32 _length, u64* _cpuMask);
+/// getcpu : Returns the CPU and NUMA node on which the calling thread is currently executing.
+i64 get_current_cpu(u32* _cpu, u32* _node, void* _unused);
+/// newfstat : Retrieves filesystem metadata for an object referenced by a file descriptor.
+i64 get_descriptor_status(u32 _fileDescriptor, DescriptorStatus* _statusBuffer);
+/// getegid : Returns the effective group ID of the calling thread.
+i64 get_effective_group_id();
+/// geteuid : Returns the effective user ID of the calling thread.
+i64 get_effective_user_id();
+/// fgetxattr : Retrieves an extended attribute from an object referenced by a file descriptor.
+i64 get_extended_attribute(i32 _fileDescriptor, const c08* _name, void* _value, u64 _size);
+/// getxattr : Retrieves a named extended attribute from a filesystem object referenced by a path.
+i64 get_extended_attribute(const c08* _pathName, const c08* _name, void* _value, u64 _size);
+/// getxattrat : Retrieves a named extended attribute using directory-relative path resolution and extended argument options.
+i64 get_extended_attribute_at(i32 _directoryFileDescriptor, const c08* _pathName, u32 _lookupFlags, const c08* _name, ExtendedAttributeArguments* _arguments, u64 _size);
+/// lgetxattr : Retrieves a named extended attribute from a path without following the final symbolic link.
+i64 get_extended_attribute_no_follow(const c08* _pathName, const c08* _name, void* _value, u64 _size);
+/// statx : Retrieves extended filesystem metadata for a path with explicit control over lookup and requested fields.
+i64 get_extended_file_status(i32 _directoryFileDescriptor, const c08* _fileName, u32 _flags, u32 _mask, ExtendedFileStatus* _buffer);
+/// name_to_handle_at : Converts a filesystem path into an opaque persistent file handle and mount identifier.
+i64 get_file_handle_at(i32 _directoryFileDescriptor, const c08* _name, FileHandleInfo* _fileHandle, void* _mountId, i32 _flags);
+/// file_getattr : Retrieves filesystem-specific attributes for a path.
+i64 get_filesystem_file_attributes(i32 _directoryFileDescriptor, const c08* _fileName, FileAttributes* _fileAttributes, u64 _size, u32 _lookupFlags);
+/// statfs : Retrieves filesystem-wide statistics for the filesystem containing a path.
+i64 get_filesystem_statistics(const c08* _pathName, FilesystemStatistics* _buffer);
+/// fstatfs : Retrieves filesystem-wide statistics for the filesystem containing an open object.
+i64 get_filesystem_statistics(u32 _fileDescriptor, FilesystemStatistics* _buffer);
+/// getresgid : Retrieves the real, effective, and saved group IDs of the calling thread.
+i64 get_group_credentials(u32* _realGroupId, u32* _effectiveGroupId, u32* _savedGroupId);
+/// getitimer : Retrieves the current state of a process interval timer.
+i64 get_interval_timer(i32 _timerType, LegacyIntervalTimerValue* _value);
+/// ioprio_get : Retrieves the I/O scheduling priority of a process, process group, or user.
+i64 get_io_priority(i32 _which, i32 _who);
+/// getsockname : Retrieves the local address currently associated with a socket.
+i64 get_local_socket_address(i32 _fileDescriptor, SocketAddress* _socketAddress, i32* _socketAddressLength);
+/// sched_get_priority_max : Returns the highest static priority supported by a scheduling policy.
+i64 get_maximum_scheduler_priority(i32 _policy);
+/// get_mempolicy : Retrieves NUMA memory-policy information for the calling thread or a specified memory address.
+i64 get_memory_policy(i32* _policy, u64* _nodeMask, u64 _maximumNode, u64 _address, u64 _flags);
+/// msgget : Opens an existing System V message queue or creates one for a specified key.
+i64 get_message_queue(i32 _key, i32 _messageFlags);
+/// sched_get_priority_min : Returns the lowest static priority supported by a scheduling policy.
+i64 get_minimum_scheduler_priority(i32 _policy);
+/// statmount : Retrieves detailed information about a mount identified by a mount request.
+i64 get_mount_information(const MountIdentifierRequest* _request, MountStatistics* _buffer, s64 _bufferSize, u32 _flags);
+/// getpriority : Retrieves the highest scheduling nice priority among the selected processes, process group, or user.
+i64 get_nice_priority(i32 _which, i32 _who);
+/// getppid : Returns the process ID of the caller's parent process.
+i64 get_parent_process_id();
+/// newfstatat : Retrieves filesystem metadata for a path resolved relative to a directory descriptor.
+i64 get_path_status_at(i32 _directoryFileDescriptor, const c08* _fileName, DescriptorStatus* _statusBuffer, i32 _flags);
+/// getpeername : Retrieves the remote address associated with a connected socket.
+i64 get_peer_socket_address(i32 _fileDescriptor, SocketAddress* _socketAddress, i32* _socketAddressLength);
+/// rt_sigpending : Retrieves signals that are blocked and currently pending.
+i64 get_pending_signals(SignalSet* _signalSet, s64 _signalSetSize);
+/// getpgid : Returns the process-group ID of a specified process.
+i64 get_process_group_id(i32 _processId);
+/// getpid : Returns the process ID of the calling process.
+i64 get_process_id();
+/// timer_gettime : Retrieves the remaining expiration time and repeat interval of a POSIX timer.
+i64 get_process_timer(i32 _timerId, KernelIntervalTimerSpecification* _setting);
+/// times : Retrieves CPU execution-time statistics for the calling process and its waited-for children.
+i64 get_process_times(ProcessTimeStatistics* _timesBuffer);
+/// getrandom : Fills a buffer with random bytes provided by the kernel random subsystem.
+i64 get_random_bytes(c08* _buffer, u64 _length, u32 _flags);
+/// getgid : Returns the real group ID of the calling thread.
+i64 get_real_group_id();
+/// getuid : Returns the real user ID of the calling thread.
+i64 get_real_user_id();
+/// getrlimit : Retrieves the soft and hard limits for a process resource.
+i64 get_resource_limit(u32 _resource, ResourceLimit* _resourceLimit);
+/// getrusage : Retrieves resource-consumption statistics for the selected execution scope.
+i64 get_resource_usage(i32 _who, ResourceUsage* _resourceUsage);
+/// sched_rr_get_interval : Retrieves the round-robin scheduling quantum for a thread.
+i64 get_round_robin_interval(i32 _processId, KernelTimeSpecification* _interval);
+/// sched_getattr : Retrieves extended scheduler attributes for a thread.
+i64 get_scheduler_attributes(i32 _processId, SchedulerAttributes* _attributes, u32 _size, u32 _flags);
+/// sched_getparam : Retrieves scheduler parameters for a thread.
+i64 get_scheduler_parameters(i32 _processId, SchedulerParameters* _parameters);
+/// sched_getscheduler : Returns the scheduling policy currently assigned to a thread.
+i64 get_scheduler_policy(i32 _processId);
+/// lsm_get_self_attr : Retrieves Linux Security Module attributes associated with the calling task.
+i64 get_security_attributes(u32 _attribute, SecurityModuleContext* _context, u32* _size, u32 _flags);
+/// semget : Opens an existing System V semaphore set or creates one for a key.
+i64 get_semaphore_set(i32 _key, i32 _semaphoreCount, i32 _flags);
+/// getsid : Returns the session ID of a specified process.
+i64 get_session_id(i32 _processId);
+/// shmget : Opens an existing System V shared-memory segment or creates one for a key.
+i64 get_shared_memory(i32 _key, s64 _size, i32 _flags);
+/// getsockopt : Retrieves the current value of a socket option.
+i64 get_socket_option(i32 _fileDescriptor, i32 _level, i32 _optionName, c08* _optionValue, i32* _optionLength);
+/// getgroups : Retrieves the supplementary group IDs of the calling thread.
+i64 get_supplementary_groups(i32 _groupSetSize, u32* _groupList);
+/// newuname : Retrieves identifying information about the running Linux system.
+i64 get_system_identification(SystemIdentification* _systemName);
+/// sysinfo : Retrieves system-wide memory, swap, uptime, and process statistics.
+i64 get_system_information(SystemInformation* _information);
+/// capget : Retrieves Linux capability sets for the thread identified by the capability header.
+i64 get_thread_capabilities(cap_user_header_t _capabilityHeader, cap_user_data_t _capabilityData);
+/// gettid : Returns the thread ID of the calling thread.
+i64 get_thread_id();
+/// get_robust_list : Retrieves the robust-futex list registered by a specified thread.
+i64 get_thread_robust_futex_list(i32 _processId, RobustFutexListHead** _headPointer, u64* _lengthPointer);
+/// timerfd_gettime : Retrieves the current expiration and interval settings of a timer descriptor.
+i64 get_timer_descriptor(i32 _fileDescriptor, KernelIntervalTimerSpecification* _currentTimer);
+/// timer_getoverrun : Returns the number of additional timer expirations that occurred before the most recent notification was delivered.
+i64 get_timer_overrun_count(i32 _timerId);
+/// getresuid : Retrieves the real, effective, and saved user IDs of the calling thread.
+i64 get_user_credentials(u32* _realUserId, u32* _effectiveUserId, u32* _savedUserId);
+/// gettimeofday : Retrieves the current wall-clock time and optionally legacy timezone information.
+i64 get_wall_clock_time(LegacyTimeValue* _timeValue, TimezoneInformation* _timezone);
+/// getcwd : Copies the calling process's absolute current working directory into a userspace buffer.
+i64 get_working_directory(c08* _buffer, u64 _size);
+/// vhangup : Simulates a terminal hangup on the calling process's controlling terminal.
+i64 hangup_virtual_terminal();
+/// membarrier : Issues a process-wide or expedited memory-ordering barrier operation.
+i64 issue_memory_barrier(i32 _command, u32 _flags, i32 _cpuId);
+/// setns : Moves the calling thread into one or more namespaces referenced by a file descriptor.
+i64 join_namespace(i32 _fileDescriptor, i32 _flags);
+/// flistxattr : Retrieves the names of all extended attributes on an object referenced by a file descriptor.
+i64 list_extended_attributes(i32 _fileDescriptor, c08* _list, u64 _size);
+/// listxattr : Retrieves the names of extended attributes associated with a filesystem object.
+i64 list_extended_attributes(const c08* _pathName, c08* _list, u64 _size);
+/// listxattrat : Retrieves extended-attribute names using directory-relative path resolution and lookup flags.
+i64 list_extended_attributes_at(i32 _directoryFileDescriptor, const c08* _pathName, u32 _lookupFlags, c08* _list, u64 _size);
+/// llistxattr : Retrieves extended-attribute names from a path without following the final symbolic link.
+i64 list_extended_attributes_no_follow(const c08* _pathName, c08* _list, u64 _size);
+/// listmount : Retrieves mount IDs beneath a specified mount for mount-tree enumeration.
+i64 list_mount_ids(const MountIdentifierRequest* _request, u64* _mountIds, u64 _mountIdCount, u32 _flags);
+/// lsm_list_modules : Retrieves the identifiers of active Linux Security Modules.
+i64 list_security_modules(u64* _moduleIds, u32* _size, u32 _flags);
+/// listen : Marks a socket as passive and configures the queue limit for pending connection requests.
+i64 listen_for_connections(i32 _fileDescriptor, i32 _backlog);
+/// kexec_load : Loads kernel memory segments and an entry point for later execution through kexec.
+i64 load_kernel_image(u64 _entryPoint, u64 _segmentCount, KernelExecutionSegment* _segments, u64 _flags);
+/// kexec_file_load : Loads a kernel and optional initramfs from file descriptors for later execution through kexec.
+i64 load_kernel_image_from_files(i32 _kernelFileDescriptor, i32 _initialRamdiskFileDescriptor, u64 _commandLineLength, const c08* _commandLine, u64 _flags);
+/// finit_module : Loads a kernel module from an already-open file descriptor.
+i64 load_kernel_module_from_descriptor(i32 _fileDescriptor, const c08* _arguments, i32 _flags);
+/// init_module : Loads a kernel module directly from an image held in userspace memory.
+i64 load_kernel_module_from_memory(void* _moduleImage, u64 _length, const c08* _arguments);
+/// mlock : Locks pages of a virtual-memory range into RAM.
+i64 lock_memory(u64 _startAddress, s64 _length);
+/// mlock2 : Locks pages of a virtual-memory range into RAM with additional locking behavior controlled by flags.
+i64 lock_memory_with_flags(u64 _startAddress, s64 _length, i32 _flags);
+/// mlockall : Locks some or all current and future mappings of the calling process into RAM.
+i64 lock_process_memory(i32 _flags);
+/// flock : Applies or removes an advisory whole-file lock associated with an open file description.
+i64 manage_file_lock(u32 _fileDescriptor, u32 _command);
+/// mmap : Creates a virtual-memory mapping backed by a file or anonymous memory.
+i64 map_memory(u64 _address, u64 _length, u64 _protection, u64 _flags, u64 _fileDescriptor, u64 _offset);
+/// migrate_pages : Moves a process's pages from one set of NUMA nodes to another.
+i64 migrate_process_pages(i32 _processId, u64 _maximumNode, const u64* _oldNodes, const u64* _newNodes);
+/// fanotify_mark : Adds, modifies, removes, or flushes fanotify marks on filesystem objects.
+i64 modify_fanotify_mark(i32 _fanotifyFileDescriptor, u32 _flags, u64 _mask, i32 _directoryFileDescriptor, const c08* _pathName);
+/// mount : Attaches a filesystem or modifies an existing mount according to the supplied flags.
+i64 mount_filesystem(c08* _deviceName, c08* _directoryName, c08* _fileSystemType, u64 _flags, void* _data);
+/// move_mount : Moves or attaches a detached mount from one location to another.
+i64 move_mount(i32 _sourceDirectoryFileDescriptor, const c08* _sourcePathName, i32 _destinationDirectoryFileDescriptor, const c08* _destinationPathName, u32 _flags);
+/// move_pages : Queries or changes the NUMA-node placement of individual pages belonging to a process.
+i64 move_process_pages(i32 _processId, u64 _pageCount, const void** _pages, const i32* _nodes, i32* _status, i32 _flags);
+/// openat : Opens or creates a filesystem object using a path resolved relative to a directory descriptor.
+i64 open_file_at(i32 _directoryFileDescriptor, const c08* _fileName, i32 _flags, u16 _mode);
+/// openat2 : Opens a filesystem object relative to a directory descriptor using extensible path-resolution and open options.
+i64 open_file_at_with_options(i32 _directoryFileDescriptor, const c08* _fileName, OpenOptions* _openHow, s64 _size);
+/// open_by_handle_at : Opens a filesystem object identified by an opaque file handle relative to a mount descriptor.
+i64 open_file_by_handle(i32 _mountDirectoryFileDescriptor, FileHandleInfo* _fileHandle, i32 _flags);
+/// mq_open : Opens or creates a POSIX message queue and returns its descriptor.
+i64 open_message_queue(const c08* _name, i32 _openFlags, u16 _mode, MessageQueueAttributes* _attributes);
+/// fspick : Creates a filesystem configuration context from an existing mount for reconfiguration.
+i64 open_mount_configuration(i32 _directoryFileDescriptor, const c08* _path, u32 _flags);
+/// open_tree : Opens or clones a mount subtree and returns a mount file descriptor.
+i64 open_mount_tree(i32 _directoryFileDescriptor, const c08* _fileName, u32 _flags);
+/// open_tree_attr : Opens or clones a mount subtree while applying supplied mount attributes.
+i64 open_mount_tree_with_attributes(i32 _directoryFileDescriptor, const c08* _fileName, u32 _flags, MountAttributes* _attributes, s64 _size);
+/// perf_event_open : Creates a kernel performance-monitoring event and returns its descriptor.
+i64 open_performance_event(PerformanceEventAttributes* _attributes, i32 _processId, i32 _cpu, i32 _groupFileDescriptor, u64 _flags);
+/// pidfd_open : Opens a file descriptor referring to a process.
+i64 open_process_descriptor(i32 _processId, u32 _flags);
+/// futex : Performs a selected operation on one or more 32-bit userspace futex words.
+i64 perform_futex_operation(u32* _userAddress, i32 _operation, u32 _value, const KernelTimeSpecification* _timeout, u32* _secondaryUserAddress, u32 _value3);
+/// ioctl : Executes a driver- or subsystem-specific control operation on a file descriptor.
+i64 perform_io_control(u32 _fileDescriptor, u32 _command, u64 _argument);
+/// semop : Atomically performs one or more operations on a System V semaphore set.
+i64 perform_semaphore_operations(i32 _semaphoreId, SemaphoreOperation* _operations, u32 _operationCount);
+/// semtimedop : Atomically performs System V semaphore operations with a relative timeout.
+i64 perform_semaphore_operations_until(i32 _semaphoreId, SemaphoreOperation* _operations, u32 _operationCount, const KernelTimeSpecification* _timeout);
+/// ppoll : Waits for events on multiple file descriptors with nanosecond timeout precision and an optional temporary signal mask.
+i64 poll_file_descriptors(PollFileDescriptor* _fileDescriptors, u32 _fileDescriptorCount, KernelTimeSpecification* _timeout, const SignalSet* _signalMask, s64 _signalSetSize);
+/// readahead : Requests that file data be loaded into the page cache before it is needed.
+i64 preload_file_data(i32 _fileDescriptor, i64 _offset, s64 _count);
+/// io_uring_enter : Submits io_uring requests, waits for completions, or performs other ring-enter operations according to flags.
+i64 process_io_uring_queue(u32 _fileDescriptor, u32 _submitCount, u32 _minimumCompletions, u32 _flags, const void* _arguments, u64 _argumentSize);
+/// mincore : Reports whether pages in a virtual-memory range are currently resident in physical memory.
+i64 query_memory_residency(u64 _startAddress, s64 _length, u08* _vector);
+/// cachestat : Queries page-cache statistics for a byte range of a file.
+i64 query_page_cache(u32 _fileDescriptor, CacheStatisticsRange* _cacheStatusRange, CacheStatistics* _cacheStatus, u32 _flags);
+/// rt_sigqueueinfo : Sends a signal with explicitly supplied signal information to a process.
+i64 queue_process_signal(i32 _processId, i32 _signal, SignalInformation* _signalInfo);
+/// rt_tgsigqueueinfo : Sends a signal with explicit signal information to a specific thread within a thread group.
+i64 queue_thread_signal(i32 _threadGroupId, i32 _processId, i32 _signal, SignalInformation* _signalInfo);
+/// read : Reads bytes from an open file descriptor into a buffer.
+i64 read_data(u32 _fileDescriptor, c08* _buffer, s64 _count);
+/// readv : Reads data from a descriptor into multiple buffers in a single operation.
+i64 read_data_vectors(u64 _fileDescriptor, const IoVector* _vectors, u64 _vectorCount);
+/// getdents64 : Reads directory entries from an open directory descriptor into a buffer.
+i64 read_directory_entries(u32 _fileDescriptor, LinuxDirectoryEntry* _directoryEntry, u32 _count);
+/// pread64 : Reads bytes from a file at an explicit offset without changing the shared file position.
+i64 read_file_at_offset(u32 _fileDescriptor, c08* _buffer, s64 _count, i64 _position);
+/// preadv : Reads into multiple buffers from an explicit file offset without changing the shared file position.
+i64 read_file_vectors_at_offset(u64 _fileDescriptor, const IoVector* _vectors, u64 _vectorCount, u64 _positionLow, u64 _positionHigh);
+/// preadv2 : Reads into multiple buffers from an explicit file offset with per-operation behavior flags.
+i64 read_file_vectors_at_offset_with_flags(u64 _fileDescriptor, const IoVector* _vectors, u64 _vectorCount, u64 _positionLow, u64 _positionHigh, i32 _flags);
+/// process_vm_readv : Copies memory directly from another process into local buffers.
+i64 read_process_memory(i32 _processId, const IoVector* _localVectors, u64 _localVectorCount, const IoVector* _remoteVectors, u64 _remoteVectorCount, u64 _flags);
+/// readlinkat : Reads the target path stored in a symbolic link resolved relative to a directory descriptor.
+i64 read_symbolic_link_at(i32 _directoryFileDescriptor, const c08* _pathName, c08* _buffer, i32 _bufferSize);
+/// mq_timedreceive : Receives the oldest eligible message from a POSIX message queue with an absolute timeout.
+i64 receive_message_until(i32 _messageQueueDescriptor, c08* _messageBuffer, s64 _messageLength, u32* _messagePriority, const KernelTimeSpecification* _absoluteTimeout);
+/// msgrcv : Receives a message from a System V message queue.
+i64 receive_queue_message(i32 _messageQueueId, MessageBuffer* _messageBuffer, s64 _messageSize, i64 _messageType, i32 _messageFlags);
+/// recvfrom : Receives data from a socket and optionally returns the sender's address.
+i64 receive_socket_data(i32 _fileDescriptor, void* _buffer, s64 _size, u32 _flags, SocketAddress* _address, i32* _addressLength);
+/// recvmsg : Receives a socket message including payload, address, and ancillary data.
+i64 receive_socket_message(i32 _fileDescriptor, UserMessageHeader* _message, u32 _flags);
+/// recvmmsg : Receives multiple socket messages in one operation with an optional timeout.
+i64 receive_socket_messages(i32 _fileDescriptor, MultiMessageHeader* _messages, u32 _messageCount, u32 _flags, KernelTimeSpecification* _timeout);
+/// process_mrelease : Reclaims memory belonging to a process that is exiting and referenced by a process descriptor.
+i64 release_process_memory(i32 _processFileDescriptor, u32 _flags);
+/// remap_file_pages : Reassigns pages within a nonlinear file-backed memory mapping.
+i64 remap_file_pages(u64 _startAddress, u64 _size, u64 _protection, u64 _pageOffset, u64 _flags);
+/// mremap : Resizes or relocates an existing virtual-memory mapping.
+i64 remap_memory(u64 _address, u64 _oldLength, u64 _newLength, u64 _flags, u64 _newAddress);
+/// removexattr : Removes a named extended attribute from a filesystem object.
+i64 remove_extended_attribute(const c08* _pathName, const c08* _name);
+/// fremovexattr : Removes an extended attribute from an object referenced by a file descriptor.
+i64 remove_extended_attribute(i32 _fileDescriptor, const c08* _name);
+/// removexattrat : Removes a named extended attribute using directory-relative path resolution.
+i64 remove_extended_attribute_at(i32 _directoryFileDescriptor, const c08* _pathName, u32 _lookupFlags, const c08* _name);
+/// lremovexattr : Removes a named extended attribute from a path without following the final symbolic link.
+i64 remove_extended_attribute_no_follow(const c08* _pathName, const c08* _name);
+/// inotify_rm_watch : Removes a watch from an inotify instance.
+i64 remove_inotify_watch(i32 _fileDescriptor, i32 _watchDescriptor);
+/// unlinkat : Removes a filesystem object using a path resolved relative to a directory descriptor.
+i64 remove_path_at(i32 _directoryFileDescriptor, const c08* _pathName, i32 _flags);
+/// renameat : Renames a filesystem object using directory-relative source and destination paths.
+i64 rename_path_at(i32 _oldDirectoryFileDescriptor, const c08* _oldName, i32 _newDirectoryFileDescriptor, const c08* _newName);
+/// renameat2 : Renames or exchanges filesystem objects using directory-relative paths and operation flags.
+i64 rename_path_at_with_flags(i32 _oldDirectoryFileDescriptor, const c08* _oldName, i32 _newDirectoryFileDescriptor, const c08* _newName, u32 _flags);
+/// request_key : Finds an existing kernel key or requests that one be constructed.
+i64 request_kernel_key(const c08* _type, const c08* _description, const c08* _calloutInfo, i32 _destinationKeyringId);
+/// futex_requeue : Wakes some waiters and moves additional waiters between futexes described by the supplied waiter structures.
+i64 requeue_futex_waiters(FutexWaitRequest* _waiters, u32 _flags, i32 _wakeCount, i32 _requeueCount);
+/// ftruncate : Changes the size of an open regular file.
+i64 resize_file(u32 _fileDescriptor, i64 _length);
+/// truncate : Changes the size of a regular file identified by path.
+i64 resize_file_at_path(const c08* _path, i64 _length);
+/// restart_syscall : Restarts a previously interrupted restartable system call.
+i64 restart_interrupted_syscall();
+/// rt_sigreturn : Restores execution state saved by the kernel when entering a signal handler.
+i64 return_from_signal_handler();
+/// mseal : Permanently prevents selected classes of future changes to a virtual-memory range.
+i64 seal_memory(u64 _startAddress, s64 _length, u64 _flags);
+/// lseek : Changes the current file offset associated with an open file description.
+i64 seek_file(i32 _fileDescriptor, i64 _offset, u32 _whence);
+/// mq_timedsend : Sends a message to a POSIX message queue with an absolute timeout.
+i64 send_message_until(i32 _messageQueueDescriptor, const c08* _messageBuffer, s64 _messageLength, u32 _messagePriority, const KernelTimeSpecification* _absoluteTimeout);
+/// msgsnd : Sends a message to a System V message queue.
+i64 send_queue_message(i32 _messageQueueId, MessageBuffer* _messageBuffer, s64 _messageSize, i32 _messageFlags);
+/// kill : Sends a signal to a process or process group selected by a process-ID value.
+i64 send_signal(i32 _processId, i32 _signal);
+/// tkill : Sends a signal directly to a thread identified by its thread ID.
+i64 send_signal_to_thread(i32 _threadId, i32 _signal);
+/// sendto : Sends data through a socket, optionally specifying the destination address.
+i64 send_socket_data(i32 _fileDescriptor, void* _buffer, s64 _length, u32 _flags, SocketAddress* _address, i32 _addressLength);
+/// sendmsg : Sends a socket message containing payload, destination, and optional ancillary data.
+i64 send_socket_message(i32 _fileDescriptor, UserMessageHeader* _message, u32 _flags);
+/// sendmmsg : Sends multiple socket messages in a single operation.
+i64 send_socket_messages(i32 _fileDescriptor, MultiMessageHeader* _messages, u32 _messageCount, u32 _flags);
+/// tgkill : Sends a signal to a specific thread within a specific thread group.
+i64 send_thread_signal(i32 _threadGroupId, i32 _threadId, i32 _signal);
+/// clock_settime : Sets the current value of a settable kernel clock.
+i64 set_clock_time(const i32 _clockId, const KernelTimeSpecification* _time);
+/// sched_setaffinity : Restricts the CPUs on which a thread may execute.
+i64 set_cpu_affinity(i32 _processId, u32 _length, u64* _cpuMask);
+/// setxattr : Creates or replaces a named extended attribute on a filesystem object.
+i64 set_extended_attribute(const c08* _pathName, const c08* _name, const void* _value, s64 _size, i32 _flags);
+/// fsetxattr : Creates or replaces an extended attribute on an object referenced by a file descriptor.
+i64 set_extended_attribute(i32 _fileDescriptor, const c08* _name, const void* _value, u64 _size, i32 _flags);
+/// setxattrat : Creates or replaces an extended attribute using directory-relative path resolution and extended arguments.
+i64 set_extended_attribute_at(i32 _directoryFileDescriptor, const c08* _pathName, u32 _lookupFlags, const c08* _name, const ExtendedAttributeArguments* _arguments, s64 _size);
+/// lsetxattr : Creates or replaces a named extended attribute without following the final symbolic link.
+i64 set_extended_attribute_no_follow(const c08* _pathName, const c08* _name, const void* _value, u64 _size, i32 _flags);
+/// umask : Replaces the calling process's file-creation permission mask and returns the previous mask.
+i64 set_file_creation_mask(i32 _mask);
+/// utimensat : Sets access and modification timestamps for a filesystem object using directory-relative path resolution.
+i64 set_file_times_at(i32 _directoryFileDescriptor, const c08* _fileName, KernelTimeSpecification* _times, i32 _flags);
+/// file_setattr : Changes filesystem-specific attributes for a path.
+i64 set_filesystem_file_attributes(i32 _directoryFileDescriptor, const c08* _fileName, FileAttributes* _fileAttributes, u64 _size, u32 _lookupFlags);
+/// setfsgid : Changes the calling thread's filesystem group ID.
+i64 set_filesystem_group_id(u32 _groupId);
+/// setfsuid : Changes the calling thread's filesystem user ID.
+i64 set_filesystem_user_id(u32 _userId);
+/// setresgid : Changes the real, effective, and saved group IDs of the calling thread.
+i64 set_group_credentials(u32 _realGroupId, u32 _effectiveGroupId, u32 _savedGroupId);
+/// setgid : Changes the calling thread's group identity according to its privileges.
+i64 set_group_id(u32 _groupId);
+/// setitimer : Configures a process interval timer and optionally returns its previous state.
+i64 set_interval_timer(i32 _timerType, LegacyIntervalTimerValue* _newValue, LegacyIntervalTimerValue* _oldValue);
+/// ioprio_set : Sets the I/O scheduling priority of a process, process group, or user.
+i64 set_io_priority(i32 _which, i32 _who, i32 _ioPriority);
+/// set_mempolicy_home_node : Sets the preferred home NUMA node for a virtual-memory range.
+i64 set_memory_home_node(u64 _startAddress, u64 _length, u64 _homeNode, u64 _flags);
+/// set_mempolicy : Sets the calling thread's default NUMA memory-allocation policy.
+i64 set_memory_policy(i32 _mode, const u64* _nodeMask, u64 _maximumNode);
+/// mprotect : Changes access permissions for a virtual-memory range.
+i64 set_memory_protection(u64 _startAddress, s64 _length, u64 _protection);
+/// pkey_mprotect : Changes memory permissions and associates a protection key with a virtual-memory range.
+i64 set_memory_protection_key(u64 _startAddress, s64 _length, u64 _protection, i32 _protectionKey);
+/// mount_setattr : Changes mount attributes for a mount selected relative to a directory descriptor.
+i64 set_mount_attributes(i32 _directoryFileDescriptor, const c08* _path, u32 _flags, MountAttributes* _attributes, s64 _size);
+/// setpriority : Changes the scheduling nice value of selected processes, process groups, or users.
+i64 set_nice_priority(i32 _which, i32 _who, i32 _niceValue);
+/// setpgid : Changes the process-group membership of a process.
+i64 set_process_group(i32 _processId, i32 _processGroupId);
+/// timer_settime : Arms, disarms, or reconfigures a POSIX per-process timer.
+i64 set_process_timer(i32 _timerId, i32 _flags, const KernelIntervalTimerSpecification* _newSetting, KernelIntervalTimerSpecification* _oldSetting);
+/// setregid : Changes the real and effective group IDs of the calling thread.
+i64 set_real_effective_group_ids(u32 _realGroupId, u32 _effectiveGroupId);
+/// setreuid : Changes the real and effective user IDs of the calling thread.
+i64 set_real_effective_user_ids(u32 _realUserId, u32 _effectiveUserId);
+/// setrlimit : Changes the soft and hard limits for a process resource.
+i64 set_resource_limit(u32 _resource, ResourceLimit* _resourceLimit);
+/// sched_setattr : Changes extended scheduler attributes for a thread.
+i64 set_scheduler_attributes(i32 _processId, SchedulerAttributes* _attributes, u32 _flags);
+/// sched_setparam : Changes scheduler parameters for a thread without changing its scheduling policy.
+i64 set_scheduler_parameters(i32 _processId, SchedulerParameters* _parameters);
+/// sched_setscheduler : Changes a thread's scheduling policy and associated parameters.
+i64 set_scheduler_policy(i32 _processId, i32 _policy, SchedulerParameters* _parameters);
+/// lsm_set_self_attr : Sets a Linux Security Module attribute for the calling task.
+i64 set_security_attribute(u32 _attribute, SecurityModuleContext* _context, u32 _size, u32 _flags);
+/// setsockopt : Changes a socket option at a specified protocol level.
+i64 set_socket_option(i32 _fileDescriptor, i32 _level, i32 _optionName, c08* _optionValue, i32 _optionLength);
+/// setgroups : Replaces the calling thread's supplementary group list.
+i64 set_supplementary_groups(i32 _groupSetSize, u32* _groupList);
+/// setdomainname : Changes the calling process's UTS namespace domain name.
+i64 set_system_domain_name(c08* _name, i32 _length);
+/// sethostname : Changes the hostname of the calling process's UTS namespace.
+i64 set_system_host_name(c08* _name, i32 _length);
+/// capset : Replaces Linux capability sets for the thread identified by the capability header.
+i64 set_thread_capabilities(cap_user_header_t _capabilityHeader, const cap_user_data_t _capabilityData);
+/// set_tid_address : Registers the userspace address that the kernel clears when the calling thread exits.
+i64 set_thread_id_address(i32* _threadIdAddress);
+/// set_robust_list : Registers the calling thread's robust-futex list with the kernel.
+i64 set_thread_robust_futex_list(RobustFutexListHead* _head, s64 _length);
+/// timerfd_settime : Arms, disarms, or reconfigures a timer descriptor.
+i64 set_timer_descriptor(i32 _fileDescriptor, i32 _flags, const KernelIntervalTimerSpecification* _newTimer, KernelIntervalTimerSpecification* _oldTimer);
+/// setresuid : Changes the real, effective, and saved user IDs of the calling thread.
+i64 set_user_credentials(u32 _realUserId, u32 _effectiveUserId, u32 _savedUserId);
+/// setuid : Changes the calling thread's user identity according to its privileges.
+i64 set_user_id(u32 _userId);
+/// settimeofday : Sets the system wall-clock time and optionally legacy timezone information.
+i64 set_wall_clock_time(LegacyTimeValue* _timeValue, TimezoneInformation* _timezone);
+/// shutdown : Disables receiving, sending, or both directions of communication on a socket.
+i64 shutdown_socket(i32 _fileDescriptor, i32 _how);
+/// pidfd_send_signal : Sends a signal to a process referenced by a process descriptor.
+i64 signal_process(i32 _processFileDescriptor, i32 _signal, SignalInformation* _signalInfo, u32 _flags);
+/// nanosleep : Suspends the calling thread for a requested relative duration.
+i64 sleep_for_duration(KernelTimeSpecification* _requestedTime, KernelTimeSpecification* _remainingTime);
+/// clock_nanosleep : Suspends the calling thread relative to or until a time measured by a selected clock.
+i64 sleep_on_clock(const i32 _clockId, i32 _flags, const KernelTimeSpecification* _requestedTime, KernelTimeSpecification* _remainingTime);
+/// splice : Transfers data between two file descriptors through a kernel pipe without copying the payload through userspace.
+i64 splice_data(i32 _inputFileDescriptor, i64* _inputOffset, i32 _outputFileDescriptor, i64* _outputOffset, s64 _length, u32 _flags);
+/// vmsplice : Maps userspace memory buffers into a pipe for splice-based data transfer.
+i64 splice_memory_to_pipe(i32 _fileDescriptor, const IoVector* _vectors, u64 _segmentCount, u32 _flags);
+/// io_submit : Submits one or more asynchronous-I/O requests to a Linux AIO context.
+i64 submit_async_io(u64 _contextId, i64 _count, IoControlBlock** _ioControlBlocks);
+/// rt_sigsuspend : Temporarily replaces the signal mask and sleeps until a signal is delivered.
+i64 suspend_until_signal(SignalSet* _newSignalSet, s64 _signalSetSize);
+/// fsync : Flushes modified file data and associated metadata to persistent storage.
+i64 synchronize_file(u32 _fileDescriptor);
+/// fdatasync : Flushes modified file data and metadata required for subsequent data access to persistent storage.
+i64 synchronize_file_data(u32 _fileDescriptor);
+/// sync_file_range : Initiates or waits for writeback of a selected byte range of an open file.
+i64 synchronize_file_range(i32 _fileDescriptor, i64 _offset, i64 _byteCount, u32 _flags);
+/// syncfs : Synchronizes pending writes for the filesystem containing an open file descriptor.
+i64 synchronize_filesystem(i32 _fileDescriptor);
+/// sync : Schedules all pending filesystem data and metadata writes system-wide.
+i64 synchronize_filesystems();
+/// msync : Synchronizes changes in a memory-mapped file range with its backing storage.
+i64 synchronize_memory_mapping(u64 _startAddress, s64 _length, i32 _flags);
+/// mq_unlink : Removes a POSIX message-queue name while allowing existing open descriptors to remain usable.
+i64 unlink_message_queue(const c08* _name);
+/// delete_module : Unloads a loaded kernel module.
+i64 unload_kernel_module(const c08* _moduleName, u32 _flags);
+/// munlock : Removes a memory lock from pages in a virtual-memory range.
+i64 unlock_memory(u64 _startAddress, s64 _length);
+/// munlockall : Removes all memory locks established by the calling process.
+i64 unlock_process_memory();
+/// munmap : Removes virtual-memory mappings from an address range.
+i64 unmap_memory(u64 _address, s64 _length);
+/// umount : Detaches a mounted filesystem according to the supplied unmount flags.
+i64 unmount_filesystem(c08* _name, i32 _flags);
+/// unshare : Detaches selected execution resources from those shared with other processes or threads.
+i64 unshare_process_resources(u64 _unshareFlags);
+/// wait4 : Waits for a child process to change state and optionally retrieves its resource usage.
+i64 wait_for_child(i32 _processId, i32* _statusAddress, i32 _options, ResourceUsage* _resourceUsage);
+/// waitid : Waits for a selected child to change state and returns detailed signal-style status information.
+i64 wait_for_child_event(i32 _which, i32 _processId, SignalInformation* _signalInfo, i32 _options, ResourceUsage* _resourceUsage);
+/// pselect6 : Waits until descriptors become ready, a timeout expires, or a signal arrives while optionally replacing the signal mask.
+i64 wait_for_descriptor_events(i32 _descriptorRange, DescriptorSet* _readFileDescriptors, DescriptorSet* _writeFileDescriptors, DescriptorSet* _exceptionFileDescriptors, KernelTimeSpecification* _timeout, void* _signalMaskData);
+/// epoll_pwait : Waits for epoll events with millisecond timeout precision while temporarily replacing the signal mask.
+i64 wait_for_epoll_events(i32 _epollFileDescriptor, EpollEventData* _events, i32 _maximumEvents, i32 _timeout, const SignalSet* _signalMask, u64 _signalSetSize);
+/// epoll_pwait2 : Waits for epoll events with high-resolution timeout precision while temporarily replacing the signal mask.
+i64 wait_for_epoll_events_precise(i32 _epollFileDescriptor, EpollEventData* _events, i32 _maximumEvents, const KernelTimeSpecification* _timeout, const SignalSet* _signalMask, u64 _signalSetSize);
+/// rt_sigtimedwait : Waits synchronously for one of a selected set of signals with an optional timeout.
+i64 wait_for_signal(const SignalSet* _signalSet, SignalInformation* _signalInfo, const KernelTimeSpecification* _timeout, s64 _signalSetSize);
+/// futex_wait : Sleeps while a futex contains an expected value and satisfies the supplied bit mask.
+i64 wait_on_futex(void* _userAddress, u64 _value, u64 _mask, u32 _flags, KernelTimeSpecification* _timeout, i32 _clockId);
+/// futex_waitv : Waits until at least one futex in a vector becomes eligible to wake.
+i64 wait_on_futex_set(FutexWaitRequest* _waiters, u32 _futexCount, u32 _flags, KernelTimeSpecification* _timeout, i32 _clockId);
+/// futex_wake : Wakes threads waiting on a futex whose waiter masks intersect the supplied mask.
+i64 wake_futex_waiters(void* _userAddress, u64 _mask, i32 _wakeCount, u32 _flags);
+/// write : Writes bytes from a buffer to an open file descriptor.
+i64 write_data(u32 _fileDescriptor, const c08* _buffer, s64 _count);
+/// writev : Writes data from multiple buffers to a descriptor in a single operation.
+i64 write_data_vectors(u64 _fileDescriptor, const IoVector* _vectors, u64 _vectorCount);
+/// pwrite64 : Writes bytes to a file at an explicit offset without changing the shared file position.
+i64 write_file_at_offset(u32 _fileDescriptor, const c08* _buffer, s64 _count, i64 _position);
+/// pwritev : Writes from multiple buffers at an explicit file offset without changing the shared file position.
+i64 write_file_vectors_at_offset(u64 _fileDescriptor, const IoVector* _vectors, u64 _vectorCount, u64 _positionLow, u64 _positionHigh);
+/// pwritev2 : Writes from multiple buffers at an explicit file offset with per-operation behavior flags.
+i64 write_file_vectors_at_offset_with_flags(u64 _fileDescriptor, const IoVector* _vectors, u64 _vectorCount, u64 _positionLow, u64 _positionHigh, i32 _flags);
+/// process_vm_writev : Copies memory directly from local buffers into another process.
+i64 write_process_memory(i32 _processId, const IoVector* _localVectors, u64 _localVectorCount, const IoVector* _remoteVectors, u64 _remoteVectorCount, u64 _flags);
+/// sched_yield : Voluntarily yields execution so another runnable thread may be scheduled.
+i64 yield_processor();

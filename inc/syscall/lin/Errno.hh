@@ -1,136 +1,272 @@
 #pragma once
-
+#include "error/Error.hh"
 namespace cmn::syscall
 {
-    #define EPERM             1 // Operation not permitted.
-    #define ENOENT            2 // No such file or directory.
-    #define ESRCH             3 // No such process.
-    #define EINTR             4 // Interrupted system call.
-    #define EIO               5 // I/O error.
-    #define ENXIO             6 // No such device or address.
-    #define E2BIG             7 // Argument list too long.
-    #define ENOEXEC           8 // Exec format error.
-    #define EBADF             9 // Bad file number.
-    #define ECHILD           10 // No child processes.
-    #define EAGAIN           11 // Try again.
-    #define ENOMEM           12 // Out of memory.
-    #define EACCES           13 // Permission denied.
-    #define EFAULT           14 // Bad address.
-    #define ENOTBLK          15 // Block device required.
-    #define EBUSY            16 // Device or resource busy.
-    #define EEXIST           17 // File exists.
-    #define EXDEV            18 // Cross-device link.
-    #define ENODEV           19 // No such device.
-    #define ENOTDIR          20 // Not a directory.
-    #define EISDIR           21 // Is a directory.
-    #define EINVAL           22 // Invalid argument.
-    #define ENFILE           23 // File table overflow.
-    #define EMFILE           24 // Too many open files.
-    #define ENOTTY           25 // Not a typewriter.
-    #define ETXTBSY          26 // Text file busy.
-    #define EFBIG            27 // File too large.
-    #define ENOSPC           28 // No space left on device.
-    #define ESPIPE           29 // Illegal seek.
-    #define EROFS            30 // Read-only file system.
-    #define EMLINK           31 // Too many links.
-    #define EPIPE            32 // Broken pipe.
-    #define EDOM             33 // Math argument out of domain of func.
-    #define ERANGE           34 // Math result not representable.
-    #define EDEADLK          35 // Resource deadlock would occur.
-    #define ENAMETOOLONG     36 // File name too long.
-    #define ENOLCK           37 // No record locks available.
-    #define ENOSYS           38 // Invalid system call number.
-    #define ENOTEMPTY        39 // Directory not empty.
-    #define ELOOP            40 // Too many symbolic links encountered.
-    #define ENOMSG           42 // No message of desired type.
-    #define EIDRM            43 // Identifier removed.
-    #define ECHRNG           44 // Channel number out of range.
-    #define EL2NSYNC         45 // Level 2 not synchronized.
-    #define EL3HLT           46 // Level 3 halted.
-    #define EL3RST           47 // Level 3 reset.
-    #define ELNRNG           48 // Link number out of range.
-    #define EUNATCH          49 // Protocol driver not attached.
-    #define ENOCSI           50 // No CSI structure available.
-    #define EL2HLT           51 // Level 2 halted.
-    #define EBADE            52 // Invalid exchange.
-    #define EBADR            53 // Invalid request descriptor.
-    #define EXFULL           54 // Exchange full.
-    #define ENOANO           55 // No anode.
-    #define EBADRQC          56 // Invalid request code.
-    #define EBADSLT          57 // Invalid slot.
-    #define EBFONT           59 // Bad font file format.
-    #define ENOSTR           60 // Device not a stream.
-    #define ENODATA          61 // No data available.
-    #define ETIME            62 // Timer expired.
-    #define ENOSR            63 // Out of streams resources.
-    #define ENONET           64 // Machine is not on the network.
-    #define ENOPKG           65 // Package not installed.
-    #define EREMOTE          66 // Object is remote.
-    #define ENOLINK          67 // Link has been severed.
-    #define EADV             68 // Advertise error.
-    #define ESRMNT           69 // Srmount error.
-    #define ECOMM            70 // Communication error on send.
-    #define EPROTO           71 // Protocol error.
-    #define EMULTIHOP        72 // Multihop attempted.
-    #define EDOTDOT          73 // RFS specific error.
-    #define EBADMSG          74 // Not a data message.
-    #define EOVERFLOW        75 // Value too large for defined data type.
-    #define ENOTUNIQ         76 // Name not unique on network.
-    #define EBADFD           77 // File descriptor in bad state.
-    #define EREMCHG          78 // Remote address changed.
-    #define ELIBACC          79 // Can not access a needed shared library.
-    #define ELIBBAD          80 // Accessing a corrupted shared library.
-    #define ELIBSCN          81 // .lib section in a.out corrupted.
-    #define ELIBMAX          82 // Attempting to link in too many shared libraries.
-    #define ELIBEXEC         83 // Cannot exec a shared library directly.
-    #define EILSEQ           84 // Illegal byte sequence.
-    #define ERESTART         85 // Interrupted system call should be restarted.
-    #define ESTRPIPE         86 // Streams pipe error.
-    #define EUSERS           87 // Too many users.
-    #define ENOTSOCK         88 // Socket operation on non-socket.
-    #define EDESTADDRREQ     89 // Destination address required.
-    #define EMSGSIZE         90 // Message too long.
-    #define EPROTOTYPE       91 // Protocol wrong type for socket.
-    #define ENOPROTOOPT      92 // Protocol not available.
-    #define EPROTONOSUPPORT  93 // Protocol not supported.
-    #define ESOCKTNOSUPPORT  94 // Socket type not supported.
-    #define EOPNOTSUPP       95 // Operation not supported on transport endpoint.
-    #define EPFNOSUPPORT     96 // Protocol family not supported.
-    #define EAFNOSUPPORT     97 // Address family not supported by protocol.
-    #define EADDRINUSE       98 // Address already in use.
-    #define EADDRNOTAVAIL    99 // Cannot assign requested address.
-    #define ENETDOWN        100 // Network is down.
-    #define ENETUNREACH     101 // Network is unreachable.
-    #define ENETRESET       102 // Network dropped connection because of reset.
-    #define ECONNABORTED    103 // Software caused connection abort.
-    #define ECONNRESET      104 // Connection reset by peer.
-    #define ENOBUFS         105 // No buffer space available.
-    #define EISCONN         106 // Transport endpoint is already connected.
-    #define ENOTCONN        107 // Transport endpoint is not connected.
-    #define ESHUTDOWN       108 // Cannot send after transport endpoint shutdown.
-    #define ETOOMANYREFS    109 // Too many references: cannot splice.
-    #define ETIMEDOUT       110 // Connection timed out.
-    #define ECONNREFUSED    111 // Connection refused.
-    #define EHOSTDOWN       112 // Host is down.
-    #define EHOSTUNREACH    113 // No route to host.
-    #define EALREADY        114 // Operation already in progress.
-    #define EINPROGRESS     115 // Operation now in progress.
-    #define ESTALE          116 // Stale file handle.
-    #define EUCLEAN         117 // Structure needs cleaning.
-    #define ENOTNAM         118 // Not a XENIX named type file.
-    #define ENAVAIL         119 // No XENIX semaphores available.
-    #define EISNAM          120 // Is a named type file.
-    #define EREMOTEIO       121 // Remote I/O error.
-    #define EDQUOT          122 // Quota exceeded.
-    #define ENOMEDIUM       123 // No medium found.
-    #define EMEDIUMTYPE     124 // Wrong medium type.
-    #define ECANCELED       125 // Operation Canceled.
-    #define ENOKEY          126 // Required key not available.
-    #define EKEYEXPIRED     127 // Key has expired.
-    #define EKEYREVOKED     128 // Key has been revoked.
-    #define EKEYREJECTED    129 // Key was rejected by service.
-    #define EOWNERDEAD      130 // Owner died.
-    #define ENOTRECOVERABLE 131 // State not recoverable.
-    #define ERFKILL         132 // Operation not possible due to RF-kill.
-    #define EHWPOISON       133 // Memory page has hardware error.
+    enum class ERRNO : error::ERROR
+    {
+        /// No error occurred.
+        NONE            =  0,
+        /// Operation was rejected because the caller lacks permission.
+        EPERM           =  1,
+        /// The requested file or directory does not exist.
+        ENOENT          =  2,
+        /// The requested process does not exist.
+        ESRCH           =  3,
+        /// The system call was interrupted by a signal.
+        EINTR           =  4,
+        /// A low-level input/output operation failed.
+        EIO             =  5,
+        /// The requested device or address does not exist.
+        ENXIO           =  6,
+        /// The process argument list exceeds the supported size.
+        E2BIG           =  7,
+        /// The executable has an invalid or unsupported format.
+        ENOEXEC         =  8,
+        /// The supplied file descriptor is invalid.
+        EBADF           =  9,
+        /// No matching child process exists.
+        ECHILD          = 10,
+        /// The operation cannot proceed now and may succeed if retried.
+        EAGAIN          = 11,
+        /// Insufficient memory is available to complete the operation.
+        ENOMEM          = 12,
+        /// Access to the requested resource was denied.
+        EACCES          = 13,
+        /// An invalid or inaccessible memory address was supplied.
+        EFAULT          = 14,
+        /// A block device was required for this operation.
+        ENOTBLK         = 15,
+        /// The requested device or resource is currently busy.
+        EBUSY           = 16,
+        /// The requested file or object already exists.
+        EEXIST          = 17,
+        /// The operation cannot cross filesystem or device boundaries.
+        EXDEV           = 18,
+        /// The requested device does not exist.
+        ENODEV          = 19,
+        /// A path component expected to be a directory is not one.
+        ENOTDIR         = 20,
+        /// The operation expected a non-directory object but found a directory.
+        EISDIR          = 21,
+        /// One or more supplied arguments are invalid.
+        EINVAL          = 22,
+        /// The system-wide limit for open files has been reached.
+        ENFILE          = 23,
+        /// The process has reached its limit for open file descriptors.
+        EMFILE          = 24,
+        /// The requested terminal operation was performed on a non-terminal.
+        ENOTTY          = 25,
+        /// The executable file is currently busy.
+        ETXTBSY         = 26,
+        /// The file exceeds the maximum supported size.
+        EFBIG           = 27,
+        /// The target device has insufficient free storage space.
+        ENOSPC          = 28,
+        /// Seeking is unsupported for this file or stream.
+        ESPIPE          = 29,
+        /// Modification was attempted on a read-only filesystem.
+        EROFS           = 30,
+        /// The maximum number of filesystem links has been exceeded.
+        EMLINK          = 31,
+        /// A pipe was written after its reading endpoint was closed.
+        EPIPE           = 32,
+        /// A mathematical argument lies outside the function's valid domain.
+        EDOM            = 33,
+        /// A mathematical result lies outside the representable range.
+        ERANGE          = 34,
+        /// The operation would cause or encounter a resource deadlock.
+        EDEADLK         = 35,
+        /// A filename or pathname exceeds the supported length.
+        ENAMETOOLONG    = 36,
+        /// No record-lock resources are currently available.
+        ENOLCK          = 37,
+        /// The requested system call or operation is not implemented.
+        ENOSYS          = 38,
+        /// The directory cannot be removed because it is not empty.
+        ENOTEMPTY       = 39,
+        /// Too many symbolic links were followed while resolving a path.
+        ELOOP           = 40,
+        /// No message matching the requested type exists.
+        ENOMSG          = 42,
+        /// The referenced IPC identifier has been removed.
+        EIDRM           = 43,
+        /// The specified channel number is outside the valid range.
+        ECHRNG          = 44,
+        /// Level-2 communication is not synchronized.
+        EL2NSYNC        = 45,
+        /// Level-3 communication has halted.
+        EL3HLT          = 46,
+        /// Level-3 communication has been reset.
+        EL3RST          = 47,
+        /// The specified link number is outside the valid range.
+        ELNRNG          = 48,
+        /// The required protocol driver is not attached.
+        EUNATCH         = 49,
+        /// No CSI structure is currently available.
+        ENOCSI          = 50,
+        /// Level-2 communication has halted.
+        EL2HLT          = 51,
+        /// An invalid exchange operation was requested.
+        EBADE           = 52,
+        /// The supplied request descriptor is invalid.
+        EBADR           = 53,
+        /// The exchange has reached its capacity.
+        EXFULL          = 54,
+        /// The requested anode does not exist.
+        ENOANO          = 55,
+        /// The supplied request code is invalid.
+        EBADRQC         = 56,
+        /// The specified slot is invalid.
+        EBADSLT         = 57,
+        /// The font file has an invalid or unsupported format.
+        EBFONT          = 59,
+        /// The specified device is not a STREAMS device.
+        ENOSTR          = 60,
+        /// No data is currently available.
+        ENODATA         = 61,
+        /// The requested timer has expired.
+        ETIME           = 62,
+        /// STREAMS resources have been exhausted.
+        ENOSR           = 63,
+        /// The machine is currently disconnected from the network.
+        ENONET          = 64,
+        /// A required software package is not installed.
+        ENOPKG          = 65,
+        /// The requested object resides on a remote system.
+        EREMOTE         = 66,
+        /// The communication link has been severed.
+        ENOLINK         = 67,
+        /// An error occurred while advertising a network resource.
+        EADV            = 68,
+        /// An error occurred during a remote mount operation.
+        ESRMNT          = 69,
+        /// A communication failure occurred while sending data.
+        ECOMM           = 70,
+        /// A protocol-level error occurred.
+        EPROTO          = 71,
+        /// An unsupported multihop operation was attempted.
+        EMULTIHOP       = 72,
+        /// A legacy Remote File Sharing protocol error occurred.
+        EDOTDOT         = 73,
+        /// The received message has an invalid format or type.
+        EBADMSG         = 74,
+        /// A value exceeds the range of its destination data type.
+        EOVERFLOW       = 75,
+        /// The specified network name is not unique.
+        ENOTUNIQ        = 76,
+        /// The file descriptor is in an invalid state for the operation.
+        EBADFD          = 77,
+        /// The remote endpoint's address has changed.
+        EREMCHG         = 78,
+        /// A required shared library could not be accessed.
+        ELIBACC         = 79,
+        /// A required shared library is corrupted or invalid.
+        ELIBBAD         = 80,
+        /// A shared-library section in the executable is corrupted.
+        ELIBSCN         = 81,
+        /// Too many shared libraries are being linked.
+        ELIBMAX         = 82,
+        /// A shared library cannot be executed directly.
+        ELIBEXEC        = 83,
+        /// The input contains an invalid byte or character sequence.
+        EILSEQ          = 84,
+        /// The interrupted system call should be restarted.
+        ERESTART        = 85,
+        /// A STREAMS pipe operation failed.
+        ESTRPIPE        = 86,
+        /// The system's supported user limit has been exceeded.
+        EUSERS          = 87,
+        /// A socket operation was attempted on a non-socket object.
+        ENOTSOCK        = 88,
+        /// The operation requires a destination address.
+        EDESTADDRREQ    = 89,
+        /// The message exceeds the supported size.
+        EMSGSIZE        = 90,
+        /// The socket uses an incompatible protocol type.
+        EPROTOTYPE      = 91,
+        /// The requested protocol option is unavailable.
+        ENOPROTOOPT     = 92,
+        /// The requested protocol is not supported.
+        EPROTONOSUPPORT = 93,
+        /// The requested socket type is not supported.
+        ESOCKTNOSUPPORT = 94,
+        /// The requested operation is unsupported by this endpoint.
+        EOPNOTSUPP      = 95,
+        /// The requested protocol family is not supported.
+        EPFNOSUPPORT    = 96,
+        /// The requested address family is unsupported by the protocol.
+        EAFNOSUPPORT    = 97,
+        /// The requested network address is already in use.
+        EADDRINUSE      = 98,
+        /// The requested network address cannot be assigned locally.
+        EADDRNOTAVAIL   = 99,
+        /// The network is currently unavailable.
+        ENETDOWN        = 100,
+        /// The destination network cannot be reached.
+        ENETUNREACH     = 101,
+        /// The network connection was lost because of a reset.
+        ENETRESET       = 102,
+        /// The connection was aborted by the local system.
+        ECONNABORTED    = 103,
+        /// The connection was forcibly reset by the remote endpoint.
+        ECONNRESET      = 104,
+        /// No network buffer space is currently available.
+        ENOBUFS         = 105,
+        /// The socket or endpoint is already connected.
+        EISCONN         = 106,
+        /// The socket or endpoint is not currently connected.
+        ENOTCONN        = 107,
+        /// Data cannot be sent after the connection has been shut down.
+        ESHUTDOWN       = 108,
+        /// The object has too many outstanding references.
+        ETOOMANYREFS    = 109,
+        /// The connection did not complete within the allowed time.
+        ETIMEDOUT       = 110,
+        /// The remote endpoint refused the connection.
+        ECONNREFUSED    = 111,
+        /// The destination host is currently unavailable.
+        EHOSTDOWN       = 112,
+        /// No route to the destination host is available.
+        EHOSTUNREACH    = 113,
+        /// The requested operation is already being performed.
+        EALREADY        = 114,
+        /// The requested asynchronous operation has started but is incomplete.
+        EINPROGRESS     = 115,
+        /// The referenced filesystem handle is no longer valid.
+        ESTALE          = 116,
+        /// A filesystem structure is inconsistent and requires repair.
+        EUCLEAN         = 117,
+        /// The object is not a legacy XENIX named-type file.
+        ENOTNAM         = 118,
+        /// No legacy XENIX semaphore resources are available.
+        ENAVAIL         = 119,
+        /// The object is a legacy XENIX named-type file.
+        EISNAM          = 120,
+        /// An input/output operation on a remote resource failed.
+        EREMOTEIO       = 121,
+        /// The user's filesystem storage quota has been exceeded.
+        EDQUOT          = 122,
+        /// No removable medium is present in the device.
+        ENOMEDIUM       = 123,
+        /// The inserted medium has an unsupported or incorrect type.
+        EMEDIUMTYPE     = 124,
+        /// The operation was explicitly canceled before completion.
+        ECANCELED       = 125,
+        /// A required cryptographic or authentication key is unavailable.
+        ENOKEY          = 126,
+        /// The required key has expired.
+        EKEYEXPIRED     = 127,
+        /// The required key has been revoked.
+        EKEYREVOKED     = 128,
+        /// The required key was rejected by the service.
+        EKEYREJECTED    = 129,
+        /// The previous owner of a robust synchronization object terminated.
+        EOWNERDEAD      = 130,
+        /// The protected state cannot be recovered after owner failure.
+        ENOTRECOVERABLE = 131,
+        /// The operation is blocked because the radio transmitter is disabled.
+        ERFKILL         = 132,
+        /// A hardware failure was detected in the referenced memory page.
+        EHWPOISON       = 133
+    };
 }

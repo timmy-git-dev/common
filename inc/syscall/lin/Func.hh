@@ -1,8 +1,10 @@
 #pragma once
-
+#include "error/Result.hh"
+#include "syscall/lin/Errno.hh"
+#include "type/Alias.hh"
 namespace cmn::syscall
 {
-    inline long syscall(long _id, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0)
+    inline error::Result<i64, ERRNO> syscall(long _id, long _arg0 = 0, long _arg1 = 0, long _arg2 = 0, long _arg3 = 0, long _arg4 = 0, long _arg5 = 0)
     {
         long _returnValue;
         register long _rax __asm__("rax") = _id;
@@ -25,6 +27,6 @@ namespace cmn::syscall
                "r"(_r9 )
             : "rcx", "r11", "memory"
         );
-        return _returnValue;
+        return error::Result<i64, ERRNO>(_returnValue, (-4096 < _returnValue && _returnValue < 0 ? ERRNO::NONE : static_cast<ERRNO>(_returnValue)));
     }
 }

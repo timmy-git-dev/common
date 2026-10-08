@@ -1,9 +1,7 @@
 #pragma once
 #include "type/Alias.hh"
-
 namespace cmn::syscall
 {
-
     typedef struct __user_cap_header_struct
     {
         u32 version;

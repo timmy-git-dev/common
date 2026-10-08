@@ -1,8 +1,6 @@
-#pragma once
 #include "syscall/lin/Call.hh"
 #include "syscall/lin/Func.hh"
 #include "syscall/lin/ID.hh"
-
 namespace cmn::syscall
 {
     #define SYSCALL0(_name, _id                                                                                          ) i64 _name(                                                                                          ) {return syscall(_id                                                                        );}
