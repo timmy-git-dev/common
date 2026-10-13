@@ -14,10 +14,10 @@ namespace cmn::syscall
         Timestamp modifyTime; // st_mtime / LastWriteTime
         Timestamp changeTime; // st_ctime / ChangeTime
 
-        i64       size;             // st_size
+        i64       size;       // st_size
 
-        u32       mode;             // Linux/macOS st_mode
-        u32       attributes;       // Windows FILE_ATTRIBUTE_*
+        u32       mode;       // Linux/macOS st_mode
+        u32       attributes; // Windows FILE_ATTRIBUTE_*
     };
 
     FileInfo query(const c08* _path);
