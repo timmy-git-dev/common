@@ -105,3 +105,4 @@ union semun {
     unsigned short  *array;         /* array for GETALL & SETALL */
 };
 typedef union semun semun_t;
+typedef struct semid_ds *semun_t_buf;
