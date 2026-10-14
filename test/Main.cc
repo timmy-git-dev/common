@@ -2,6 +2,7 @@
 #include "sys/platform/OS.hh"
 
 #if CMN_SYS_OS_LIN
+
 #include "syscall/lin/Call.hh"
 i32 main(const i32, const c08**)
 {
@@ -10,9 +11,11 @@ i32 main(const i32, const c08**)
 
     return 0;
 }
+
 #elif CMN_SYS_OS_WIN
-#include "syscall/win/Nt.hh"
-#include "syscall/win/Resolve.hh"
+
+#include "syscall/win/Call.hh"
+#include "syscall/win/Func.hh"
 
 int test(int _result)
 {
@@ -24,7 +27,7 @@ i32 main(const i32, const c08**)
     constexpr c08 _text[] = "Hello, world!\n";
     IO_STATUS_BLOCK iosb { };
 
-    cmn::syscall::win::nt_write_file
+    cmn::syscall::win::NtWriteFile
     (
         cmn::syscall::win_::resolve_peb()->ProcessParameters->StandardOutput,
         0,
@@ -39,14 +42,17 @@ i32 main(const i32, const c08**)
 
     return 0;
 }
+
 #elif CMN_SYS_OS_MAC
-#include "sys/xnu/Call.hh"
+
+#include "syscall/mac/Call.hh"
 
 i32 main(const i32, const c08**)
 {
     constexpr c08 _text[] = "Hello, world!\n";
-    cmn::sys::xnu::write(1, reinterpret_cast<user_addr_t>(_text), sizeof(_text) - 1);
+    cmn::syscall::mac::write(1, reinterpret_cast<user_addr_t>(_text), sizeof(_text) - 1);
 
     return 0;
 }
+
 #endif

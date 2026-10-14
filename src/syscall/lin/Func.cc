@@ -1,5 +1,10 @@
+#include "sys/platform/OS.hh"
+
+#if CMN_SYS_OS_LIN
+
 #include "syscall/lin/Func.hh"
 #include "sys/platform/Arch.hh"
+
 
 namespace cmn::syscall
 {
@@ -58,3 +63,5 @@ namespace cmn::syscall
         #endif
     }
 }
+
+#endif

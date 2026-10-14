@@ -1,3 +1,7 @@
+#include "sys/platform/OS.hh"
+
+#if CMN_SYS_OS_MAC
+
 #include "sys/platform/Arch.hh"
 #include "syscall/mac/Func.hh"
 
@@ -53,3 +57,5 @@ namespace cmn::syscall::mac
         #endif
     }
 }
+
+#endif

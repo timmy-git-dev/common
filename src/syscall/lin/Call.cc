@@ -1,3 +1,7 @@
+#include "sys/platform/OS.hh"
+
+#if CMN_SYS_OS_LIN
+
 #include "syscall/lin/Call.hh"
 #include "syscall/lin/Func.hh"
 #include "syscall/lin/ID.hh"
@@ -335,3 +339,5 @@ namespace cmn::syscall
     SYSCALL3(write, WRITE, unsigned int, fd, const char *, buf, s64, count)
     SYSCALL3(writev, WRITEV, unsigned long, fd, const iovec *, vec, unsigned long, vlen)
 }
+
+#endif

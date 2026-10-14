@@ -51,7 +51,7 @@ namespace cmn::syscall
 
     struct FileStatus
     {
-        #ifdef CMN_SYS_ARCH_X64
+        #if CMN_SYS_ARCH_X64
             u64      st_dev;
             u64      st_ino;
             u64      st_nlink;
