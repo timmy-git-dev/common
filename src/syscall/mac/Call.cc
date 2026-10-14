@@ -18,7 +18,6 @@ namespace cmn::syscall::mac
     #define SYSCALL7(_return, _name, _id, _type0, _arg0, _type1, _arg1, _type2, _arg2, _type3, _arg3, _type4, _arg4, _type5, _arg5, _type6, _arg6               ) _return _name(_type0 _arg0, _type1 _arg1, _type2 _arg2, _type3 _arg3, _type4 _arg4, _type5 _arg5, _type5 _arg6              ){return syscall(_id, (long)_arg0, (long)_arg1, (long)_arg2, (long)_arg3, (long)_arg4, (long)_arg5, (long)_arg6            );}
     #define SYSCALL8(_return, _name, _id, _type0, _arg0, _type1, _arg1, _type2, _arg2, _type3, _arg3, _type4, _arg4, _type5, _arg5, _type6, _arg6, _type7, _arg7) _return _name(_type0 _arg0, _type1 _arg1, _type2 _arg2, _type3 _arg3, _type4 _arg4, _type5 _arg5, _type5 _arg6, _type5 _arg7){return syscall(_id, (long)_arg0, (long)_arg1, (long)_arg2, (long)_arg3, (long)_arg4, (long)_arg5, (long)_arg6, (long)_arg7);}
 
-    #pragma message("???")
     SYSCALL3(int, __channel_get_info, __CHANNEL_GET_INFO, int, c, ch_info *, cinfo, uint32_t, cinfolen)
     SYSCALL4(int, __channel_get_opt, __CHANNEL_GET_OPT, int, c, uint32_t, opt, void *, aoptval, uint32_t *, aoptlen)
     SYSCALL2(int, __channel_open, __CHANNEL_OPEN, ch_init *, init, uint32_t, init_len)

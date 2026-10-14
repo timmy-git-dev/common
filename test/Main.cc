@@ -1,58 +1,10 @@
 #include "abi/Entry.hh"
-#include "sys/platform/OS.hh"
+#include "syscall/Terminal.hh"
 
-#if CMN_SYS_OS_LIN
+i32 main(const i32, const c08**)
+{
+    c08 _buffer[15] = "Hello, world!\n";
+    cmn::syscall::print(_buffer, 14);
 
-    #include "syscall/lin/Call.hh"
-    i32 main(const i32, const c08**)
-    {
-        c08 _buffer[15] = "Hello, world!\n";
-        cmn::syscall::lin::write(1, _buffer, 14);
-
-        return 0;
-    }
-
-#elif CMN_SYS_OS_WIN
-
-    #include "syscall/win/Call.hh"
-    #include "syscall/win/Func.hh"
-
-    int test(int _result)
-    {
-        return _result;
-    }
-
-    i32 main(const i32, const c08**)
-    {
-        constexpr c08 _text[] = "Hello, world!\n";
-        IO_STATUS_BLOCK iosb { };
-
-        cmn::syscall::win::NtWriteFile
-        (
-            cmn::syscall::win_::resolve_peb()->ProcessParameters->StandardOutput,
-            0,
-            0,
-            0,
-            &iosb,
-            (PVOID)_text,
-            sizeof(_text) - 1,
-            0,
-            0
-        );
-
-        return 0;
-    }
-
-#elif CMN_SYS_OS_MAC
-
-    #include "syscall/mac/Call.hh"
-
-    i32 main(const i32, const c08**)
-    {
-        constexpr c08 _text[] = "Hello, world!\n";
-        cmn::syscall::mac::write(1, reinterpret_cast<user_addr_t>(_text), sizeof(_text) - 1);
-
-        return 0;
-    }
-
-#endif
+    return 0;
+}
