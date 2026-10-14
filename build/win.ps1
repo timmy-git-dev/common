@@ -123,7 +123,8 @@ $OBJECTS = Get-ChildItem $OBJ -Recurse -File -Filter "*.o" |
     $OBJECTS `
     -o $EXE `
     "-e" `
-    "start__"
+    "start__" `
+    "-v"
 
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
