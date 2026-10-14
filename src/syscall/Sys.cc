@@ -12,14 +12,14 @@
 namespace cmn::syscall
 {
     [[noreturn]]
-    void exit(i32 _status)
+    void exit(const i32 _status)
     {
         #if CMN_SYS_OS_LIN
-            cmn::syscall::lin::exit(_status);
+            lin::exit(_status);
         #elif CMN_SYS_OS_MAC
-            cmn::syscall::mac::exit(_status);
+            mac::exit(_status);
         #elif CMN_SYS_OS_WIN
-            cmn::syscall::win::NtTerminateProcess((HANDLE)-1, _status);
+            win::NtTerminateProcess((HANDLE)-1, _status);
         #endif
 
         while (true) { }

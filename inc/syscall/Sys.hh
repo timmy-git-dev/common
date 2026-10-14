@@ -4,5 +4,5 @@
 namespace cmn::syscall
 {
     [[noreturn]]
-    void exit(i32);
+    void exit(const i32 _status);
 }
