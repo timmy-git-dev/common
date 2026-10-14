@@ -1,9 +1,7 @@
 #include "abi/Entry.hh"
-#include "syscall/win/Call.hh"
+#include "syscall/Sys.hh"
 // #include "abi/Cxa.hh"
 // #include "abi/InitFini.hh"
-
-// #include "syscall/lin/Call.hh" // TODO: replace syscall with universal "exit".
 
 extern "C" void start__()
 {
@@ -14,9 +12,8 @@ extern "C" void start__()
     // cmn::sys::abi::destruct_static_funcs(       );
     // cmn::sys::abi::destruct_static_vars (nullptr);
 
-
-    // cmn::syscall::exit(_result);
-    cmn::syscall::win::NtTerminateProcess((HANDLE)-1, _result);
+    cmn::syscall::exit(_result);
+    // cmn::syscall::win::NtTerminateProcess((HANDLE)-1, _result);
     while (true) { }
 }
 

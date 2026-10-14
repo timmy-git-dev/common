@@ -2,7 +2,7 @@
 #include "sys/platform/Arch.hh"
 #include "type/Alias.hh"
 
-namespace cmn::syscall
+namespace cmn::syscall::lin
 {
     using aio_context_t = u64;
     using mode_t        = u08;

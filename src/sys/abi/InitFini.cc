@@ -38,6 +38,6 @@ namespace cmn::sys::abi
         }
     }
 }
-#elif CMN_SYS_OS_WIN
 #elif CMN_SYS_OS_MAC
+#elif CMN_SYS_OS_WIN
 #endif

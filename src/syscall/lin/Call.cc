@@ -6,7 +6,7 @@
 #include "syscall/lin/Func.hh"
 #include "syscall/lin/ID.hh"
 
-namespace cmn::syscall
+namespace cmn::syscall::lin
 {
     #define SYSCALL0(_name, _id                                                                                          ) long _name(                                                                                  ){return syscall(_id                                                                              );}
     #define SYSCALL1(_name, _id, _type0, _arg0                                                                           ) long _name(_type0 _arg0                                                                      ){return syscall(_id, (long)_arg0                                                                 );}

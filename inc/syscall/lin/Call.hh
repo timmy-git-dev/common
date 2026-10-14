@@ -1,7 +1,7 @@
 #pragma once
 #include "syscall/lin/Type.hh"
 
-namespace cmn::syscall
+namespace cmn::syscall::lin
 {
     long accept                  (int fd, sockaddr *upeer_sockaddr, int *upeer_addrlen);
     long accept4                 (int fd, sockaddr *upeer_sockaddr, int *upeer_addrlen, int flags);

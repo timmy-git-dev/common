@@ -1,3 +1,7 @@
+#include "sys/platform/OS.hh"
+
+#if CMN_SYS_OS_WIN
+
 #include "syscall/win/Func.hh"
 #include "sys/platform/Arch.hh"
 
@@ -122,3 +126,5 @@ namespace cmn::syscall::win_
         return (void*)nullptr;
     }
 }
+
+#endif

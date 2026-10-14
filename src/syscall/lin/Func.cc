@@ -6,7 +6,7 @@
 #include "sys/platform/Arch.hh"
 
 
-namespace cmn::syscall
+namespace cmn::syscall::lin
 {
     long syscall(long _id, long _arg0, long _arg1, long _arg2, long _arg3, long _arg4, long _arg5)
     {

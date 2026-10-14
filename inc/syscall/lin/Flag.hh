@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cmn::syscall
+namespace cmn::syscall::lin
 {
     // TODO: maybe automate if possible/get all defines + maybe separate files.
     #define PROT_NONE           0x0
