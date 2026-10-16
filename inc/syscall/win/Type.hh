@@ -542,15 +542,78 @@ struct _DOCONNECTDATA;
 struct CACHE_STATISTICS;
 struct _DONOTIFYDATA;
 
-struct RTL_USER_PROCESS_PARAMETERS
+typedef struct _CURDIR
 {
-    b08 Unneeded[32];
+    UNICODE_STRING DosPath;
+    HANDLE Handle;
+} CURDIR, *PCURDIR;
 
+typedef struct _STRING
+{
+    USHORT Length;
+    USHORT MaximumLength;
+    PCHAR Buffer;
+} STRING, *PSTRING, ANSI_STRING, *PANSI_STRING, OEM_STRING, *POEM_STRING;
+
+typedef struct _RTL_DRIVE_LETTER_CURDIR
+{
+    USHORT Flags;
+    USHORT Length;
+    ULONG TimeStamp;
+    STRING DosPath;
+} RTL_DRIVE_LETTER_CURDIR, *PRTL_DRIVE_LETTER_CURDIR;
+
+#define RTL_MAX_DRIVE_LETTERS 32
+typedef struct _RTL_USER_PROCESS_PARAMETERS
+{
+    ULONG MaximumLength;
+    ULONG Length;
+
+    ULONG Flags; // RTL_USER_PROC_FLAGS
+    ULONG DebugFlags; // RTL_USER_DEBUG_FLAGS
+
+    HANDLE ConsoleHandle;
+    ULONG ConsoleFlags; // RTL_USER_PROC_CONSOLE_FLAGS
     HANDLE StandardInput;
     HANDLE StandardOutput;
     HANDLE StandardError;
-};
-using PRTL_USER_PROCESS_PARAMETERS = struct RTL_USER_PROCESS_PARAMETERS *;
+
+    CURDIR CurrentDirectory;
+    UNICODE_STRING DllPath;
+    UNICODE_STRING ImagePathName;
+    UNICODE_STRING CommandLine;
+    PVOID Environment;
+
+    ULONG StartingX;
+    ULONG StartingY;
+    ULONG CountX;
+    ULONG CountY;
+    ULONG CountCharsX;
+    ULONG CountCharsY;
+    ULONG FillAttribute;
+
+    ULONG WindowFlags; // RTL_USER_PROC_WINDOW_FLAGS
+    ULONG ShowWindowFlags;
+    UNICODE_STRING WindowTitle;
+    UNICODE_STRING DesktopInfo;
+    UNICODE_STRING ShellInfo;
+    UNICODE_STRING RuntimeData;
+    RTL_DRIVE_LETTER_CURDIR CurrentDirectories[RTL_MAX_DRIVE_LETTERS];
+
+    ULONG_PTR EnvironmentSize;
+    ULONG_PTR EnvironmentVersion;
+
+    PVOID PackageDependencyData;
+    ULONG ProcessGroupId;
+    ULONG LoaderThreads; // THRESHOLD
+    UNICODE_STRING RedirectionDllName; // REDSTONE5
+    UNICODE_STRING HeapPartitionName; // 19H1
+    PULONGLONG DefaultThreadpoolCpuSetMasks;
+    ULONG DefaultThreadpoolCpuSetMaskCount;
+    ULONG DefaultThreadpoolThreadMaximum; // 20H1
+    ULONG HeapMemoryTypeMask; // WIN11 22H2
+    PVOID AttributeList;
+} RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
 struct PEB
 {
     unsigned char Reserved1[2];

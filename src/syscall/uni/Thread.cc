@@ -1,4 +1,4 @@
-#include "syscall/Sys.hh"
+#include "syscall/uni/Thread.hh"
 #include "sys/platform/OS.hh"
 
 #if CMN_SYS_OS_LIN
@@ -9,13 +9,13 @@
 #include "syscall/win/Call.hh"
 #endif
 
-namespace cmn::syscall
+namespace cmn::syscall::uni::thread
 {
     [[noreturn]]
     void exit(const i32 _status)
     {
         #if CMN_SYS_OS_LIN
-            cmn::syscall::lin::exit(_status);
+            cmn::syscall::lin::exit_group(_status);
         #elif CMN_SYS_OS_MAC
             cmn::syscall::mac::exit(_status);
         #elif CMN_SYS_OS_WIN

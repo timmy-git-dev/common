@@ -1,7 +1,7 @@
 #pragma once
 // #include "type/Alias.hh"
 
-namespace cmn::syscall
+namespace cmn::syscall::uni
 {
     void dir_create (); // NtCreateFile                 : mkdirat                      : mkdirat
     void dir_open   (); // NtCreateFile                 : openat                       : openat(O_DIRECTORY)

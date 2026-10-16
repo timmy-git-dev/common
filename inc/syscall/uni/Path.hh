@@ -1,7 +1,7 @@
 #pragma once
 #include "type/Alias.hh"
 
-namespace cmn::syscall
+namespace cmn::syscall::uni
 {
     struct Timestamp
     {

@@ -1,4 +1,4 @@
-#include "syscall/Terminal.hh"
+#include "syscall/uni/Terminal.hh"
 #include "sys/platform/OS.hh"
 
 #if CMN_SYS_OS_LIN
@@ -10,7 +10,7 @@
 #include "syscall/win/Func.hh"
 #endif
 
-namespace cmn::syscall
+namespace cmn::syscall::uni::terminal
 {
     #if CMN_SYS_OS_WIN
         PRTL_USER_PROCESS_PARAMETERS processParameters;

@@ -16,6 +16,7 @@ PATH_EXE="$PATH_BIN/common.exe"
 # Set compile types.
 COMPILE_VERSION="-std=c++23"
 FLAGS_BOTH="-g3 -O0 -ffreestanding"
+# FLAGS_BOTH="-flto -O3 -ffunction-sections -fdata-sections -ffreestanding"
 FLAGS_COMP="-fno-exceptions -fno-rtti -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables"
 FLAGS_LINK="-nostdlib -nostdinc -static"
 

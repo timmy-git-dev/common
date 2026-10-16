@@ -23,10 +23,10 @@ using u32 = unsigned int;
 /// A 64-bit unsigned integer.
 using u64 = unsigned long long;
 
-/// An 8-bit character used to represent ASCII or UTF-8.
+/// An 8-bit character typically used to represent ASCII or UTF-8.
 using c08 = char;
-/// An 8-bit character used to represent UTF-16.
-using c16 = wchar_t;
+/// An 8-bit character typically used to represent UTF-16 for windows paths.
+using c16 = char16_t;
 
 /// An 8-bit boolean used to represent a true/false condition.
 using b08 = bool;

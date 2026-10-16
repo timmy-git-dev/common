@@ -21,16 +21,21 @@ namespace cmn::syscall::mac
 
             asm volatile
             (
-                "svc #0x80"
-                : "+r"(x0 )
-                :  "r"(x16),
-                   "r"(x1 ),
-                   "r"(x2 ),
-                   "r"(x3 ),
-                   "r"(x4 ),
-                   "r"(x5 )
-                : "memory"
+                "svc #0x80\n\t"
+                "b.cc 1f\n\t"
+                "neg x0, x0\n\t"
+                "1:"
+                : "+r"(x0)
+                : "r"(x16),
+                  "r"(x1),
+                  "r"(x2),
+                  "r"(x3),
+                  "r"(x4),
+                  "r"(x5)
+                : "cc", "memory"
             );
+
+            return x0;
 
             return x0;
 
@@ -39,17 +44,23 @@ namespace cmn::syscall::mac
             _id |= 0x2000000;
 
             register long r10 asm("r10") = _arg3;
+            register long r8  asm("r8")  = _arg4;
+            register long r9  asm("r9")  = _arg5;
 
-            asm volatile(
-                "syscall"
-                : "+a"(_id )
+            asm volatile
+            (
+                "syscall\n\t"
+                "jnc 1f\n\t"
+                "neg %%rax\n\t"
+                "1:"
+                : "+a"(_id)
                 : "D"(_arg0),
                   "S"(_arg1),
                   "d"(_arg2),
-                  "r"(r10  ),
-                  "r"(_arg4),
-                  "r"(_arg5)
-                : "rcx", "r11", "memory"
+                  "r"(r10),
+                  "r"(r8),
+                  "r"(r9)
+                : "rcx", "r11", "cc", "memory"
             );
 
             return _id;
