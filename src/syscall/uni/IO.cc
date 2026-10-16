@@ -1,5 +1,6 @@
 #include "syscall/uni/IO.hh"
 #include "error/Result.hh"
+#include "syscall/win/Func.hh"
 
 #if CMN_SYS_OS_LIN
 #include "syscall/lin/Call.hh"
@@ -7,7 +8,6 @@
 #include "syscall/mac/Call.hh"
 #elif CMN_SYS_OS_WIN
 #include "syscall/win/Call.hh"
-#include "syscall/win/Func.hh"
 #endif
 
 namespace cmn::syscall::uni::file
@@ -119,7 +119,7 @@ namespace cmn::syscall::uni::file
             OBJECT_ATTRIBUTES _attributes
             {
                 sizeof(OBJECT_ATTRIBUTES),
-                nullptr,
+                win_::resolve_peb()->ProcessParameters->CurrentDirectory.Handle,
                 &_name,
                 OBJ_CASE_INSENSITIVE,
                 nullptr,
