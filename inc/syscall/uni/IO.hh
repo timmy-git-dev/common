@@ -1,4 +1,5 @@
 #pragma once
+#include "error/Error.hh"
 #include "error/Result.hh"
 #include "sys/platform/OS.hh"
 
@@ -6,11 +7,16 @@
 #include "syscall/lin/Errno.hh"
 #endif
 
-namespace cmn::syscall::uni::file
+namespace cmn::syscall::uni::io
 {
     using PathHandle = s64;
 
-    enum CREATE : error::ERROR
+    enum class CWD : error::ERROR
+    {
+        NONE = 0,
+    };
+
+    enum class CREATE : error::ERROR
     {
         NONE = 0,
 
@@ -42,8 +48,10 @@ namespace cmn::syscall::uni::file
         #endif
     };
 
+    PathHandle cwd_handle();
+
     // Return universal file-descriptor
-    cmn::error::Result<PathHandle, CREATE> create(const c08 *_path, const s64 _length);
+    cmn::error::Result<PathHandle, CREATE> create(const PathHandle _root, const c08 *_path, const s64 _length);
     // cmn::error::Result<void, OPEN  > open  ();
     // void close     (); // NtClose                      : close                        : close
     // void remove    (); // NtSetInformationFile         : unlinkat                     : unlinkat

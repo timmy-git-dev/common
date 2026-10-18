@@ -1,6 +1,5 @@
 #include "syscall/uni/IO.hh"
 #include "error/Result.hh"
-#include "syscall/win/Func.hh"
 
 #if CMN_SYS_OS_LIN
 #include "syscall/lin/Call.hh"
@@ -8,9 +7,10 @@
 #include "syscall/mac/Call.hh"
 #elif CMN_SYS_OS_WIN
 #include "syscall/win/Call.hh"
+#include "syscall/win/Func.hh"
 #endif
 
-namespace cmn::syscall::uni::file
+namespace cmn::syscall::uni::io
 {
     #if CMN_SYS_OS_WIN
         PRTL_USER_PROCESS_PARAMETERS processParameters;
@@ -89,19 +89,30 @@ namespace cmn::syscall::uni::file
 
     #endif
 
-    cmn::error::Result<PathHandle, CREATE> create(const c08 *_path, const s64 _length) // NtCreateFile(FILE_CREATE)    : openat(O_CREAT|O_EXCL)       : openat(O_CREAT|O_EXCL)
+    PathHandle cwd_handle()
+    {
+        #if CMN_SYS_OS_LIN
+            return AT_FDCWD;
+        #elif CMN_SYS_OS_MAC
+            return AT_FDCWD;
+        #elif CMN_SYS_OS_WIN
+            return PathHandle(win_::resolve_peb()->ProcessParameters->CurrentDirectory.Handle);
+        #endif
+    }
+
+    cmn::error::Result<PathHandle, CREATE> create(const PathHandle _root, const c08 *_path, const s64 _length)
     {
         PathHandle _pathHandle;
         CREATE     _error;
 
         #if CMN_SYS_OS_LIN
 
-            _pathHandle = cmn::syscall::lin::openat(AT_FDCWD, _path, O_WRONLY | O_CREAT | O_TRUNC, (lin::mode_t)0644);
+            _pathHandle = cmn::syscall::lin::openat(_root, _path, O_WRONLY | O_CREAT | O_TRUNC, (lin::mode_t)0644);
             _error  = (u64(_pathHandle) >= u64(-4095LL)) ? CREATE(-_pathHandle) : CREATE::NONE;
 
         #elif CMN_SYS_OS_MAC
 
-            _pathHandle = cmn::syscall::mac::openat(AT_FDCWD, (user_addr_t)_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            _pathHandle = cmn::syscall::mac::openat(_root, (user_addr_t)_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             _error  = _pathHandle < 0 ? CREATE(-_pathHandle) : CREATE::NONE;
 
         #elif CMN_SYS_OS_WIN
@@ -119,7 +130,7 @@ namespace cmn::syscall::uni::file
             OBJECT_ATTRIBUTES _attributes
             {
                 sizeof(OBJECT_ATTRIBUTES),
-                win_::resolve_peb()->ProcessParameters->CurrentDirectory.Handle,
+                (void*)_root,
                 &_name,
                 OBJ_CASE_INSENSITIVE,
                 nullptr,
@@ -129,7 +140,7 @@ namespace cmn::syscall::uni::file
             IO_STATUS_BLOCK _ioStatus { };
             HANDLE _handle;
 
-            NTSTATUS _status = CREATE(cmn::syscall::win::NtCreateFile
+            NTSTATUS _status = cmn::syscall::win::NtCreateFile
             (
                 &_handle,
                 FILE_WRITE_DATA | SYNCHRONIZE,
@@ -142,7 +153,7 @@ namespace cmn::syscall::uni::file
                 FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT,
                 nullptr,
                 0
-            ));
+            );
 
             _pathHandle = PathHandle(_handle);
             _error = _status < 0 ? CREATE(_status) : CREATE::NONE;
