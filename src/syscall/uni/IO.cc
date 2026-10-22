@@ -84,6 +84,14 @@ namespace cmn::syscall::uni::io
             _output[_count++] = _code;
         }
 
+        _output[_count] = u'\0';
+        return _count;
+    }
+
+    s64 posix_to_win_path()
+    {
+        s64 _count = 0;
+
         return _count;
     }
 

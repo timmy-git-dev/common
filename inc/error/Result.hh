@@ -1,6 +1,7 @@
 #pragma once
-#include <error/Error.hh>
-#include <type/Alias.hh>
+#include "error/Error.hh"
+#include "type/Alias.hh"
+
 namespace cmn::error
 {
     template<typename TYPE, typename ERROR>

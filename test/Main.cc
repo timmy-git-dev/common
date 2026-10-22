@@ -16,10 +16,15 @@ void int_to_hex(u32 _value, c08 _output[11])
     _output[10] = '\0';
 }
 
+struct example
+{
+    int bruh;
+};
+
 i32 main(const i32, const c08**)
 {
     c08 _bufferA[11];
-    static constexpr c08 _bufferC[] = "bin\\test.txt";
+    static constexpr c08 _bufferC[] = "bin/../test.txt";
     cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _test = cmn::syscall::uni::io::create(cmn::syscall::uni::io::cwd_handle(), _bufferC, sizeof(_bufferC) - 1);
 
     int_to_hex(u32(_test.error.code), _bufferA);
