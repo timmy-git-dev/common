@@ -1,4 +1,5 @@
 #pragma once
+#include "type/Assert.hh"
 
 /// Explicitly casts from a type to another, equivalent to static_cast.
 template<typename TO_, typename FROM_> constexpr
@@ -16,9 +17,9 @@ TO_ cast_cv(FROM_ &&_value) noexcept
 template<typename TO_, typename FROM_>
 constexpr TO_ cast_bits(const FROM_& _value) noexcept
 {
-    assert(sizeof(TO_) == sizeof(FROM_)  , "Casted types must be the same size."          );
-    assert(__is_trivially_copyable(FROM_), "From casting type must be trivially copyable.");
-    assert(__is_trivially_copyable(TO_  ), "To casting type must be trivially copyable."  );
+    cassert(sizeof(TO_) == sizeof(FROM_)  , "Casted types must be the same size."          );
+    cassert(__is_trivially_copyable(FROM_), "From casting type must be trivially copyable.");
+    cassert(__is_trivially_copyable(TO_  ), "To casting type must be trivially copyable."  );
 
     return __builtin_bit_cast(TO_, _value);
 }

@@ -4,7 +4,7 @@
 
 i32 main(const i32, const c08**)
 {
-    c08 _bufferB[] = "\nHello, world!\n";
+    c08 _bufferB[] = "Hello, world!\n";
     cmn::syscall::uni::terminal::print(_bufferB, sizeof(_bufferB) - 1);
 
     return 0;
