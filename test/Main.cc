@@ -2,6 +2,7 @@
 #include "error/Result.hh"
 #include "syscall/uni/IO.hh"
 #include "syscall/uni/Terminal.hh"
+#include "syscall/win/Func.hh"
 
 void int_to_hex(u32 _value, c08 _output[11])
 {
@@ -16,18 +17,24 @@ void int_to_hex(u32 _value, c08 _output[11])
     _output[10] = '\0';
 }
 
-struct example
-{
-    int bruh;
-};
-
 i32 main(const i32, const c08**)
 {
-    c08 _bufferA[11];
-    static constexpr c08 _bufferC[] = "bin/../test.txt";
-    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _test = cmn::syscall::uni::io::create(cmn::syscall::uni::io::cwd_handle(), _bufferC, sizeof(_bufferC) - 1);
+    #if CMN_SYS_OS_WIN
+        UNICODE_STRING test = cmn::syscall::win_::resolve_peb()->ProcessParameters->CurrentDirectory.DosPath;
+        c08 _bufferD[512];
+        for (int _i = 0; _i < test.Length / 2; ++_i)
+        {
+            _bufferD[_i] = test.Buffer[_i];
+        }
+        _bufferD[test.Length / 2] = '\n';
+        cmn::syscall::uni::terminal::print(_bufferD, test.Length / 2 + 1);
+    #endif
 
-    int_to_hex(u32(_test.error.code), _bufferA);
+    c08 _bufferA[11];
+    static constexpr c08 _bufferC[] = "Z:\\home\\timmy\\code\\common\\test.txt";
+    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(cmn::syscall::uni::io::PathHandle(nullptr), _bufferC, sizeof(_bufferC) - 1);
+
+    int_to_hex(u32(_file.error.code), _bufferA);
     cmn::syscall::uni::terminal::print(_bufferA, sizeof(_bufferA) - 1);
 
     c08 _bufferB[] = "\nHello, world!\n";
