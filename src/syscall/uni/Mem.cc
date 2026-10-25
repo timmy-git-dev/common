@@ -1,7 +1,6 @@
 #include "error/Result.hh"
 #include "sys/platform/OS.hh"
 #include "syscall/uni/Mem.hh"
-#include "syscall/win/Call.hh"
 #include "type/Cast.hh"
 
 #if CMN_SYS_OS_LIN
@@ -24,6 +23,7 @@
 
 #elif CMN_SYS_OS_WIN
 
+    #include "syscall/win/Call.hh"
     #include "syscall/win/Type.hh"
 
     constexpr u32 MEM_COMMIT     = 0x1000;
