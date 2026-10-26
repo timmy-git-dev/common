@@ -1,11 +1,33 @@
 #include "abi/Entry.hh"
 #include "error/Result.hh"
 #include "syscall/uni/IO.hh"
-#include "syscall/uni/Mem.hh"
 #include "syscall/uni/Terminal.hh"
 #include "syscall/win/Call.hh"
 #include "syscall/win/Type.hh"
+#include "syscall/util/Path.hh"
 
+s64 int_to_str(u64 _value, c08 _output[22])
+{
+    i32 _count = 0;
+
+    do
+    {
+        _output[_count++] = c08('0' + _value % 10);
+        _value /= 10;
+    }
+    while (_value);
+
+    for (i32 _i = 0; _i < _count / 2; ++_i)
+    {
+        c08 _temp = _output[_i];
+        _output[_i] = _output[_count - 1 - _i];
+        _output[_count - 1 - _i] = _temp;
+    }
+
+    _output[_count++] = '\n';
+    _output[_count] = '\0';
+    return _count;
+}
 void int_to_hex(u64 _value, c08 _output[20])
 {
     constexpr c08 _digits[] = "0123456789ABCDEF";
@@ -33,18 +55,47 @@ void int_to_hex(u32 _value, c08 _output[12])
     _output[11] = '\0';
 }
 
-static c08 hex[20];
+
+
+
+void print_entry(const c08 *_name, s64 _length, void *_context)
+{
+    // _name contains only the entry name.
+    // Example: "file.txt" or "subfolder"
+
+    cmn::syscall::uni::terminal::print(_name, _length);
+    cmn::syscall::uni::terminal::print("\n", 1);
+}
+
+
+static c08 hex[22];
+static c08 _buffer[512];
+static c08 _filePath[] = "\\??\\Z:\\home\\timmy\\code\\common";
+// static c08 _testPath[] = "/C:/./././//test.txt";
 
 i32 main(const i32, const c08**)
 {
+    // u64 _len = cmn::syscall::util::path::native_size(_testPath, sizeof(_testPath) - 1);
+    // cmn::syscall::uni::terminal::print(hex, int_to_str(_len, hex));
 
-    const c08* _filePath = "\\??\\Z:\\home\\timmy\\code\\common\\test.txt";
-    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(cmn::syscall::uni::io::PathHandle(nullptr), _filePath, 38);
+
+    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(cmn::syscall::uni::io::PathHandle(nullptr), _filePath, sizeof(_filePath) - 1);
     int_to_hex(u32(_file.error.code), hex);
     cmn::syscall::uni::terminal::print(hex, 11);
 
     if (_file.error.code == cmn::syscall::uni::io::CREATE::NONE)
     {
+        cmn::syscall::uni::io::for_each_name(_file.value, print_entry);
+
+
+        cmn::syscall::uni::io::get_name(_file.value, _buffer);
+        s64 _length = -1;
+        while (_buffer[++_length] != '\0') { }
+        _buffer[_length++] = '\n';
+        _buffer[_length] = '\0';
+        cmn::syscall::uni::terminal::print(_buffer, _length);
+
+
         cmn::syscall::win::NtClose(HANDLE(_file.value));
     }
 

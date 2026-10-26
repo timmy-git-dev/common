@@ -67,4 +67,9 @@ namespace cmn::syscall::uni::io
     // void query     (); // NtQueryInformationFile       : fstat                        : fstat
 
     // void flush     (); // NtFlushBuffersFile           : fsync                        : fsync
+
+
+
+    void get_name(cmn::syscall::uni::io::PathHandle _handle, c08 *_output);
+    s64 for_each_name(cmn::syscall::uni::io::PathHandle _handle, void (*_visit)(const c08 *_name, s64 _length, void *_context), void *_context = nullptr);
 }
