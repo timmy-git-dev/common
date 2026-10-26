@@ -58,44 +58,28 @@ void int_to_hex(u32 _value, c08 _output[12])
 
 
 
-void print_entry(const c08 *_name, s64 _length, void *_context)
-{
-    // _name contains only the entry name.
-    // Example: "file.txt" or "subfolder"
+// void print_entry(const c08 *_name, s64 _length, void *_context)
+// {
+//     // _name contains only the entry name.
+//     // Example: "file.txt" or "subfolder"
 
-    cmn::syscall::uni::terminal::print(_name, _length);
-    cmn::syscall::uni::terminal::print("\n", 1);
-}
+//     cmn::syscall::uni::terminal::print(_name, _length);
+//     cmn::syscall::uni::terminal::print("\n", 1);
+// }
 
 
 static c08 hex[22];
-static c08 _buffer[512];
-static c08 _filePath[] = "\\??\\Z:\\home\\timmy\\code\\common";
+static c08 _filePath[] = "/Z:/home/timmy/code/common";
 // static c08 _testPath[] = "/C:/./././//test.txt";
 
 i32 main(const i32, const c08**)
 {
-    // u64 _len = cmn::syscall::util::path::native_size(_testPath, sizeof(_testPath) - 1);
-    // cmn::syscall::uni::terminal::print(hex, int_to_str(_len, hex));
-
-
-    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(cmn::syscall::uni::io::PathHandle(nullptr), _filePath, sizeof(_filePath) - 1);
+    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(_filePath, sizeof(_filePath) - 1);
     int_to_hex(u32(_file.error.code), hex);
     cmn::syscall::uni::terminal::print(hex, 11);
 
     if (_file.error.code == cmn::syscall::uni::io::CREATE::NONE)
     {
-        cmn::syscall::uni::io::for_each_name(_file.value, print_entry);
-
-
-        cmn::syscall::uni::io::get_name(_file.value, _buffer);
-        s64 _length = -1;
-        while (_buffer[++_length] != '\0') { }
-        _buffer[_length++] = '\n';
-        _buffer[_length] = '\0';
-        cmn::syscall::uni::terminal::print(_buffer, _length);
-
-
         cmn::syscall::win::NtClose(HANDLE(_file.value));
     }
 

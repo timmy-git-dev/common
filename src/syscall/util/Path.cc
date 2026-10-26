@@ -1,6 +1,6 @@
 #include "syscall/util/Path.hh"
-#include "syscall/util/UTF.hh"
 #include "sys/platform/OS.hh"
+#include "syscall/win/Type.hh"
 
 namespace cmn::syscall::util::path
 {
@@ -22,169 +22,305 @@ namespace cmn::syscall::util::path
     }
 
 
+    // TODO: thread_local broken due to _tls_index, should fix cuz actually useful.
+    #if CMN_SYS_OS_LIN
+        constexpr s64 MAX_PATH_SIZE = 256;
+        static c08 PATH_BUFFER[MAX_PATH_SIZE];
+    #elif CMN_SYS_OS_MAC
+        constexpr s64 MAX_PATH_SIZE = 256;
+        static c08 PATH_BUFFER[MAX_PATH_SIZE];
+    #elif CMN_SYS_OS_WIN
+        constexpr s64 MAX_PATH_SIZE = 260;
+        static c16 nativePathBuffer[MAX_PATH_SIZE];
+        static u32 componentBuffer [MAX_PATH_SIZE];
 
+        /// "/C:/dir_a/dir_b/../file.c" -> "\??\C:\dir_a\file.c"
+        UNICODE_STRING to_native(const c08 *_exposedPath, const s64 _exposedPathLength)
+        {
+            s64 _utfCharacterCount = 0;
+            s64 _skip = 0;
+            s64 _componentCount = 0;
 
+            s64 _exposedPathIndex     = _exposedPathLength;
+            s64 _componentBufferIndex = MAX_PATH_SIZE;
+            s64 _nativeBufferIndex    = MAX_PATH_SIZE - 1; // Reserve an extra trailing separator for when the path just points to a drive "\??\C:\".
 
+            // Iterate backwards through the exposed path.
+            while (_exposedPathIndex-- > 0)
+            {
+                // Count utf-8 chars until found one that is a valid start sequence.
+                _utfCharacterCount++;
+                if (((u08(_exposedPath[_exposedPathIndex]) & 0b11000000)) == 0b10000000)
+                {
+                    continue;
+                }
 
+                // Obtain the unicode-point for the utf-8 sequence.
+                u32 _code;
+                switch (_utfCharacterCount)
+                {
+                    case 1:
+                    {
+                        _code =
+                            u32(_exposedPath[_exposedPathIndex]);
+                        break;
+                    }
+                    case 2:
+                    {
+                        _code =
+                            u32(_exposedPath[_exposedPathIndex    ] & 0b00011111) <<  6 |
+                            u32(_exposedPath[_exposedPathIndex + 1] & 0b00111111);
+                        break;
+                    }
+                    case 3:
+                    {
+                        _code =
+                            u32(_exposedPath[_exposedPathIndex    ] & 0b00001111) << 12 |
+                            u32(_exposedPath[_exposedPathIndex + 1] & 0b00111111) <<  6 |
+                            u32(_exposedPath[_exposedPathIndex + 2] & 0b00111111);
+                        break;
+                    }
+                    case 4:
+                    {
+                        _code =
+                            u32(_exposedPath[_exposedPathIndex    ] & 0b00000111) << 18 |
+                            u32(_exposedPath[_exposedPathIndex + 1] & 0b00111111) << 12 |
+                            u32(_exposedPath[_exposedPathIndex + 2] & 0b00111111) <<  6 |
+                            u32(_exposedPath[_exposedPathIndex + 3] & 0b00111111);
+                        break;
+                    }
+                }
+                _utfCharacterCount = 0;
 
+                //  If a separator is not found, continue writing the component to the buffer.
+                if (_code != '/')
+                {
+                    componentBuffer[--_componentBufferIndex] = _code;
+                    continue;
+                }
 
+                // Get the length and reset the buffer.
+                s64 _componentLength = MAX_PATH_SIZE - _componentBufferIndex;
+                _componentBufferIndex = MAX_PATH_SIZE;
 
-    // TODO: Change "size" to "length" for naming.
+                // Skip trailing separators, consecutive separators/empty components, and single-period/current directory components.
+                if (_componentLength == 0 || (_componentLength == 1 && componentBuffer[MAX_PATH_SIZE - 1] == '.'))
+                {
+                    continue;
+                }
 
-    /// takes exposed path and returns the expected size when converted to a native path.
-    // s64 native_size(const c08 *_exposedPath, const s64 _exposedPathLength)
-    // {
+                // Skip the next valid, non-root component if the current component is two-periods.
+                if (_componentLength == 1 && componentBuffer[MAX_PATH_SIZE - 2] == '.' && componentBuffer[MAX_PATH_SIZE - 1] == '.')
+                {
+                    _skip++;
+                    continue;
+                }
 
+                // If valid, and a non-root component, skip the component if a ".." was encountered.
+                if (_skip > 0 && _exposedPathIndex == 0)
+                {
+                    _skip--;
+                    continue;
+                }
 
+                for (s64 _i = 0; _i < _componentLength; ++_i)
+                {
+                    _code = componentBuffer[MAX_PATH_SIZE - 1 - _i];
 
+                    if (_code > 0b1111111111111111)
+                    {
+                        nativePathBuffer[--_nativeBufferIndex] = c16(0b1101100000000000 | ((_code - 0x10000) >> 10));
+                        nativePathBuffer[--_nativeBufferIndex] = c16(0b1101110000000000 | ((_code - 0x10000) & 0b1111111111));
+                    }
+                    else
+                    {
+                        nativePathBuffer[--_nativeBufferIndex] = _code;
+                    }
+                }
+                nativePathBuffer[--_nativeBufferIndex] = u'\\';
+                _componentCount++;
+            }
 
+            // Prepend "\??".
+            nativePathBuffer[--_nativeBufferIndex] = u'\\';
+            nativePathBuffer[--_nativeBufferIndex] = u'?';
+            nativePathBuffer[--_nativeBufferIndex] = u'?';
 
+            s64 _nativePathLength = u16(MAX_PATH_SIZE - 1 - _nativeBufferIndex);
 
+            // Append a trailing '\' separator if the path is just a drive.
+            if (_componentCount == 1)
+            {
+                nativePathBuffer[MAX_PATH_SIZE - 1] = u'\\';
+                _nativePathLength++;
+            }
 
+            // Return the native path buffer.
+            return UNICODE_STRING
+            {
+                .Length        = u16(_nativePathLength * 2),
+                .MaximumLength = u16(_nativePathLength * 2),
+                .Buffer        = nativePathBuffer + _nativeBufferIndex,
+            };
+        }
+        /// "/C:/dir_a/dir_b" + "\dir_c\file.d" -> "/C:/dir_c/file.d"
+        s64 from_native_rooted_drive(const c08 *_exposedPath, const s64 _exposedPathLength, const UNICODE_STRING _nativePath, c08 *_output)
+        {
+            // Add the first component from _exposedPath (typically drive 'A-Z + ':') to _output, excluding the first leading '/' separator.
+            // Note that if the exposed path is empty, a single '/' separator, or just a drive without an
+            // extra '/' separator, the output will still be valid after appending the converted native path.
+            s64 _outputIndex = 0;
+            s64 _exposedPathIndex = 1;
+            while (_exposedPathIndex < _exposedPathLength)
+            {
+                c08 _char = _exposedPath[_exposedPathIndex];
 
+                // Break and ignore the separator if found.
+                if (((u08(_char) & 0b10000000)) == 0b00000000 && _exposedPath[_exposedPathIndex] != '/')
+                {
+                    break;
+                }
 
+                _output[_outputIndex++] = _char;
+            }
 
-    //     // lin:
-    //     /// - /root/example/.. -> /root (removes "/file/..")
-    //     /// - /root/example/. -> /root/example (removes "/.")
-    //     // mac:
-    //     /// - /root/example/.. -> /root (removes "/file/..")
-    //     /// - /root/example/. -> /root/example (removes "/.")
-    //     // win:
-    //     /// - /root/example/.. -> /root (removes "/file/..")
-    //     /// - /root/example/. -> /root/example (removes "/.")
-    //     /// - /root/example -> \root\example (swaps "/" with "\", but won't change size, so don't check here.)
-    //     /// - /root/example -> \??/root/example (prepends "\??" to the path)
+            // Convert the entire string from _nativePath to utf-8 and add to _output, ensure all '\'s are replaced with '/'.
+            s64 _nativePathIndex = 0;
+            const s64 _nativePathLength = _nativePath.Length / 2;
+            while (_nativePathIndex < _nativePathLength)
+            {
+                u32 _char = _nativePath.Buffer[_nativePathIndex++];
 
-    //     // lin: /root/example/../test/./file.txt -> /root/test/file.txt
-    //     // mac: /root/example/../test/./file.txt -> /root/test/file.txt
-    //     // win: /C:/example/../test/./file.txt -> \??\C:\test\file.txt
+                u32 _code = _char >= 0xD800 && _char <= 0xDBFF ?
+                    0x10000 | ((_char & 0x3FF) << 10) | (_nativePath.Buffer[_nativePathIndex++] & 0x3FF) :
+                    _char;
 
+                _code = _code == '\\' ? '/' : _code;
 
-    //     // Remember, must iterate through code-points, not characters.
-    //     s64 _bufferIndex = BUFFER_SIZE - 1;
+                if (_code <= 0x7F)
+                {
+                    _output[_outputIndex++] = c08(_code);
+                }
+                else if (_code <= 0x7FF)
+                {
+                    _output[_outputIndex++] = c08(0b11000000 |  (_code >> 6));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+                else if (_code <= 0xFFFF)
+                {
+                    _output[_outputIndex++] = c08(0b11100000 |  (_code >> 12));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 6) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+                else
+                {
+                    _output[_outputIndex++] = c08(0b11110000 |  (_code >> 18));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 12) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 6) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+            }
 
-    //     s64 _nativePathLength = 0;
+            // Return the concatenated exposed output size.
+            return _outputIndex;
+        }
+        /// "/C:/dir_a/dir_b" + "dir_c\file.d" -> "/C:/dir_a/dir_b/dir_c/file.d"
+        s64 from_native_relative(const c08 *_exposedPath, const s64 _exposedPathLength, const UNICODE_STRING _nativePath, c08 *_output)
+        {
+            s64 _outputIndex = 0;
+            s64 _exposedPathIndex = 0;
+            while (_exposedPathIndex < _exposedPathLength)
+            {
+                _output[_outputIndex++] = _exposedPath[_exposedPathIndex];
+            }
 
-    //     s64 _index = _exposedPathLength;
-    //     s64 _utfCount = 0;
-    //     s64 _skip = 0;
-    //     s64 _componentUtfSize = 0;
-    //     s64 _componentCount = 0;
-    //     while (_index-- > 0)
-    //     {
-    //         _utfCount++;
-    //         if (((u08(_exposedPath[_index]) & 0b11000000)) == 0b10000000)
-    //         {
-    //             continue;
-    //         }
+            // Convert the entire string from _nativePath to utf-8 and add to _output, ensure all '\'s are replaced with '/'.
+            s64 _nativePathIndex = 0;
+            const s64 _nativePathLength = _nativePath.Length / 2;
+            while (_nativePathIndex < _nativePathLength)
+            {
+                u32 _char = _nativePath.Buffer[_nativePathIndex++];
 
-    //         switch (_utfCount)
-    //         {
-    //             case 1: buffer[_bufferIndex] = u32(_exposedPath[_index]);                                                                                                                                                                      break;
-    //             case 2: buffer[_bufferIndex] = u32(_exposedPath[_index] & 0b00011111) <<  6 | u32(_exposedPath[_index + 1] & 0b00111111);                                                                                                      break;
-    //             case 3: buffer[_bufferIndex] = u32(_exposedPath[_index] & 0b00001111) << 12 | u32(_exposedPath[_index + 1] & 0b00111111) <<  6 | u32(_exposedPath[_index + 2] & 0b00111111);                                                   break;
-    //             case 4: buffer[_bufferIndex] = u32(_exposedPath[_index] & 0b00000111) << 18 | u32(_exposedPath[_index + 1] & 0b00111111) << 12 | u32(_exposedPath[_index + 2] & 0b00111111) << 6 | u32(_exposedPath[_index + 3] & 0b00111111); break;
+                u32 _code = _char >= 0xD800 && _char <= 0xDBFF ?
+                    0x10000 | ((_char & 0x3FF) << 10) | (_nativePath.Buffer[_nativePathIndex++] & 0x3FF) :
+                    _char;
 
-    //             default: return -1; // TODO: Use result output with error.
-    //         }
-    //         #if CMN_SYS_OS_LIN
-    //             _componentUtfSize += _utfCount;
-    //         #elif CMN_SYS_OS_MAC
-    //             _componentUtfSize += _utfCount;
-    //         #elif CMN_SYS_OS_WIN
-    //             _componentUtfSize += buffer[_bufferIndex] > 0xFFFF ? 4 : 2;
-    //         #endif
-    //         _utfCount = 0;
+                _code = _code == '\\' ? '/' : _code;
 
-    //         if (buffer[_bufferIndex] != '/')
-    //         {
-    //             _bufferIndex--;
-    //             continue;
-    //         }
+                if (_code <= 0x7F)
+                {
+                    _output[_outputIndex++] = c08(_code);
+                }
+                else if (_code <= 0x7FF)
+                {
+                    _output[_outputIndex++] = c08(0b11000000 |  (_code >> 6));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+                else if (_code <= 0xFFFF)
+                {
+                    _output[_outputIndex++] = c08(0b11100000 |  (_code >> 12));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 6) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+                else
+                {
+                    _output[_outputIndex++] = c08(0b11110000 |  (_code >> 18));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 12) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 6) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+            }
 
-    //         s64 _componentLength = BUFFER_SIZE - 1 - _bufferIndex;
-    //         _bufferIndex = BUFFER_SIZE - 1;
+            // Return the concatenated exposed output size.
+            return _outputIndex;
+        }
+        /// N/A + "C:/dir_c/file.d" -> "/C:/dir_c/file.d"
+        s64 from_native_absolute(const UNICODE_STRING _nativePath, c08 *_output)
+        {
+            s64 _outputIndex = 0;
+             // Insert a '/' separator at the beginning.
+            _output[_outputIndex++] = '/';
 
-    //         if (_componentLength == 0 || (_componentLength == 1 && buffer[BUFFER_SIZE - 1] == '.'))
-    //         {
-    //             _componentUtfSize = 0;
-    //             continue;
-    //         }
+            // Convert the entire string from _nativePath to utf-8 and add to _output, ensure all '\'s are replaced with '/'.
+            s64 _nativePathIndex = 0;
+            const s64 _nativePathLength = _nativePath.Length / 2;
+            while (_nativePathIndex < _nativePathLength)
+            {
+                u32 _char = _nativePath.Buffer[_nativePathIndex++];
 
-    //         if (_componentLength == 2 && buffer[BUFFER_SIZE - 2] == '.' && buffer[BUFFER_SIZE - 1] == '.')
-    //         {
-    //             _skip++;
-    //             _componentUtfSize = 0;
-    //             continue;
-    //         }
+                u32 _code = _char >= 0xD800 && _char <= 0xDBFF ?
+                    0x10000 | ((_char & 0x3FF) << 10) | (_nativePath.Buffer[_nativePathIndex++] & 0x3FF) :
+                    _char;
 
-    //         #if CMN_SYS_OS_LIN
-    //             if (_skip > 0)
-    //         #elif CMN_SYS_OS_MAC
-    //             if (_skip > 0)
-    //         #elif CMN_SYS_OS_WIN
-    //             if (_skip > 0 && _index != 0)
-    //         #endif
-    //         {
-    //             _skip--;
-    //             _componentUtfSize = 0;
-    //             continue;
-    //         }
+                _code = _code == '\\' ? '/' : _code;
 
-    //         // TODO: Consider utf conversion, add the amount of utf-8/16 characters that will be in the native path.
-    //         _nativePathLength += _componentUtfSize;
-    //         _componentCount++;
-    //         _componentUtfSize = 0;
+                if (_code <= 0x7F)
+                {
+                    _output[_outputIndex++] = c08(_code);
+                }
+                else if (_code <= 0x7FF)
+                {
+                    _output[_outputIndex++] = c08(0b11000000 |  (_code >> 6));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+                else if (_code <= 0xFFFF)
+                {
+                    _output[_outputIndex++] = c08(0b11100000 |  (_code >> 12));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 6) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+                else
+                {
+                    _output[_outputIndex++] = c08(0b11110000 |  (_code >> 18));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 12) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 | ((_code >> 6) & 0x3F));
+                    _output[_outputIndex++] = c08(0b10000000 |  (_code & 0x3F));
+                }
+            }
 
-    //         // buffer[_bufferIndex] -> buffer[BUFFER_SIZE - 1] = "/component_name"
-    //     }
+            // Return the exposed output size.
+            return _outputIndex;
+        }
 
-    //     // TODO: Windows likely needs edge case handling for root because likely fails when "\??\C:" does not contain appended '\' separator.
-
-    //     #if CMN_SYS_OS_LIN
-    //         return _componentCount == 0 ? 2 : _nativePathLength + 1; // Ensure that for "empty" paths with just root (i.e: "/", "/a/..") will be a single valid '/' and '\0' null-terminator.
-    //     #elif CMN_SYS_OS_MAC
-    //         return _componentCount == 0 ? 2 : _nativePathLength + 1; // Ensure that for "empty" paths with just root (i.e: "/", "/a/..") will be a single valid '/' and '\0' null-terminator.
-    //     #elif CMN_SYS_OS_WIN
-    //         return _nativePathLength + (_componentCount == 1 ? 8 : 6);     // If the path is just the drive ("\??\A-Z:"), append an additional '\' because windows is shit.
-    //     #endif
-    // }
-    // /// takes native path and returns the expected size when converted to an exposed path.
-    // s64 exposed_size(const u32 *_nativePath, const s64 _nativePathLength)
-    // {
-    //     // lin:
-    //     /// - returned path is identical.
-    //     // mac:
-    //     /// - /root/example/.. -> /root (removes "/file/..")
-    //     /// - /root/example/. -> /root/example (removes "/.")
-    //     // win:
-    //     /// - /root/example/.. -> /root (removes "/file/..")
-    //     /// - /root/example/. -> /root/example (removes "/.")
-    //     /// - /root/example -> \root\example (swaps "/" with "\", but won't change size, so don't check here.)
-    //     /// - /root/example -> \??/root/example (prepends "\??" to the path)
-
-    //     // lin:
-    //     /// - /a/b + /a/b/..//c/./d.efg -> /a/c/d.efg
-    //     /// - /a/b + a/b/..//c/./d.efg -> /a/c/d.efg
-    //     // mac: /root/example/../test/./file.txt -> /root/test/file.txt
-    //     // win: /C:/example/../test/./file.txt -> \??\C:\test\file.txt
-    // }
-
-    // /// takes exposed path and outputs native path to buffer, should be >= native_path_size().
-    // void to_native(const c08 *_exposedPath, const s64 _length, u08 *_bufferNativePath)
-    // {
-
-    // }
-    // /// takes native path and outputs exposed path to buffer, should be >= exposed_path_size().
-    // void to_exposed(const c08 *_nativePath, const s64 _length , c08 *_bufferExposedPath)
-    // {
-
-    // }
-
-
-
-    // error::Result<s64, PATH> component_count(const c08 *_inputUTF8, const s64 _length, c16 *_outputUTF16);
-    // error::Result<s64, PATH> resolve_components(const c08 *_inputUTF8, const s64 _length, c16 *_outputUTF16);
-    // s64 to_lin(const c08 *_inputUTF16, const s64 _length, c16 *_outputUTF8 );
+    #endif
 }

@@ -51,7 +51,7 @@ namespace cmn::syscall::uni::io
     PathHandle cwd_handle();
 
     // Return universal file-descriptor
-    cmn::error::Result<PathHandle, CREATE> create(const PathHandle _root, const c08 *_path, const s64 _length);
+    cmn::error::Result<PathHandle, CREATE> create(const c08 *_path, const s64 _length);
     // cmn::error::Result<void, OPEN  > open  ();
     // void close     (); // NtClose                      : close                        : close
     // void remove    (); // NtSetInformationFile         : unlinkat                     : unlinkat

@@ -1,5 +1,6 @@
-#include "syscall/uni/IO.hh"
 #include "error/Result.hh"
+#include "syscall/uni/IO.hh"
+#include "syscall/util/Path.hh"
 
 #if CMN_SYS_OS_LIN
 #include "syscall/lin/Call.hh"
@@ -8,6 +9,7 @@
 #elif CMN_SYS_OS_WIN
 #include "syscall/win/Call.hh"
 #include "syscall/win/Func.hh"
+#include "syscall/win/Type.hh"
 #endif
 
 namespace cmn::syscall::uni::io
@@ -108,7 +110,7 @@ namespace cmn::syscall::uni::io
         #endif
     }
 
-    cmn::error::Result<PathHandle, CREATE> create(const PathHandle _root, const c08 *_path, const s64 _length)
+    cmn::error::Result<PathHandle, CREATE> create(const c08 *_path, const s64 _length)
     {
         PathHandle _pathHandle;
         CREATE     _error;
@@ -125,20 +127,12 @@ namespace cmn::syscall::uni::io
 
         #elif CMN_SYS_OS_WIN
 
-            c16 _widePath[512];
-            s64 _wideLength = utf_8_to_utf_16(_path, _length, _widePath);
-
-            UNICODE_STRING _name
-            {
-                u16(_wideLength * 2),
-                u16(_wideLength * 2 + 2),
-                _widePath
-            };
+            UNICODE_STRING _name = cmn::syscall::util::path::to_native(_path, _length);
 
             OBJECT_ATTRIBUTES _attributes
             {
                 sizeof(OBJECT_ATTRIBUTES),
-                (void*)_root,
+                nullptr,
                 &_name,
                 OBJ_CASE_INSENSITIVE,
                 nullptr,
