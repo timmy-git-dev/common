@@ -1,6 +1,15 @@
 #include "syscall/util/Path.hh"
 #include "sys/platform/OS.hh"
-#include "syscall/win/Type.hh"
+
+#if CMN_SYS_OS_LIN
+
+#elif CMN_SYS_OS_MAC
+
+#elif CMN_SYS_OS_WIN
+    include "syscall/win/Type.hh"
+#endif
+
+
 
 namespace cmn::syscall::util::path
 {
@@ -21,15 +30,51 @@ namespace cmn::syscall::util::path
         return 0;
     }
 
-
     // TODO: thread_local broken due to _tls_index, should fix cuz actually useful.
-    #if CMN_SYS_OS_LIN
-        constexpr s64 MAX_PATH_SIZE = 256;
-        static c08 PATH_BUFFER[MAX_PATH_SIZE];
-    #elif CMN_SYS_OS_MAC
-        constexpr s64 MAX_PATH_SIZE = 256;
-        static c08 PATH_BUFFER[MAX_PATH_SIZE];
+
+    #if CMN_SYS_OS_LIN || CMN_SYS_OS_MAC
+
+        /// TODO: Likely want posix/windows functionality to be near identical, therefore, likely need to add additional to_native functions with 4KiB path buffer /:
+
+        /// "/dir_a/dir_b" + "dir_c/file.d" -> "/dir_a/dir_b/dir_c/file.d"
+        s64 from_native_relative(const c08 *_exposedPath, const s64 _exposedPathLength, const c08 *_nativePath, const s64 _nativePathLength, c08 *_output)
+        {
+            s64 _outputIndex = 0;
+
+            s64 _exposedPathIndex = 0;
+            while (_exposedPathIndex < _exposedPathLength)
+            {
+                _output[_outputIndex++] = _exposedPath[_exposedPathIndex];
+            }
+
+            _output[_outputIndex++] = '/';
+
+            s64 _nativePathIndex = 0;
+            while (_nativePathIndex < _nativePathLength)
+            {
+                _output[_outputIndex++] = _nativePath[_nativePathIndex];
+            }
+
+            return _outputIndex;
+        }
+        /// N/A + "/dir_c/file.d" -> "/dir_c/file.d"
+        s64 from_native_absolute(const c08 *_nativePath, const s64 _nativePathLength, c08 *_output)
+        {
+            s64 _outputIndex = 0;
+
+            _output[_outputIndex++] = '/';
+
+            s64 _nativePathIndex = 0;
+            while (_nativePathIndex < _nativePathLength)
+            {
+                _output[_outputIndex++] = _nativePath[_nativePathIndex];
+            }
+
+            return _outputIndex;
+        }
+
     #elif CMN_SYS_OS_WIN
+
         constexpr s64 MAX_PATH_SIZE = 260;
         static c16 nativePathBuffer[MAX_PATH_SIZE];
         static u32 componentBuffer [MAX_PATH_SIZE];
@@ -142,9 +187,9 @@ namespace cmn::syscall::util::path
             }
 
             // Prepend "\??".
+            nativePathBuffer[--_nativeBufferIndex] = u'?';
+            nativePathBuffer[--_nativeBufferIndex] = u'?';
             nativePathBuffer[--_nativeBufferIndex] = u'\\';
-            nativePathBuffer[--_nativeBufferIndex] = u'?';
-            nativePathBuffer[--_nativeBufferIndex] = u'?';
 
             s64 _nativePathLength = u16(MAX_PATH_SIZE - 1 - _nativeBufferIndex);
 

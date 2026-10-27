@@ -1,8 +1,10 @@
 #include "abi/Entry.hh"
 #include "error/Result.hh"
 #include "syscall/uni/IO.hh"
+#include "syscall/uni/Mem.hh"
 #include "syscall/uni/Terminal.hh"
 #include "syscall/win/Call.hh"
+#include "syscall/win/Func.hh"
 #include "syscall/win/Type.hh"
 #include "syscall/util/Path.hh"
 
@@ -69,12 +71,29 @@ void int_to_hex(u32 _value, c08 _output[12])
 
 
 static c08 hex[22];
-static c08 _filePath[] = "/Z:/home/timmy/code/common";
-// static c08 _testPath[] = "/C:/./././//test.txt";
 
 i32 main(const i32, const c08**)
 {
-    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(_filePath, sizeof(_filePath) - 1);
+    UNICODE_STRING _dosCWD = cmn::syscall::win_::resolve_peb()->ProcessParameters->CurrentDirectory.DosPath;
+
+    c08 _buf[512];
+    s64 _len = cmn::syscall::util::path::from_native_absolute(_dosCWD, _buf);
+
+    _buf[_len++] = 't';
+    _buf[_len++] = 'e';
+    _buf[_len++] = 's';
+    _buf[_len++] = 't';
+    _buf[_len++] = '.';
+    _buf[_len++] = 't';
+    _buf[_len++] = 'x';
+    _buf[_len++] = 't';
+
+    _buf[_len] = '\n';
+    cmn::syscall::uni::terminal::print(_buf, _len + 1);
+
+
+
+    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(_buf, _len);
     int_to_hex(u32(_file.error.code), hex);
     cmn::syscall::uni::terminal::print(hex, 11);
 
@@ -87,19 +106,19 @@ i32 main(const i32, const c08**)
     c08 _a[] = "Hello, world!\n";
     cmn::syscall::uni::terminal::print(_a, sizeof(_a) - 1);
 
-    // cmn::error::Result<void *, cmn::syscall::uni::mem::MEMORY> _memory = cmn::syscall::uni::mem::allocate(64);
-    // int_to_hex(u32(_memory.error.code), hex);
-    // cmn::syscall::uni::terminal::print(hex, 11);
+    cmn::error::Result<void *, cmn::syscall::uni::mem::MEMORY> _memory = cmn::syscall::uni::mem::allocate(64);
+    int_to_hex(u32(_memory.error.code), hex);
+    cmn::syscall::uni::terminal::print(hex, 11);
 
-    // if (_memory.error.code == cmn::syscall::uni::mem::MEMORY::NONE)
-    // {
-    //     int_to_hex(u64(_memory.value), hex);
-    //     cmn::syscall::uni::terminal::print(hex, 19);
+    if (_memory.error.code == cmn::syscall::uni::mem::MEMORY::NONE)
+    {
+        int_to_hex(u64(_memory.value), hex);
+        cmn::syscall::uni::terminal::print(hex, 19);
 
-    //     cmn::error::Result<void, cmn::syscall::uni::mem::MEMORY> _free = cmn::syscall::uni::mem::free(_memory.value, 64).error.code;
-    //     int_to_hex(u32(_free.error.code), hex);
-    //     cmn::syscall::uni::terminal::print(hex, 11);
-    // }
+        cmn::error::Result<void, cmn::syscall::uni::mem::MEMORY> _free = cmn::syscall::uni::mem::free(_memory.value, 64).error.code;
+        int_to_hex(u32(_free.error.code), hex);
+        cmn::syscall::uni::terminal::print(hex, 11);
+    }
 
     return 0;
 }
