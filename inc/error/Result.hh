@@ -4,14 +4,14 @@
 
 namespace cmn::error
 {
-    template<typename TYPE, typename ERROR>
-    requires(__is_same(__underlying_type(ERROR), u32))
+    template<typename Type_, typename Error_>
+    requires(__is_same(__underlying_type(Error_), u32))
     struct Result
     {
-        TYPE         value;
-        Error<ERROR> error;
+        Type_         value;
+        Error<Error_> error;
 
-        Result(TYPE _value, ERROR _error) :
+        Result(Type_ _value, Error_ _error) :
             value(_value),
             error(_error)
         { }

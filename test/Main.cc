@@ -93,7 +93,7 @@ i32 main(const i32, const c08**)
 
 
 
-    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create(_buf, _len);
+    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create_file(_buf, _len);
     int_to_hex(u32(_file.error.code), hex);
     cmn::syscall::uni::terminal::print(hex, 11);
 

@@ -110,7 +110,7 @@ namespace cmn::syscall::uni::io
         #endif
     }
 
-    cmn::error::Result<PathHandle, CREATE> create(const c08 *_path, const s64 _length)
+    cmn::error::Result<PathHandle, CREATE> create_file(const c08 *_path, const s64 _length)
     {
         PathHandle _pathHandle;
         CREATE     _error;

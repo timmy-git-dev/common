@@ -3,12 +3,12 @@
 
 namespace cmn::error
 {
-    using ERROR = u32;
+    using Code = u32;
 
-    template<typename CODE>
-    requires(__is_same(__underlying_type(CODE), ERROR))
+    template<typename Code_>
+    requires(__is_same(__underlying_type(Code_), Code))
     struct Error
     {
-        CODE code;
+        Code_ code;
     };
 }
