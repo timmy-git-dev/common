@@ -59,21 +59,22 @@
 
 namespace cmn::syscall::uni::io
 {
-    static cmn::syscall::uni::io::Path PathBuffer;
+    static cmn::syscall::uni::io::Path pathBuffer;
 
     /// Returns the specified
     /// If _capacity is < the length of the current working directory, the output buffer is only set up to _capacity.
     /// Upon error, _outputBuffer is untouched and the returned length is 0.
-    cmn::error::Result<c08*, Cwd> cwd()
+    cmn::error::Result<s64, Cwd> cwd(c08* _outputBuffer, const s64 _capacity)
     {
+        s64 _length;
         Cwd _error;
 
         #if CMN_SYS_OS_LIN
 
-            i64 _status  = lin::getcwd(PathBuffer.string, 1024);
+            i64 _status  = lin::getcwd(_outputBuffer, _capacity);
             b08 _success = u64(_status) < -4095ul;
 
-            // _length = _success ? _status   : 0;
+            _length = _success ? _status   : 0;
             _error  = _success ? Cwd::NONE : Cwd(-_status);
 
         #elif CMN_SYS_OS_MAC
@@ -82,21 +83,26 @@ namespace cmn::syscall::uni::io
             i64 _status  = mac::openat(AT_FDCWD, user_addr_t(_cwd), O_RDONLY | O_DIRECTORY | O_CLOEXEC, 0);
             b08 _success = _status >= 0;
 
-            // _length = 0;
+            _length = 0;
 
             if (_success)
             {
                 i32 _fileDescriptor = i32(_status);
 
-                _status  = mac::sys_fcntl(_fileDescriptor, F_GETPATH, long(PathBuffer.string));
+                _status  = mac::sys_fcntl(_fileDescriptor, F_GETPATH, long(pathBuffer.string));
                 _success = _status >= 0;
 
                 if (_success)
                 {
-                    // while (PathBuffer[_length] != '\0')
-                    // {
-                    //     ++_length;
-                    // }
+                    while (_length < _capacity && pathBuffer.string[_length] != '\0')
+                    {
+                        _outputBuffer[_length] = pathBuffer.string[_length];
+                        ++_length;
+                    }
+                    while (pathBuffer.string[_length] != '\0')
+                    {
+                        ++_length;
+                    }
                 }
 
                 // No need to check close, regardless of whether this fails or not, the cwd output is valid, and if this does fail it likely means it was already closed by another thread in-between.
@@ -109,12 +115,13 @@ namespace cmn::syscall::uni::io
 
             UNICODE_STRING _cwd = cmn::syscall::win_::resolve_peb()->ProcessParameters->CurrentDirectory.DosPath;
 
-            PathBuffer.length = cmn::syscall::util::path::from_native_absolute(_cwd, PathBuffer.string);
+            // Maybe implement capacities for path conversions.
+            _length = cmn::syscall::util::path::from_native_absolute(_cwd, _outputBuffer);
             _error = Cwd::NONE;
 
         #endif
 
-        return error::Result<c08*, Cwd>(PathBuffer.string, _error);
+        return error::Result<s64, Cwd>(_length, _error);
     }
     /// Determines if and what type of filesystem-object exists at a given path.
     /// Upon error, TYPE::NONE is returned.

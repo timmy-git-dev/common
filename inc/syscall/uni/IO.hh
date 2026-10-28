@@ -26,7 +26,7 @@ namespace cmn::syscall::uni::io
     /// Obtains the current working directory, copies it into the specified _outputBuffer up to _capcity, and returns the length.
     /// If _capacity is < the length of the current working directory, the output buffer is only set up to _capacity.
     /// Upon error, _outputBuffer is untouched and the returned length is 0.
-    cmn::error::Result<c08*, Cwd   > cwd   ();
+    cmn::error::Result<s64 , Cwd   > cwd   (c08 *_outputBuffer, const s64 _capacity);
     /// Determines if and what type of filesystem-object exists at a given path.
     /// Upon error, TYPE::NONE is returned.
     cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length);

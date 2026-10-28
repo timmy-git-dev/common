@@ -57,15 +57,14 @@ void int_to_hex(u32 _value, c08 _output[12])
 
 i32 main(const i32, const c08**)
 {
-    // TODO: Want to return both ptr & length, but must implement memcpy globally.
-    cmn::error::Result<c08*, cmn::syscall::uni::io::Cwd> _path = cmn::syscall::uni::io::cwd();
-    s64 _length = 0;
-    while (_path.value[_length] != '\0') { ++_length; }
+    c08 _buffer[1024];
+    cmn::error::Result<s64, cmn::syscall::uni::io::Cwd> _path = cmn::syscall::uni::io::cwd(_buffer, 1024);
+
     if (_path.error.code == cmn::syscall::uni::io::Cwd::NONE)
     {
-        cmn::syscall::uni::terminal::print(_path.value, _length);
+        cmn::syscall::uni::terminal::print(_buffer, _path.value);
+        cmn::syscall::uni::terminal::print("\n", 1);
     }
-    cmn::syscall::uni::terminal::print("\n", 1);
 
 
     c08 _a[] = "Hello, world!\n";
