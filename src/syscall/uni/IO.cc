@@ -125,7 +125,14 @@ namespace cmn::syscall::uni::io
     }
     /// Determines if and what type of filesystem-object exists at a given path.
     /// Upon error, TYPE::NONE is returned.
-    cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length);
+    // cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length)
+    // {
+    //     #if CMN_SYS_OS_LIN
+    //         // lin::fcntl?
+    //     #elif CMN_SYS_OS_MAC
+    //     #elif CMN_SYS_OS_WIN
+    //     #endif
+    // }
     /// Obtains information on a given filesystem-object.
     cmn::error::Result<s64 , Query > query (const Handle _object); // TODO: Add info for query.
 }
