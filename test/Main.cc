@@ -1,12 +1,8 @@
 #include "abi/Entry.hh"
 #include "error/Result.hh"
 #include "syscall/uni/IO.hh"
-#include "syscall/uni/Mem.hh"
+#include "syscall/uni/IO_Error.hh"
 #include "syscall/uni/Terminal.hh"
-#include "syscall/win/Call.hh"
-#include "syscall/win/Func.hh"
-#include "syscall/win/Type.hh"
-#include "syscall/util/Path.hh"
 
 s64 int_to_str(u64 _value, c08 _output[22])
 {
@@ -57,68 +53,24 @@ void int_to_hex(u32 _value, c08 _output[12])
     _output[11] = '\0';
 }
 
-
-
-
-// void print_entry(const c08 *_name, s64 _length, void *_context)
-// {
-//     // _name contains only the entry name.
-//     // Example: "file.txt" or "subfolder"
-
-//     cmn::syscall::uni::terminal::print(_name, _length);
-//     cmn::syscall::uni::terminal::print("\n", 1);
-// }
-
-
-static c08 hex[22];
+// static c08 hex[22];
 
 i32 main(const i32, const c08**)
 {
-    UNICODE_STRING _dosCWD = cmn::syscall::win_::resolve_peb()->ProcessParameters->CurrentDirectory.DosPath;
-
-    c08 _buf[512];
-    s64 _len = cmn::syscall::util::path::from_native_absolute(_dosCWD, _buf);
-
-    _buf[_len++] = 't';
-    _buf[_len++] = 'e';
-    _buf[_len++] = 's';
-    _buf[_len++] = 't';
-    _buf[_len++] = '.';
-    _buf[_len++] = 't';
-    _buf[_len++] = 'x';
-    _buf[_len++] = 't';
-
-    _buf[_len] = '\n';
-    cmn::syscall::uni::terminal::print(_buf, _len + 1);
-
-
-
-    cmn::error::Result<cmn::syscall::uni::io::PathHandle, cmn::syscall::uni::io::CREATE> _file = cmn::syscall::uni::io::create_file(_buf, _len);
-    int_to_hex(u32(_file.error.code), hex);
-    cmn::syscall::uni::terminal::print(hex, 11);
-
-    if (_file.error.code == cmn::syscall::uni::io::CREATE::NONE)
+    // TODO: Want to return both ptr & length, but must implement memcpy globally.
+    cmn::error::Result<c08*, cmn::syscall::uni::io::Cwd> _path = cmn::syscall::uni::io::cwd();
+    s64 _length = 0;
+    while (_path.value[_length] != '\0') { ++_length; }
+    if (_path.error.code == cmn::syscall::uni::io::Cwd::NONE)
     {
-        cmn::syscall::win::NtClose(HANDLE(_file.value));
+        cmn::syscall::uni::terminal::print(_path.value, _length);
     }
+    cmn::syscall::uni::terminal::print("\n", 1);
 
 
     c08 _a[] = "Hello, world!\n";
     cmn::syscall::uni::terminal::print(_a, sizeof(_a) - 1);
 
-    cmn::error::Result<void *, cmn::syscall::uni::mem::MEMORY> _memory = cmn::syscall::uni::mem::allocate(64);
-    int_to_hex(u32(_memory.error.code), hex);
-    cmn::syscall::uni::terminal::print(hex, 11);
-
-    if (_memory.error.code == cmn::syscall::uni::mem::MEMORY::NONE)
-    {
-        int_to_hex(u64(_memory.value), hex);
-        cmn::syscall::uni::terminal::print(hex, 19);
-
-        cmn::error::Result<void, cmn::syscall::uni::mem::MEMORY> _free = cmn::syscall::uni::mem::free(_memory.value, 64).error.code;
-        int_to_hex(u32(_free.error.code), hex);
-        cmn::syscall::uni::terminal::print(hex, 11);
-    }
 
     return 0;
 }

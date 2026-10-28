@@ -35,49 +35,49 @@
 
 namespace cmn::syscall::uni::mem
 {
-    error::Result<void *, MEMORY> allocate(const s64 _length)
+    error::Result<void *, Memory> allocate(const s64 _length)
     {
         void *_address = nullptr;
-        MEMORY _error;
+        Memory _error;
 
         #if CMN_SYS_OS_LIN
 
             u64 _status = lin::mmap(0, _length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
             _address = cast_bits<void *>(_status);
-            _error   = _status >= -4095ULL ? cast<MEMORY>(_status) : MEMORY::NONE;
+            _error   = _status >= -4095ULL ? cast<Memory>(_status) : Memory::NONE;
 
         #elif CMN_SYS_OS_MAC
 
             u64 _status = mac::mmap(0, _length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
             _address = cast_bits<void *>(_status);
-            _error   = _status >= -4095ULL ? cast<MEMORY>(_status) : MEMORY::NONE;
+            _error   = _status >= -4095ULL ? cast<Memory>(_status) : Memory::NONE;
 
         #elif CMN_SYS_OS_WIN
 
             SIZE_T _size = _length;
             NTSTATUS _status = win::NtAllocateVirtualMemory(cast_bits<HANDLE>(-1ULL), &_address, 0, &_size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-            _error = _status < 0 ? cast<MEMORY>(_status) : MEMORY::NONE;
+            _error = _status < 0 ? cast<Memory>(_status) : Memory::NONE;
 
         #endif
 
-        return error::Result<void *, MEMORY>(_address, _error);
+        return error::Result<void *, Memory>(_address, _error);
     }
-    error::Result<void, MEMORY> free(void *_memory, s64 _length)
+    error::Result<void, Memory> free(void *_memory, s64 _length)
     {
-        MEMORY _error;
+        Memory _error;
 
         #if CMN_SYS_OS_LIN
-            _error = cast<MEMORY>(lin::munmap(cast_bits<u64>(_memory), _length));
+            _error = cast<Memory>(lin::munmap(cast_bits<u64>(_memory), _length));
         #elif CMN_SYS_OS_MAC
-            _error = cast<MEMORY>(mac::munmap(cast_bits<u64>(_memory), _length));
+            _error = cast<Memory>(mac::munmap(cast_bits<caddr_t>(_memory), _length));
         #elif CMN_SYS_OS_WIN
 
             SIZE_T _size = _length;
             NTSTATUS _status = win::NtFreeVirtualMemory(cast_bits<HANDLE>(-1ULL), &_memory, &_size, MEM_RELEASE);
-            _error = _status < 0 ? cast<MEMORY>(_status) : MEMORY::NONE;
+            _error = _status < 0 ? cast<Memory>(_status) : Memory::NONE;
 
         #endif
 
-        return error::Result<void, MEMORY>(_error);
+        return error::Result<void, Memory>(_error);
     }
 }

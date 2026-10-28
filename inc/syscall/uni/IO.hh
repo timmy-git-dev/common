@@ -7,6 +7,12 @@ namespace cmn::syscall::uni::io
     // TODO: Maybe change this to a struct or something? Or maybe put usings in more places, not sure what kind of practice I should use yet.
     using Handle = s64;
 
+    struct Path
+    {
+        s64 length = 0;
+        c08 string[1024];
+    };
+
     // TODO: Maybe set values based on returned values from exists for performance.
     enum class Type
     {
@@ -17,10 +23,10 @@ namespace cmn::syscall::uni::io
         SYMLINK   = 4,
     };
 
-    /// Obtains the current working directory, copies it into the specified _outputBuffer, and returns the length.
-    ///
+    /// Obtains the current working directory, copies it into the specified _outputBuffer up to _capcity, and returns the length.
+    /// If _capacity is < the length of the current working directory, the output buffer is only set up to _capacity.
     /// Upon error, _outputBuffer is untouched and the returned length is 0.
-    cmn::error::Result<s64 , Cwd   > cwd   (c08 *_outputBuffer, const s64 _capacity);
+    cmn::error::Result<c08*, Cwd   > cwd   ();
     /// Determines if and what type of filesystem-object exists at a given path.
     /// Upon error, TYPE::NONE is returned.
     cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length);

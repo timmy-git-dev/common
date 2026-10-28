@@ -1,187 +1,124 @@
 #include "error/Result.hh"
 #include "syscall/uni/IO.hh"
-#include "syscall/util/Path.hh"
+#include "syscall/uni/IO_Error.hh"
+#include "sys/platform/OS.hh"
 
 #if CMN_SYS_OS_LIN
-#include "syscall/lin/Call.hh"
+    #include "syscall/lin/Call.hh"
 #elif CMN_SYS_OS_MAC
-#include "syscall/mac/Call.hh"
+    #include "syscall/mac/Call.hh"
+    #include "syscall/mac/Type.hh"
 #elif CMN_SYS_OS_WIN
-#include "syscall/win/Call.hh"
-#include "syscall/win/Func.hh"
-#include "syscall/win/Type.hh"
+    #include "syscall/util/Path.hh"
+    #include "syscall/win/Func.hh"
 #endif
+
+
+
+// TODO: Cleanup and make non-defines or something? And put into separate "flags" files for each OS.
+#if CMN_SYS_OS_LIN
+
+    #define AT_FDCWD -100
+
+    #define O_RDONLY 0
+    #define O_WRONLY 1
+    #define O_RDWR   2
+
+    #define O_CREAT  0100
+    #define O_EXCL   0200
+    #define O_TRUNC  01000
+    #define O_APPEND 02000
+
+#elif CMN_SYS_OS_MAC
+
+    #define AT_FDCWD -2
+
+    #define F_GETPATH 50
+
+    #define O_RDONLY    0x00000000
+    #define O_DIRECTORY 0x00100000
+    #define O_CLOEXEC   0x01000000
+
+#elif CMN_SYS_OS_WIN
+
+    #define FILE_WRITE_DATA              0x0002
+    #define SYNCHRONIZE                  0x00100000
+
+    #define OBJ_CASE_INSENSITIVE         0x40
+    #define FILE_ATTRIBUTE_NORMAL        0x80
+    #define FILE_SHARE_READ              0x01
+    #define FILE_SHARE_WRITE             0x02
+    #define FILE_OVERWRITE_IF            0x05
+    #define FILE_NON_DIRECTORY_FILE      0x40
+    #define FILE_SYNCHRONOUS_IO_NONALERT 0x20
+
+#endif
+
+
+
 
 namespace cmn::syscall::uni::io
 {
-    #if CMN_SYS_OS_WIN
-        PRTL_USER_PROCESS_PARAMETERS processParameters;
-    #endif
+    static cmn::syscall::uni::io::Path PathBuffer;
 
-    #if CMN_SYS_OS_LIN
-
-        #define AT_FDCWD -100
-
-        #define O_RDONLY 0
-        #define O_WRONLY 1
-        #define O_RDWR   2
-
-        #define O_CREAT  0100
-        #define O_EXCL   0200
-        #define O_TRUNC  01000
-        #define O_APPEND 02000
-
-    #elif CMN_SYS_OS_MAC
-
-        #define AT_FDCWD -2
-
-        #define O_WRONLY 0x0001
-
-        #define O_CREAT  0x0200
-        #define O_TRUNC  0x0400
-
-    #elif CMN_SYS_OS_WIN
-
-        #define FILE_WRITE_DATA              0x0002
-        #define SYNCHRONIZE                  0x00100000
-
-        #define OBJ_CASE_INSENSITIVE         0x40
-        #define FILE_ATTRIBUTE_NORMAL        0x80
-        #define FILE_SHARE_READ              0x01
-        #define FILE_SHARE_WRITE             0x02
-        #define FILE_OVERWRITE_IF            0x05
-        #define FILE_NON_DIRECTORY_FILE      0x40
-        #define FILE_SYNCHRONOUS_IO_NONALERT 0x20
-
-    s64 utf_8_to_utf_16(const c08 *_input, const s64 _length, c16 *_output)
+    /// Returns the specified
+    /// If _capacity is < the length of the current working directory, the output buffer is only set up to _capacity.
+    /// Upon error, _outputBuffer is untouched and the returned length is 0.
+    cmn::error::Result<c08*, Cwd> cwd()
     {
-        s64 _count = 0;
-
-        for (s64 _i = 0; _i < _length;)
-        {
-            u32 _code        = 0;
-            u32 _char        = _input[_i++];
-            i32 _leadingOnes = __builtin_clz((~_char & 0xFF) << 24);
-
-            switch (_leadingOnes)
-            {
-                case 0: _code =  _char;                                                                                                                                         break;
-
-                case 2: _code = (_char & 0b00011111 <<  6) |  (_input[_i] & 0b00111111);                                                                               _i += 1; break;
-                case 3: _code = (_char & 0b00001111 << 12) | ((_input[_i] & 0b00111111) <<  6) |  (_input[_i + 1] & 0b00111111);                                       _i += 2; break;
-                case 4: _code = (_char & 0b00000111 << 18) | ((_input[_i] & 0b00111111) << 12) | ((_input[_i + 1] & 0b00111111) << 6) | (_input[_i + 2] & 0b00111111); _i += 3; break;
-
-                default:                                                                                                                                                        break;
-            }
-
-            if (_code > 0xFFFF)
-            {
-                _code -= 0x10000;
-
-                _output[_count++] = c16(0xD800 | (_code >> 10));
-                _output[_count++] = c16(0xDC00 | (_code & 0x3FF));
-                continue;
-            }
-
-            _output[_count++] = _code;
-        }
-
-        _output[_count] = u'\0';
-        return _count;
-    }
-
-    s64 posix_to_win_path()
-    {
-        s64 _count = 0;
-
-        return _count;
-    }
-
-    #endif
-
-    PathHandle cwd_handle()
-    {
-        #if CMN_SYS_OS_LIN
-            return AT_FDCWD;
-        #elif CMN_SYS_OS_MAC
-            return AT_FDCWD;
-        #elif CMN_SYS_OS_WIN
-            return PathHandle(win_::resolve_peb()->ProcessParameters->CurrentDirectory.Handle);
-        #endif
-    }
-
-    cmn::error::Result<PathHandle, CREATE> create_file(const c08 *_path, const s64 _length)
-    {
-        PathHandle _pathHandle;
-        CREATE     _error;
+        Cwd _error;
 
         #if CMN_SYS_OS_LIN
 
-            _pathHandle = cmn::syscall::lin::openat(AT_FDCWD, _path, O_WRONLY | O_CREAT | O_TRUNC, (lin::mode_t)0644);
-            _error  = (u64(_pathHandle) >= u64(-4095LL)) ? CREATE(-_pathHandle) : CREATE::NONE;
+            i64 _status  = lin::getcwd(PathBuffer.string, 1024);
+            b08 _success = u64(_status) < -4095ul;
+
+            // _length = _success ? _status   : 0;
+            _error  = _success ? Cwd::NONE : Cwd(-_status);
 
         #elif CMN_SYS_OS_MAC
 
-            _pathHandle = cmn::syscall::mac::openat(AT_FDCWD, (user_addr_t)_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            _error  = _pathHandle < 0 ? CREATE(-_pathHandle) : CREATE::NONE;
+            c08 _cwd[]   = ".";
+            i64 _status  = mac::openat(AT_FDCWD, user_addr_t(_cwd), O_RDONLY | O_DIRECTORY | O_CLOEXEC, 0);
+            b08 _success = _status >= 0;
+
+            // _length = 0;
+
+            if (_success)
+            {
+                i32 _fileDescriptor = i32(_status);
+
+                _status  = mac::sys_fcntl(_fileDescriptor, F_GETPATH, long(PathBuffer.string));
+                _success = _status >= 0;
+
+                if (_success)
+                {
+                    // while (PathBuffer[_length] != '\0')
+                    // {
+                    //     ++_length;
+                    // }
+                }
+
+                // No need to check close, regardless of whether this fails or not, the cwd output is valid, and if this does fail it likely means it was already closed by another thread in-between.
+                mac::sys_close(_fileDescriptor);
+            }
+
+            _error = _success ? Cwd::NONE : Cwd(-_status);
 
         #elif CMN_SYS_OS_WIN
 
-            UNICODE_STRING _name = cmn::syscall::util::path::to_native(_path, _length);
+            UNICODE_STRING _cwd = cmn::syscall::win_::resolve_peb()->ProcessParameters->CurrentDirectory.DosPath;
 
-            OBJECT_ATTRIBUTES _attributes
-            {
-                sizeof(OBJECT_ATTRIBUTES),
-                nullptr,
-                &_name,
-                OBJ_CASE_INSENSITIVE,
-                nullptr,
-                nullptr
-            };
-
-            IO_STATUS_BLOCK _ioStatus { };
-            HANDLE _handle;
-
-            #define FILE_OPEN_IF        3
-            #define FILE_CREATE         2
-            #define FILE_DIRECTORY_FILE 0x00000001
-            #define FILE_LIST_DIRECTORY 0x00000001
-
-            NTSTATUS _status = cmn::syscall::win::NtCreateFile
-            (
-                &_handle,
-                FILE_WRITE_DATA | SYNCHRONIZE,
-                &_attributes,
-                &_ioStatus,
-                nullptr,
-                FILE_ATTRIBUTE_NORMAL,
-                FILE_SHARE_READ | FILE_SHARE_WRITE,
-                FILE_OVERWRITE_IF,
-                FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT,
-                nullptr,
-                0
-            );
-
-            _pathHandle = PathHandle(_handle);
-            _error = _status < 0 ? CREATE(_status) : CREATE::NONE;
+            PathBuffer.length = cmn::syscall::util::path::from_native_absolute(_cwd, PathBuffer.string);
+            _error = Cwd::NONE;
 
         #endif
 
-        return error::Result<PathHandle, CREATE>(_pathHandle, _error);
+        return error::Result<c08*, Cwd>(PathBuffer.string, _error);
     }
-    // cmn::error::Result<void, OPEN  > open  ();
-    void close     (); // NtClose                      : close                        : close
-    void remove    (); // NtSetInformationFile         : unlinkat                     : unlinkat
-
-    void read      (); // NtReadFile                   : read                         : read
-    void write     (); // NtWriteFile                  : write                        : write
-    void seek      (); // NtSetInformationFile         : lseek                        : lseek
-
-    void resize    (); // NtSetInformationFile         : ftruncate                    : ftruncate
-    void allocate  (); // NtSetInformationFile*        : fallocate                    : fcntl(F_PREALLOCATE)
-    void deallocate(); // NtSetInformationFile*        : fallocate                    : fcntl(F_PUNCHHOLE*) / ftruncate
-
-    void query     (); // NtQueryInformationFile       : fstat                        : fstat
-
-    void flush     (); // NtFlushBuffersFile           : fsync                        : fsync
+    /// Determines if and what type of filesystem-object exists at a given path.
+    /// Upon error, TYPE::NONE is returned.
+    cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length);
+    /// Obtains information on a given filesystem-object.
+    cmn::error::Result<s64 , Query > query (const Handle _object); // TODO: Add info for query.
 }

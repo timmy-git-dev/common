@@ -6,7 +6,7 @@
 #elif CMN_SYS_OS_MAC
 
 #elif CMN_SYS_OS_WIN
-    include "syscall/win/Type.hh"
+    #include "syscall/win/Type.hh"
 #endif
 
 
@@ -329,7 +329,7 @@ namespace cmn::syscall::util::path
             // Convert the entire string from _nativePath to utf-8 and add to _output, ensure all '\'s are replaced with '/'.
             s64 _nativePathIndex = 0;
             const s64 _nativePathLength = _nativePath.Length / 2;
-            while (_nativePathIndex < _nativePathLength)
+            while (_nativePathIndex < _nativePathLength - 1)
             {
                 u32 _char = _nativePath.Buffer[_nativePathIndex++];
 

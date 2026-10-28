@@ -37,8 +37,6 @@ namespace cmn::syscall::mac
 
             return x0;
 
-            return x0;
-
         #elif CMN_SYS_ARCH_X64
 
             _id |= 0x2000000;

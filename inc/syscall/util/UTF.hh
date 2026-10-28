@@ -5,7 +5,7 @@
 
 namespace cmn::syscall::util::utf
 {
-    enum class Utf : error::CODE
+    enum class Utf : error::Code
     {
         NONE = 0,
 

@@ -5,7 +5,7 @@
 
 namespace cmn::syscall::uni::mem
 {
-    enum class Memory : error::CODE
+    enum class Memory : error::Code
     {
         NONE = 0,
     };

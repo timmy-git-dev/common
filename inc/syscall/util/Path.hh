@@ -1,10 +1,10 @@
 #pragma once
-#include "syscall/util/UTF.hh"
+#include "error/Error.hh"
 #include "syscall/win/Type.hh"
 
 namespace cmn::syscall::util::path
 {
-    enum class Path : error::CODE
+    enum class Path : error::Code
     {
         NONE = 0,
 

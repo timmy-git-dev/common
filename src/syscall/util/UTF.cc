@@ -3,7 +3,7 @@
 
 namespace cmn::syscall::util::utf
 {
-    error::Result<u32, UTF> str8_to_code(const c08 *_utf8 , s64 &_index)
+    error::Result<u32, Utf> str8_to_code(const c08 *_utf8 , s64 &_index)
     {
         u32 _code;
         u32 _char = _utf8[_index];
@@ -16,12 +16,12 @@ namespace cmn::syscall::util::utf
             case 3:  _code = u32(_char & 0b00001111) << 12 | u32(_utf8[_index + 1] & 0b00111111) <<  6 | u32(_utf8[_index + 2] & 0b00111111);                                            _index += 3; break;
             case 4:  _code = u32(_char & 0b00000111) << 18 | u32(_utf8[_index + 1] & 0b00111111) << 12 | u32(_utf8[_index + 2] & 0b00111111) << 6 | u32(_utf8[_index + 3] & 0b00111111); _index += 4; break;
 
-            default: return error::Result<u32, UTF>(0, UTF::INVALID_FORMAT);
+            default: return error::Result<u32, Utf>(0, Utf::INVALID_FORMAT);
         }
 
-        return error::Result<u32, UTF>(_code, UTF::NONE);
+        return error::Result<u32, Utf>(_code, Utf::NONE);
     }
-    error::Result<u32, UTF> str16_to_code(const c16 *_utf16, s64 &_index)
+    error::Result<u32, Utf> str16_to_code(const c16 *_utf16, s64 &_index)
     {
         u32 _char = _utf16[_index++];
         u32 _code = _char;
@@ -31,16 +31,16 @@ namespace cmn::syscall::util::utf
             u32 _next = _utf16[_index++];
 
             if (_next < 0xDC00 || _next > 0xDFFF)
-                return error::Result<u32, UTF>(0, UTF::INVALID_FORMAT);
+                return error::Result<u32, Utf>(0, Utf::INVALID_FORMAT);
 
             _code = 0x10000 | ((_char & 0x3FF) << 10) | (_next & 0x3FF);
         }
         else if (_char >= 0xDC00 && _char <= 0xDFFF)
         {
-            return error::Result<u32, UTF>(0, UTF::INVALID_FORMAT);
+            return error::Result<u32, Utf>(0, Utf::INVALID_FORMAT);
         }
 
-        return error::Result<u32, UTF>(_code, UTF::NONE);
+        return error::Result<u32, Utf>(_code, Utf::NONE);
     }
 
     void code_to_str8(const u32 _code, c08 *_utf8, s64 &_index)
