@@ -3,8 +3,11 @@
 #include "syscall/uni/IO_Error.hh"
 #include "sys/platform/OS.hh"
 
+#include "dbg/Print.hh"
+
 #if CMN_SYS_OS_LIN
     #include "syscall/lin/Call.hh"
+    #include "syscall/lin/Type.hh"
 #elif CMN_SYS_OS_MAC
     #include "syscall/mac/Call.hh"
     #include "syscall/mac/Type.hh"
@@ -61,21 +64,36 @@ namespace cmn::syscall::uni::io
 {
     static cmn::syscall::uni::io::Path pathBuffer;
 
-    /// Returns the specified
-    /// If _capacity is < the length of the current working directory, the output buffer is only set up to _capacity.
-    /// Upon error, _outputBuffer is untouched and the returned length is 0.
+    /// Copies the current working directory into _outputBuffer and returns the length excluding the null terminator.
     cmn::error::Result<s64, Cwd> cwd(c08* _outputBuffer, const s64 _capacity)
     {
-        s64 _length;
-        Cwd _error;
+        s64 _length  = 0;
+        Cwd _error   = Cwd::NONE;
 
         #if CMN_SYS_OS_LIN
 
-            i64 _status  = lin::getcwd(_outputBuffer, _capacity);
+            i64 _status  = lin::getcwd(pathBuffer.string, 1024);
             b08 _success = u64(_status) < -4095ul;
 
-            _length = _success ? _status   : 0;
-            _error  = _success ? Cwd::NONE : Cwd(-_status);
+            if (_success)
+            {
+                _length = _status - 1;
+                if (_capacity >= _length + 1)
+                {
+                    for (s64 _i = 0; _i < _length + 1; ++_i)
+                    {
+                        _outputBuffer[_i] = pathBuffer.string[_i];
+                    }
+                }
+                else
+                {
+                    _error = Cwd::INVALID_CAPACITY;
+                }
+            }
+            else
+            {
+                _error  = Cwd(-_status);
+            }
 
         #elif CMN_SYS_OS_MAC
 
@@ -125,14 +143,42 @@ namespace cmn::syscall::uni::io
     }
     /// Determines if and what type of filesystem-object exists at a given path.
     /// Upon error, TYPE::NONE is returned.
-    // cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length)
-    // {
-    //     #if CMN_SYS_OS_LIN
-    //         // lin::fcntl?
-    //     #elif CMN_SYS_OS_MAC
-    //     #elif CMN_SYS_OS_WIN
-    //     #endif
-    // }
+    cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length)
+    {
+        Type   _type  = Type::NONE;
+        Exists _error = Exists::NONE;
+
+        #if CMN_SYS_OS_LIN
+            constexpr i32 AT_SYMLINK_NOFOLLOW = 0x100;
+            constexpr u32 STATX_TYPE          = 0x001;
+
+            struct lin::statx _info;
+
+            i64 _status = lin::statx(-1, _path, AT_SYMLINK_NOFOLLOW, STATX_TYPE, &_info);
+            b08 _success = u64(_status) < -4095ul;
+
+            if (_success)
+            {
+                switch ((_info.stx_mask & STATX_TYPE) ? (_info.stx_mode & 0xF000) : 0)
+                {
+                    case 0x8000: _type = Type::FILE;      break;
+                    case 0x4000: _type = Type::DIRECTORY; break;
+                    case 0xA000: _type = Type::SYMLINK;   break;
+                    default:     _type = Type::UNKNOWN;   break;
+                }
+            }
+            else if (_status != -ENOENT)
+            {
+                _error = Exists(-_status);
+            }
+
+
+        #elif CMN_SYS_OS_MAC
+        #elif CMN_SYS_OS_WIN
+        #endif
+
+        return error::Result<Type, Exists>(_type, _error);
+    }
     /// Obtains information on a given filesystem-object.
     cmn::error::Result<s64 , Query > query (const Handle _object); // TODO: Add info for query.
 }

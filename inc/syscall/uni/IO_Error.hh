@@ -10,19 +10,15 @@
 
 #endif
 
+// TODO: Maybe change "error" to "status," so that info/warnings and 'success' can be returned, rather than just errors.
+
 namespace cmn::syscall::uni::io
 {
     enum class Cwd : error::Code
     {
         NONE = 0,
-
-        #if CMN_SYS_OS_LIN
-
-        #elif CMN_SYS_OS_MAC
-
-        #elif CMN_SYS_OS_WIN
-
-        #endif
+        /// The specified buffer's capacity was < length - 1. The returned length is still set, but the specified buffer is untouched, and if nullptr, will not fail.
+        INVALID_CAPACITY = 1,
     };
     enum class Exists : error::Code
     {

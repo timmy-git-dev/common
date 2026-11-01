@@ -5,7 +5,7 @@
 namespace cmn::error
 {
     template<typename Type_, typename Error_>
-    requires(__is_same(__underlying_type(Error_), u32))
+    requires(__is_same(__underlying_type(Error_), i32))
     struct Result
     {
         Type_         value;

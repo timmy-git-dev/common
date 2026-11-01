@@ -89,6 +89,18 @@ namespace cmn::syscall::lin
             u32 : 32;
         #endif
     };
+    struct statx
+    {
+        u32 stx_mask;
+        u32 stx_blksize;
+        u64 stx_attributes;
+        u32 stx_nlink;
+        u32 stx_uid;
+        u32 stx_gid;
+        u16 stx_mode;
+        u16 : 16;
+        u64 : 64 * 28;
+    };
 
     struct __aio_sigset;
     struct cachestat;
@@ -138,7 +150,6 @@ namespace cmn::syscall::lin
     struct stack_t;
     struct statfs;
     struct statmount;
-    struct statx;
     struct sysinfo;
     struct timezone;
     struct tms;

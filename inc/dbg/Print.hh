@@ -113,9 +113,10 @@ namespace dbg
         return _length;
     }
 
+    inline s64 stringify(s64 _x) { return stringify(u64(_x)); }
     inline s64 stringify(u32 _x) { return stringify(u64(_x)); }
-    inline s64 stringify(u16 _x) { return stringify(u32(_x)); }
-    inline s64 stringify(u08 _x) { return stringify(u16(_x)); }
+    inline s64 stringify(u16 _x) { return stringify(u64(_x)); }
+    inline s64 stringify(u08 _x) { return stringify(u64(_x)); }
 
     inline s64 prepend_minus_(s64 _length)
     {
@@ -139,8 +140,8 @@ namespace dbg
     }
 
     inline s64 stringify(i32 _x) { return stringify(i64(_x)); }
-    inline s64 stringify(i16 _x) { return stringify(i32(_x)); }
-    inline s64 stringify(i08 _x) { return stringify(i16(_x)); }
+    inline s64 stringify(i16 _x) { return stringify(i64(_x)); }
+    inline s64 stringify(i08 _x) { return stringify(i64(_x)); }
 
     template<typename Type_>
         requires (__is_enum(Type_))
@@ -269,7 +270,7 @@ namespace dbg
 
     #define PRINT(...) \
         do { \
-            dbg::print(__FILE__, ":", u32(__LINE__), "\n"); \
+            dbg::print("\033[1m", __FILE__, ":", u32(__LINE__), "\033[22m", "\n"); \
             CMN_EACH_(CMN_PRINT_VALUE_, __VA_ARGS__) \
         } while (false)
 }

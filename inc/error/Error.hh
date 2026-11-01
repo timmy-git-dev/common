@@ -3,7 +3,7 @@
 
 namespace cmn::error
 {
-    using Code = u32;
+    using Code = i32;
 
     template<typename Code_>
     requires(__is_same(__underlying_type(Code_), Code))
