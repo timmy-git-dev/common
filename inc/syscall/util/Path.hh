@@ -1,5 +1,5 @@
 #pragma once
-#include "error/Error.hh"
+#include "error/Status.hh"
 #include "syscall/win/Type.hh"
 
 namespace cmn::syscall::util::path

@@ -62,37 +62,38 @@
 
 namespace cmn::syscall::uni::io
 {
-    static cmn::syscall::uni::io::Path pathBuffer;
+    // Reusable buffer for internal path copying, mainly for windows UTF-8 <-> UTF-8 and POSIX <-> NT path resolution.
+    static c08 pathBuffer[4096];
 
-    /// Copies the current working directory into _outputBuffer and returns the length excluding the null terminator.
     cmn::error::Result<s64, Cwd> cwd(c08* _outputBuffer, const s64 _capacity)
     {
         s64 _length  = 0;
-        Cwd _error   = Cwd::NONE;
+        Cwd _error   = Cwd::SUCCESS;
 
         #if CMN_SYS_OS_LIN
 
-            i64 _status  = lin::getcwd(pathBuffer.string, 1024);
-            b08 _success = u64(_status) < -4095ul;
+            // Obtain the cwd length or errno.
+            i64 _status  = lin::getcwd(pathBuffer, 1024);
 
-            if (_success)
-            {
-                _length = _status - 1;
-                if (_capacity >= _length + 1)
-                {
-                    for (s64 _i = 0; _i < _length + 1; ++_i)
-                    {
-                        _outputBuffer[_i] = pathBuffer.string[_i];
-                    }
-                }
-                else
-                {
-                    _error = Cwd::INVALID_CAPACITY;
-                }
-            }
-            else
+            b08 _success = u64(_status) < -4095ul;
+            if (!_success)
             {
                 _error  = Cwd(-_status);
+                return { _length, _error };
+            }
+
+            // Exclude the null-terminator.
+            _length = _status - 1;
+            if (_capacity < _length)
+            {
+                _error = Cwd::INVALID_CAPACITY;
+                return { _length, _error };
+            }
+
+            // Copy over the cwd path.
+            for (s64 _i = 0; _i < _length; ++_i)
+            {
+                _outputBuffer[_i] = pathBuffer[_i];
             }
 
         #elif CMN_SYS_OS_MAC
@@ -107,17 +108,17 @@ namespace cmn::syscall::uni::io
             {
                 i32 _fileDescriptor = i32(_status);
 
-                _status  = mac::sys_fcntl(_fileDescriptor, F_GETPATH, long(pathBuffer.string));
+                _status  = mac::sys_fcntl(_fileDescriptor, F_GETPATH, long(pathBuffer));
                 _success = _status >= 0;
 
                 if (_success)
                 {
-                    while (_length < _capacity && pathBuffer.string[_length] != '\0')
+                    while (_length < _capacity && pathBuffer[_length] != '\0')
                     {
-                        _outputBuffer[_length] = pathBuffer.string[_length];
+                        _outputBuffer[_length] = pathBuffer[_length];
                         ++_length;
                     }
-                    while (pathBuffer.string[_length] != '\0')
+                    while (pathBuffer[_length] != '\0')
                     {
                         ++_length;
                     }
@@ -139,14 +140,14 @@ namespace cmn::syscall::uni::io
 
         #endif
 
-        return error::Result<s64, Cwd>(_length, _error);
+        return { _length, _error };
     }
     /// Determines if and what type of filesystem-object exists at a given path.
     /// Upon error, TYPE::NONE is returned.
     cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length)
     {
         Type   _type  = Type::NONE;
-        Exists _error = Exists::NONE;
+        Exists _error = Exists::SUCCESS;
 
         #if CMN_SYS_OS_LIN
             constexpr i32 AT_SYMLINK_NOFOLLOW = 0x100;

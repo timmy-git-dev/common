@@ -11,15 +11,15 @@ bool cwd()
     cmn::error::Result<s64, cmn::syscall::uni::io::Cwd> _correct = cmn::syscall::uni::io::cwd(buffer, 1024);
 
     bool _success =
-        _invalid.error.code == cmn::syscall::uni::io::Cwd::INVALID_CAPACITY && _invalid.value != 0 &&
-        _correct.error.code == cmn::syscall::uni::io::Cwd::NONE             && _correct.value != 0;
+        _invalid.status.code == cmn::syscall::uni::io::Cwd::INVALID_CAPACITY && _invalid.value != 0 &&
+        _correct.status.code == cmn::syscall::uni::io::Cwd::SUCCESS          && _correct.value != 0;
 
     if (!_success)
     {
         PRINT
         (
-            _invalid.error.code, _invalid.value,
-            _correct.error.code, _correct.value
+            _invalid.status.code, _invalid.value,
+            _correct.status.code, _correct.value
         );
     }
 
@@ -39,16 +39,16 @@ bool exists()
     cmn::error::Result<cmn::syscall::uni::io::Type, cmn::syscall::uni::io::Exists> _file = cmn::syscall::uni::io::exists(buffer, _length + sizeof(_buffer) - 1);
 
     bool _success =
-        _dir .error.code == cmn::syscall::uni::io::Exists::NONE && _dir .value == cmn::syscall::uni::io::Type::DIRECTORY &&
-        _file.error.code == cmn::syscall::uni::io::Exists::NONE && _file.value == cmn::syscall::uni::io::Type::FILE;
+        _dir .status.code == cmn::syscall::uni::io::Exists::SUCCESS && _dir .value == cmn::syscall::uni::io::Type::DIRECTORY &&
+        _file.status.code == cmn::syscall::uni::io::Exists::SUCCESS && _file.value == cmn::syscall::uni::io::Type::FILE;
 
     if (!_success)
     {
         PRINT
         (
             buffer,
-            _dir .error.code, _dir .value,
-            _file.error.code, _file.value
+            _dir .status.code, _dir .value,
+            _file.status.code, _file.value
         );
     }
 

@@ -7,7 +7,7 @@ namespace cmn::error
 
     template<typename Code_>
     requires(__is_same(__underlying_type(Code_), Code))
-    struct Error
+    struct Status
     {
         Code_ code;
     };

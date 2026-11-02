@@ -1,5 +1,5 @@
 #pragma once
-#include "error/Error.hh"
+#include "error/Status.hh"
 #include "sys/platform/OS.hh"
 
 #if CMN_SYS_OS_LIN
@@ -10,19 +10,49 @@
 
 #endif
 
-// TODO: Maybe change "error" to "status," so that info/warnings and 'success' can be returned, rather than just errors.
-
 namespace cmn::syscall::uni::io
 {
     enum class Cwd : error::Code
     {
-        NONE = 0,
-        /// The specified buffer's capacity was < length - 1. The returned length is still set, but the specified buffer is untouched, and if nullptr, will not fail.
+        /// The length of the cwd is returned and `_outputBuffer` is set to the cwd.
+        SUCCESS = 0,
+        /// The specified `_capacity` was < the length of the cwd.
+        /// The length of the cwd is returned and `_outputBuffer` is untouched.
         INVALID_CAPACITY = 1,
+
+        #if CMN_SYS_OS_LIN
+
+            /// Permission to read or search a component of the cwd path was denied.
+            /// The returned length is 0 and `_outputBuffer` is untouched.
+            PERMISSION_DENIED       = EACCES,
+            /// The cwd has been unlinked/removed from the filesystem.
+            /// The returned length is 0 and `_outputBuffer` is untouched.
+            UNLINKED_CWD            = ENOENT,
+            /// The OS does not have enough memory to obtain the cwd.
+            /// The returned length is 0 and `_outputBuffer` is untouched.
+            OUT_OF_MEMORY           = ENOMEM,
+
+            /// The internal capacity specified was zero, and the internal buffer was null.
+            /// The returned length is 0 and `_outputBuffer` is untouched.
+            ZERO_INTERNAL_SIZE      = EINVAL,
+            /// The internal buffer was invalid and likely null.
+            /// The returned length is 0 and `_outputBuffer` is untouched.
+            NULL_INTERNAL_ADDRESS   = EFAULT,
+            /// The internal specified was not large enough to store the cwd path.
+            /// The returned length is 0 and `_outputBuffer` is untouched.
+            SHORT_INTERNAL_CAPACITY = ERANGE,
+
+        #elif CMN_SYS_OS_MAC
+
+        #elif CMN_SYS_OS_WIN
+
+        #endif
+
     };
     enum class Exists : error::Code
     {
-        NONE = 0,
+        /// The specified `_path` was valid, and the filesystem-object's type; and whether it exists, is returned.
+        SUCCESS = 0,
 
         #if CMN_SYS_OS_LIN
 

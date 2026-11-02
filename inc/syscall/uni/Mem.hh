@@ -1,5 +1,5 @@
 #pragma once
-#include "error/Error.hh"
+#include "error/Status.hh"
 #include "error/Result.hh"
 #include "type/Alias.hh"
 

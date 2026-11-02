@@ -7,28 +7,24 @@ namespace cmn::syscall::uni::io
     // TODO: Maybe change this to a struct or something? Or maybe put usings in more places, not sure what kind of practice I should use yet.
     using Handle = s64;
 
-    struct Path
-    {
-        s64 length = 0;
-        c08 string[1024];
-    };
-
     // TODO: Maybe set values based on returned values from exists for performance.
     enum class Type
     {
+        /// No filesystem-object, returned from `exists()` for when no filesystem-object is found at a given path.
         NONE      = 0,
+        /// An unknown filesystem-object on this OS.
         UNKNOWN   = 1,
+        /// A file-based filesystem-object.
         FILE      = 2,
+        /// A directory-based filesystem-object.
         DIRECTORY = 3,
+        /// A symlink-based filesystem-object.
         SYMLINK   = 4,
     };
 
-    /// Obtains the current working directory, copies it into the specified _outputBuffer up to _capcity, and returns the length.
-    /// If _capacity is < the length of the current working directory, the output buffer is only set up to _capacity.
-    /// Upon error, _outputBuffer is untouched and the returned length is 0.
+    /// Copies the current working directory into `_outputBuffer` and returns the length.
     cmn::error::Result<s64 , Cwd   > cwd   (c08 *_outputBuffer, const s64 _capacity);
-    /// Determines if and what type of filesystem-object exists at a given path.
-    /// Upon error, TYPE::NONE is returned.
+    /// Determines if and what type of filesystem-object exists at a given path, will not follow symlinks.
     cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length);
     /// Obtains information on a given filesystem-object.
     cmn::error::Result<s64 , Query > query (const Handle _object); // TODO: Add info for query.
