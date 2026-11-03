@@ -1,4 +1,4 @@
-#include "type/Alias.hh"
+#include "type/alias.hh"
 
 extern "C"
 {
