@@ -12,7 +12,7 @@ bool cwd()
 
     bool _success =
         _invalid.status.code == cmn::syscall::uni::io::Cwd::SHORT_CAPACITY && _invalid.value != 0 &&
-        _correct.status.code == cmn::syscall::uni::io::Cwd::SUCCESS          && _correct.value != 0;
+        _correct.status.code == cmn::syscall::uni::io::Cwd::SUCCESS        && _correct.value != 0;
 
     if (!_success)
     {
@@ -44,7 +44,7 @@ bool query()
 
     PRINT
     (
-        _dir.status.code,
+        _dir.status.code           ,
         _dir.value.type            ,
         _dir.value.length          ,
         _dir.value.allocated       ,
@@ -59,7 +59,7 @@ bool query()
 
     PRINT
     (
-        _file.status.code,
+        _file.status.code           ,
         _file.value.type            ,
         _file.value.length          ,
         _file.value.allocated       ,

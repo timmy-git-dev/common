@@ -2,6 +2,14 @@
 #include "error/Result.hh"
 #include "syscall/uni/IO_Error.hh"
 
+#if CMN_SYS_OS_LIN
+    #include "syscall/lin/Flag.hh"
+#elif CMN_SYS_OS_MAC
+    #include "syscall/mac/Flag.hh"
+#elif CMN_SYS_OS_WIN
+    #include "syscall/win/Flag.hh"
+#endif
+
 namespace cmn::syscall::uni::io
 {
     // TODO: Maybe change this to a struct or something? Or maybe put usings in more places, not sure what kind of practice I should use yet.
@@ -12,22 +20,49 @@ namespace cmn::syscall::uni::io
     {
         #if CMN_SYS_OS_LIN
 
-            /// A domain-socket for local communication via filesystem syscalls.
-            SOCKET           = 0140000,
-            /// A symbolic-link pointing to some other path.
-            SYMLINK          = 0120000,
             /// A regular file.
-            FILE             = 0100000,
+            FILE             = S_IFREG,
             /// A directory/folder.
-            DIRECTORY        = 0040000,
+            DIRECTORY        = S_IFDIR,
+            /// A symbolic-link pointing to some other path.
+            SYMLINK          = S_IFLNK,
+
+            /// A domain-socket for local communication via filesystem syscalls.
+            SOCKET           = S_IFSOCK,
+
             /// A First-In-First-Out named pipe for inter-process communication.
-            FIFO             = 0010000,
+            FIFO             = S_IFIFO,
+
             /// A block-device for fixed-size storage/transfer such as /dev/sda.
-            BLOCK_DEVICE     = 0060000,
+            BLOCK_DEVICE     = S_IFBLK,
             /// A character-device for communication with hardware like keyboards.
-            CHARACTER_DEVICE = 0020000,
+            CHARACTER_DEVICE = S_IFCHR,
+
+            /// A whiteout file, indicating the file has been deleted in a union file system.
+            WHITEOUT         = -1,
 
         #elif CMN_SYS_OS_MAC
+
+            /// A regular file.
+            FILE             = S_IFREG,
+            /// A directory/folder.
+            DIRECTORY        = S_IFDIR,
+            /// A symbolic-link pointing to some other path.
+            SYMLINK          = S_IFLNK,
+
+            /// A domain-socket for local communication via filesystem syscalls.
+            SOCKET           = S_IFSOCK,
+
+            /// A First-In-First-Out named pipe for inter-process communication.
+            FIFO             = S_IFIFO,
+
+            /// A block-device for fixed-size storage/transfer such as /dev/sda.
+            BLOCK_DEVICE     = S_IFBLK,
+            /// A character-device for communication with hardware like keyboards.
+            CHARACTER_DEVICE = S_IFCHR,
+
+            /// A whiteout file, indicating the file has been deleted in a union file system.
+            WHITEOUT         = S_IFWHT,
 
         #elif CMN_SYS_OS_WIN
 
@@ -38,7 +73,7 @@ namespace cmn::syscall::uni::io
             /// A regular file.
             FILE             = 0100000,
             /// A directory/folder.
-            DIRECTORY        = 0040000,
+            DIRECTORY        = 16,
             /// A First-In-First-Out named pipe for inter-process communication.
             FIFO             = -1,
             /// A block-device for fixed-size storage/transfer such as /dev/sda.

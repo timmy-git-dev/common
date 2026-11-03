@@ -68,15 +68,6 @@
 
     #define S_IFMT   0170000  /* type of file */
 
-    #define	S_IFIFO  0010000  /* named pipe (fifo) */
-    #define	S_IFCHR  0020000  /* character special */
-    #define	S_IFDIR  0040000  /* directory */
-    #define	S_IFBLK  0060000  /* block special */
-    #define	S_IFREG  0100000  /* regular */
-    #define	S_IFLNK  0120000  /* symbolic link */
-    #define	S_IFSOCK 0140000  /* socket */
-    #define	S_IFWHT  0160000  /* whiteout */
-
 #elif CMN_SYS_OS_WIN
 
     #define FILE_WRITE_DATA              0x0002
@@ -95,7 +86,7 @@
 
 namespace cmn::syscall::uni::io
 {
-    // Reusable buffer for internal path copying, mainly for windows UTF-8 <-> UTF-8 and POSIX <-> NT path resolution.
+    // Reusable buffer for internal path copying, mainly for windows UTF-8 <-> UTF-16 and POSIX <-> NT path resolution.
     static c08 pathBuffer[4096];
 
     cmn::error::Result<s64, Cwd> cwd(c08* _outputBuffer, const s64 _capacity)
