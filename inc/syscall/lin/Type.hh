@@ -46,10 +46,10 @@ namespace cmn::syscall::lin
     struct timespec
     {
         i64 tv_sec;
-        i64 tv_nsec;
+        u64 tv_nsec;
     };
 
-    struct FileStatus
+    struct stat
     {
         #if CMN_SYS_ARCH_X64
             u64      st_dev;
@@ -89,17 +89,39 @@ namespace cmn::syscall::lin
             u32 : 32;
         #endif
     };
+
+    struct statx_timestamp
+    {
+        i64 tv_sec;    /* Seconds since the Epoch (UNIX time) */
+        u32 tv_nsec;   /* Nanoseconds since tv_sec */
+   };
     struct statx
     {
-        u32 stx_mask;
-        u32 stx_blksize;
-        u64 stx_attributes;
-        u32 stx_nlink;
-        u32 stx_uid;
-        u32 stx_gid;
-        u16 stx_mode;
-        u16 : 16;
-        u64 : 64 * 28;
+        u32 stx_mask;                   /* Mask of bits indicating filled fields */
+        u32 stx_blksize;                /* Block size for filesystem I/O */
+        u64 stx_attributes;             /* Extra file attribute indicators */
+        u32 stx_nlink;                  /* Number of hard links */
+        u32 stx_uid;                    /* User ID of owner */
+        u32 stx_gid;                    /* Group ID of owner */
+        u16 stx_mode;                   /* File type and mode */
+        u64 stx_ino;                    /* Inode number */
+        u64 stx_size;                   /* Total size in bytes */
+        u64 stx_blocks;                 /* Number of 512B blocks allocated */
+        u64 stx_attributes_mask;        /* Mask to show what's supported in stx_attributes */
+
+        /* The following fields are file timestamps */
+        statx_timestamp stx_atime;      /* Last access */
+        statx_timestamp stx_btime;      /* Creation */
+        statx_timestamp stx_ctime;      /* Last status change */
+        statx_timestamp stx_mtime;      /* Last modification */
+
+        /* If this file represents a device, then the next two fields contain the ID of the device */
+        u32 stx_rdev_major;             /* Major ID */
+        u32 stx_rdev_minor;             /* Minor ID */
+
+        /* The next two fields contain the ID of the device containing the filesystem where the file resides */
+        u32 stx_dev_major;              /* Major ID */
+        u32 stx_dev_minor;              /* Minor ID */
     };
 
     struct __aio_sigset;

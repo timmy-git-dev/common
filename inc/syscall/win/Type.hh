@@ -131,12 +131,12 @@ enum _EVENT_INFORMATION_CLASS { };
 using EVENT_INFORMATION_CLASS = enum _EVENT_INFORMATION_CLASS;
 struct OBJECT_ATTRIBUTES
 {
-    u32 Length;
-    void* RootDirectory;
+    u32             Length;
+    void*           RootDirectory;
     UNICODE_STRING* ObjectName;
-    u32 Attributes;
-    void* SecurityDescriptor;
-    void* SecurityQualityOfService;
+    u32             Attributes;
+    void*           SecurityDescriptor;
+    void*           SecurityQualityOfService;
 };
 using PCOBJECT_ATTRIBUTES = const OBJECT_ATTRIBUTES *;
 enum _MUTANT_INFORMATION_CLASS { };
@@ -193,8 +193,30 @@ struct _LUID;
 using PLUID = struct _LUID *;
 using CHAR = char;
 using PCHAR = CHAR *;
-union _ULARGE_INTEGER;
-using ULARGE_INTEGER = union _ULARGE_INTEGER;
+typedef i64 LONGLONG;
+typedef u64 ULONGLONG;
+typedef union _LARGE_INTEGER {
+  struct {
+    DWORD LowPart;
+    LONG  HighPart;
+  } DUMMYSTRUCTNAME;
+  struct {
+    DWORD LowPart;
+    LONG  HighPart;
+  } u;
+  LONGLONG QuadPart;
+} LARGE_INTEGER;
+typedef union _ULARGE_INTEGER {
+  struct {
+    DWORD LowPart;
+    DWORD HighPart;
+  } DUMMYSTRUCTNAME;
+  struct {
+    DWORD LowPart;
+    DWORD HighPart;
+  } u;
+  ULONGLONG QuadPart;
+} ULARGE_INTEGER;
 using PULARGE_INTEGER = ULARGE_INTEGER *;
 enum _SYSTEM_INFORMATION_CLASS { };
 using SYSTEM_INFORMATION_CLASS = enum _SYSTEM_INFORMATION_CLASS;
@@ -282,7 +304,92 @@ enum _DEBUGOBJECTINFOCLASS { };
 using DEBUGOBJECTINFOCLASS = enum _DEBUGOBJECTINFOCLASS;
 struct _DBGUI_WAIT_STATE_CHANGE;
 using PDBGUI_WAIT_STATE_CHANGE = struct _DBGUI_WAIT_STATE_CHANGE *;
-enum _FILE_INFORMATION_CLASS { };
+enum _FILE_INFORMATION_CLASS {
+    FileDirectoryInformation = 1,
+    FileFullDirectoryInformation = 2,
+    FileBothDirectoryInformation = 3,
+    FileBasicInformation = 4,
+    FileStandardInformation = 5,
+    FileInternalInformation = 6,
+    FileEaInformation = 7,
+    FileAccessInformation = 8,
+    FileNameInformation = 9,
+    FileRenameInformation = 10,
+    FileLinkInformation = 11,
+    FileNamesInformation = 12,
+    FileDispositionInformation = 13,
+    FilePositionInformation = 14,
+    FileFullEaInformation = 15,
+    FileModeInformation = 16,
+    FileAlignmentInformation = 17,
+    FileAllInformation = 18,
+    FileAllocationInformation = 19,
+    FileEndOfFileInformation = 20,
+    FileAlternateNameInformation = 21,
+    FileStreamInformation = 22,
+    FilePipeInformation = 23,
+    FilePipeLocalInformation = 24,
+    FilePipeRemoteInformation = 25,
+    FileMailslotQueryInformation = 26,
+    FileMailslotSetInformation = 27,
+    FileCompressionInformation = 28,
+    FileObjectIdInformation = 29,
+    FileCompletionInformation = 30,
+    FileMoveClusterInformation = 31,
+    FileQuotaInformation = 32,
+    FileReparsePointInformation = 33,
+    FileNetworkOpenInformation = 34,
+    FileAttributeTagInformation = 35,
+    FileTrackingInformation = 36,
+    FileIdBothDirectoryInformation = 37,
+    FileIdFullDirectoryInformation = 38,
+    FileValidDataLengthInformation = 39,
+    FileShortNameInformation = 40,
+    FileIoCompletionNotificationInformation = 41,
+    FileIoStatusBlockRangeInformation = 42,
+    FileIoPriorityHintInformation = 43,
+    FileSfioReserveInformation = 44,
+    FileSfioVolumeInformation = 45,
+    FileHardLinkInformation = 46,
+    FileProcessIdsUsingFileInformation = 47,
+    FileNormalizedNameInformation = 48,
+    FileNetworkPhysicalNameInformation = 49,
+    FileIdGlobalTxDirectoryInformation = 50,
+    FileIsRemoteDeviceInformation = 51,
+    FileUnusedInformation = 52,
+    FileNumaNodeInformation = 53,
+    FileStandardLinkInformation = 54,
+    FileRemoteProtocolInformation = 55,
+    FileRenameInformationBypassAccessCheck = 56,
+    FileLinkInformationBypassAccessCheck = 57,
+    FileVolumeNameInformation = 58,
+    FileIdInformation = 59,
+    FileIdExtdDirectoryInformation = 60,
+    FileReplaceCompletionInformation = 61,
+    FileHardLinkFullIdInformation = 62,
+    FileIdExtdBothDirectoryInformation = 63,
+    FileDispositionInformationEx = 64,
+    FileRenameInformationEx = 65,
+    FileRenameInformationExBypassAccessCheck = 66,
+    FileDesiredStorageClassInformation = 67,
+    FileStatInformation = 68,
+    FileMemoryPartitionInformation = 69,
+    FileStatLxInformation = 70,
+    FileCaseSensitiveInformation = 71,
+    FileLinkInformationEx = 72,
+    FileLinkInformationExBypassAccessCheck = 73,
+    FileStorageReserveIdInformation = 74,
+    FileCaseSensitiveInformationForceAccessCheck = 75,
+    FileKnownFolderInformation = 76,
+    FileStatBasicInformation = 77,
+    FileId64ExtdDirectoryInformation = 78,
+    FileId64ExtdBothDirectoryInformation = 79,
+    FileIdAllExtdDirectoryInformation = 80,
+    FileIdAllExtdBothDirectoryInformation = 81,
+    FileStreamReservationInformation,
+    FileMupProviderInfo,
+    FileMaximumInformation
+};
 using FILE_INFORMATION_CLASS = enum _FILE_INFORMATION_CLASS;
 using PIO_APC_ROUTINE = void (*)(void *, _IO_STATUS_BLOCK *, unsigned long);
 using PSID = PVOID;
@@ -304,6 +411,28 @@ struct FILE_BASIC_INFORMATION
     u32 FileAttributes;
 };
 using PFILE_BASIC_INFORMATION = struct FILE_BASIC_INFORMATION *;
+typedef unsigned char BYTE;
+typedef struct _FILE_ID_128 {
+  BYTE Identifier[16];
+} FILE_ID_128, *PFILE_ID_128;
+struct FILE_STAT_BASIC_INFORMATION {
+  LARGE_INTEGER FileId;
+  LARGE_INTEGER CreationTime;
+  LARGE_INTEGER LastAccessTime;
+  LARGE_INTEGER LastWriteTime;
+  LARGE_INTEGER ChangeTime;
+  LARGE_INTEGER AllocationSize;
+  LARGE_INTEGER EndOfFile;
+  ULONG         FileAttributes;
+  ULONG         ReparseTag;
+  ULONG         NumberOfLinks;
+  ULONG         DeviceType;
+  ULONG         DeviceCharacteristics;
+  ULONG         Reserved;
+  LARGE_INTEGER VolumeSerialNumber;
+  FILE_ID_128   FileId128;
+};
+using PFILE_STAT_BASIC_INFORMATION = struct FILE_STAT_BASIC_INFORMATION *;
 struct _FILE_NETWORK_OPEN_INFORMATION;
 using PFILE_NETWORK_OPEN_INFORMATION = struct _FILE_NETWORK_OPEN_INFORMATION *;
 enum _DIRECTORY_NOTIFY_INFORMATION_CLASS { };

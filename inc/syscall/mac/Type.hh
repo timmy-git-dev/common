@@ -65,7 +65,6 @@ struct sockaddr;
 struct statfs64;
 struct nxprov_reg;
 struct nxctl_init;
-struct timespec;
 using __off_t = long;
 using off_t = __off_t;
 using au_id_t = uid_t;
@@ -83,6 +82,7 @@ using sigset_t = __darwin_sigset_t;
 using __int64_t = long;
 using int64_t = __int64_t;
 using __int32_t = int;
+using __uint16_t = unsigned short;
 using int32_t = __int32_t;
 struct shared_file_mapping_slide_np_t;
 using shared_file_mapping_slide_np_ut = shared_file_mapping_slide_np_t;
@@ -106,3 +106,52 @@ union semun {
 };
 typedef union semun semun_t;
 typedef struct semid_ds *semun_t_buf;
+
+typedef __int64_t     blkcnt_t;      /* total blocks */
+typedef __int32_t     blksize_t;     /* preferred block size */
+typedef __int32_t     dev_t;         /* dev_t */
+typedef unsigned int  fsblkcnt_t;    /* Used by statvfs and fstatvfs */
+typedef unsigned int  fsfilcnt_t;    /* Used by statvfs and fstatvfs */
+typedef __uint32_t    gid_t;         /* [???] process and group IDs */
+typedef __uint32_t    id_t;          /* [XSI] pid_t, uid_t, or gid_t*/
+typedef __uint64_t    ino64_t;       /* [???] Used for 64 bit inodes */
+typedef ino64_t        ino_t;         /* [???] Used for inodes */
+typedef __uint16_t    mode_t;        /* [???] Some file attributes */
+typedef __int64_t     off_t;         /* [???] Used for file sizes */
+typedef __int32_t     pid_t;         /* [???] process and group IDs */
+typedef __uint32_t    sigset_t;      /* [???] signal set */
+typedef __int32_t     suseconds_t;   /* [???] microseconds */
+typedef __uint32_t    uid_t;         /* [???] user IDs */
+typedef __uint32_t    useconds_t;    /* [???] microseconds */
+typedef unsigned char uuid_t[16];
+typedef char          uuid_string_t[37];
+
+typedef long time_t;
+typedef __uint16_t nlink_t;
+
+struct timespec
+{
+	time_t tv_sec;
+	long            tv_nsec;
+};
+
+struct stat { /* when _DARWIN_FEATURE_64_BIT_INODE is defined */
+    dev_t     st_dev;	   /* ID of device containing file */
+    mode_t    st_mode;	   /* Mode of file (see below) */
+    nlink_t   st_nlink;	   /* Number of hard links */
+    ino_t     st_ino;	   /* File serial number */
+    uid_t     st_uid;	   /* User ID of the file */
+    gid_t     st_gid;	   /* Group ID of the file */
+    dev_t     st_rdev;	   /* Device ID */
+    timespec  st_atimespec;	   /* time of last access */
+    timespec  st_mtimespec;	   /* time of last data modification */
+    timespec  st_ctimespec;	   /* time of last status change */
+    timespec  st_birthtimespec; /* time of file creation(birth) */
+    off_t     st_size;	   /* file size, in bytes */
+    blkcnt_t  st_blocks;	   /* blocks allocated for file */
+    blksize_t st_blksize;	   /* optimal blocksize for I/O */
+    uint32_t  st_flags;	   /* user defined flags for file */
+    uint32_t  st_gen;	   /* file generation number */
+    int32_t   st_lspare;	   /* RESERVED: DO NOT USE! */
+    int64_t   st_qspare[2];	   /* RESERVED: DO NOT USE! */
+};

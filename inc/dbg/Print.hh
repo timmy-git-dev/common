@@ -1,4 +1,5 @@
 #include "syscall/uni/Terminal.hh"
+#include "sys/platform/OS.hh"
 
 // NOTE/TODO: This is simply some helper funcs while developing this common library, for general use,
 // these should be removed, and also likely added and cleaned up to some plugin which can be used for other plugin development.
@@ -113,7 +114,9 @@ namespace dbg
         return _length;
     }
 
+    #if !CMN_SYS_OS_WIN // Windows is stupid.
     inline s64 stringify(s64 _x) { return stringify(u64(_x)); }
+    #endif
     inline s64 stringify(u32 _x) { return stringify(u64(_x)); }
     inline s64 stringify(u16 _x) { return stringify(u64(_x)); }
     inline s64 stringify(u08 _x) { return stringify(u64(_x)); }

@@ -18,7 +18,7 @@ namespace cmn::syscall::uni::io
         SUCCESS = 0,
         /// The specified `_capacity` was < the length of the cwd.
         /// The length of the cwd is returned and `_outputBuffer` is untouched.
-        INVALID_CAPACITY = 1,
+        SHORT_CAPACITY = 1,
 
         #if CMN_SYS_OS_LIN
 
@@ -64,7 +64,7 @@ namespace cmn::syscall::uni::io
     };
     enum class Query : error::Code
     {
-        NONE = 0,
+        SUCCESS = 0,
 
         #if CMN_SYS_OS_LIN
 

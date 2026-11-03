@@ -174,8 +174,8 @@ namespace cmn::syscall::lin
     long munmap                  (unsigned long addr, s64 len);
     long name_to_handle_at       (int dfd, const char *name, file_handle *handle, void *mnt_id, int flag);
     long nanosleep               (timespec *rqtp, timespec *rmtp);
-    long newfstat                (unsigned int fd, FileStatus *statbuf);
-    long newfstatat              (int dfd, const char *filename, FileStatus *statbuf, int flag);
+    long newfstat                (unsigned int fd, stat *statbuf);
+    long newfstatat              (int dfd, const char *filename, stat *statbuf, int flag);
     long newuname                (new_utsname *name);
     long openat2                 (int dfd, const char *filename, open_how *how, s64 usize);
     long openat                  (int dfd, const char *filename, int flags, mode_t mode);

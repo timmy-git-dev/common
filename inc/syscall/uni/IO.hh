@@ -10,24 +10,92 @@ namespace cmn::syscall::uni::io
     // TODO: Maybe set values based on returned values from exists for performance.
     enum class Type
     {
-        /// No filesystem-object, returned from `exists()` for when no filesystem-object is found at a given path.
-        NONE      = 0,
-        /// An unknown filesystem-object on this OS.
-        UNKNOWN   = 1,
-        /// A file-based filesystem-object.
-        FILE      = 2,
-        /// A directory-based filesystem-object.
-        DIRECTORY = 3,
-        /// A symlink-based filesystem-object.
-        SYMLINK   = 4,
+        #if CMN_SYS_OS_LIN
+
+            /// A domain-socket for local communication via filesystem syscalls.
+            SOCKET           = 0140000,
+            /// A symbolic-link pointing to some other path.
+            SYMLINK          = 0120000,
+            /// A regular file.
+            FILE             = 0100000,
+            /// A directory/folder.
+            DIRECTORY        = 0040000,
+            /// A First-In-First-Out named pipe for inter-process communication.
+            FIFO             = 0010000,
+            /// A block-device for fixed-size storage/transfer such as /dev/sda.
+            BLOCK_DEVICE     = 0060000,
+            /// A character-device for communication with hardware like keyboards.
+            CHARACTER_DEVICE = 0020000,
+
+        #elif CMN_SYS_OS_MAC
+
+        #elif CMN_SYS_OS_WIN
+
+            /// A domain-socket for local communication via filesystem syscalls.
+            SOCKET           = -1,
+            /// A symbolic-link pointing to some other path.
+            SYMLINK          = 0120000,
+            /// A regular file.
+            FILE             = 0100000,
+            /// A directory/folder.
+            DIRECTORY        = 0040000,
+            /// A First-In-First-Out named pipe for inter-process communication.
+            FIFO             = -1,
+            /// A block-device for fixed-size storage/transfer such as /dev/sda.
+            BLOCK_DEVICE     = -1,
+            /// A character-device for communication with hardware like keyboards.
+            CHARACTER_DEVICE = -1,
+
+        #endif
+    };
+
+    /// The time for filesystem-objects since an epoch of 0000/00/00-00:00.
+    struct Time
+    {
+        /// The seconds since 0000/00/00-00:00.
+        i64 seconds;
+        /// The floating-point part of the second, likely between [0, 1e9).
+        u64 nanoseconds;
+    };
+
+    /// The info of a filesystem-object.
+    struct Info
+    {
+        /// The type; file, directory, etc, of object at the given path.
+        Type    type;
+
+        /// The byte-length of the object's contents, such as EOF or symlink pathname length.
+        /// Note that other than reporting storage, this likely shouldn't be used as it is unreliable across platforms and filesystems.
+        s64     length;
+        /// The total bytes allocated to the object storage.
+        /// Note that other than reporting storage, this likely shouldn't be used as it is unreliable across platforms and filesystems.
+        s64     allocated;
+
+        /// The amount of hard-links pointing to this object.
+        s64     linkCount;
+
+        /// Unsure on proper sizes here:
+        /// The ID of the object within the filesystem.
+        u64     id;
+        /// The ID of the filesystem containing the object.
+        u64     filesystemID;
+
+        /// The time at which the object was created.
+        Time    created;
+        /// The most recent time at which the object was accessed.
+        Time    accessed;
+        /// The most recent time at which the object's contents or entries was modified.
+        Time    edited;
+        /// The most recent time at which the object's metadata was changed.
+        Time    updated;
     };
 
     /// Copies the current working directory into `_outputBuffer` and returns the length.
-    cmn::error::Result<s64 , Cwd   > cwd   (c08 *_outputBuffer, const s64 _capacity);
-    /// Determines if and what type of filesystem-object exists at a given path, will not follow symlinks.
-    cmn::error::Result<Type, Exists> exists(const c08 *_path, const s64 _length);
-    /// Obtains information on a given filesystem-object.
-    cmn::error::Result<s64 , Query > query (const Handle _object); // TODO: Add info for query.
+    cmn::error::Result<s64 , Cwd  > cwd  (c08 *_outputBuffer, const s64 _capacity);
+    /// Obtains information on a given filesystem-object given it's string-path.
+    cmn::error::Result<Info, Query> query(const c08 *_path, const s64 _length);
+    /// Obtains information on a given filesystem-object given it's handle.
+    cmn::error::Result<Info, Query> query(const Handle _object); // TODO: Might provide more info than query-by-path?
 
     namespace file
     {
