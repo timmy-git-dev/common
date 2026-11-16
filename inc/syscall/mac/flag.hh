@@ -10,7 +10,7 @@ namespace cmn::syscall::mac
     #define O_DIRECTORY 0x00100000
     #define O_CLOEXEC   0x01000000
 
-    #define AT_SYMLINK_NOFOLLOW 0x100
+    #define AT_SYMLINK_NOFOLLOW 0x0020
 
     #define S_IFMT   0170000  /* type of file */
 

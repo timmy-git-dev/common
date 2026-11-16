@@ -42,45 +42,39 @@ bool query()
         _dir .status.code == cmn::syscall::uni::io::Query::SUCCESS && _dir .value.type == cmn::syscall::uni::io::Type::DIRECTORY &&
         _file.status.code == cmn::syscall::uni::io::Query::SUCCESS && _file.value.type == cmn::syscall::uni::io::Type::FILE;
 
-    PRINT
-    (
-        _dir.status.code           ,
-        _dir.value.type            ,
-        _dir.value.length          ,
-        _dir.value.allocated       ,
-        _dir.value.linkCount       ,
-        _dir.value.id              ,
-        _dir.value.filesystemID    ,
-        _dir.value.created .seconds, _dir.value.created .nanoseconds,
-        _dir.value.accessed.seconds, _dir.value.accessed.nanoseconds,
-        _dir.value.edited  .seconds, _dir.value.edited  .nanoseconds,
-        _dir.value.updated .seconds, _dir.value.updated .nanoseconds,
-    );
 
-    PRINT
-    (
-        _file.status.code           ,
-        _file.value.type            ,
-        _file.value.length          ,
-        _file.value.allocated       ,
-        _file.value.linkCount       ,
-        _file.value.id              ,
-        _file.value.filesystemID    ,
-        _file.value.created .seconds, _file.value.created .nanoseconds,
-        _file.value.accessed.seconds, _file.value.accessed.nanoseconds,
-        _file.value.edited  .seconds, _file.value.edited  .nanoseconds,
-        _file.value.updated .seconds, _file.value.updated .nanoseconds,
-    );
+    if (!_success)
+    {
+        PRINT
+        (
+            _dir.status.code           ,
+            _dir.value.type            ,
+            _dir.value.length          ,
+            _dir.value.allocated       ,
+            _dir.value.linkCount       ,
+            _dir.value.id              ,
+            _dir.value.filesystemID    ,
+            _dir.value.created .seconds, _dir.value.created .nanoseconds,
+            _dir.value.accessed.seconds, _dir.value.accessed.nanoseconds,
+            _dir.value.edited  .seconds, _dir.value.edited  .nanoseconds,
+            _dir.value.updated .seconds, _dir.value.updated .nanoseconds,
+        );
 
-    // if (!_success)
-    // {
-    //     PRINT
-    //     (
-    //         buffer,
-    //         _dir .status.code, _dir .value,
-    //         _file.status.code, _file.value
-    //     );
-    // }
+        PRINT
+        (
+            _file.status.code           ,
+            _file.value.type            ,
+            _file.value.length          ,
+            _file.value.allocated       ,
+            _file.value.linkCount       ,
+            _file.value.id              ,
+            _file.value.filesystemID    ,
+            _file.value.created .seconds, _file.value.created .nanoseconds,
+            _file.value.accessed.seconds, _file.value.accessed.nanoseconds,
+            _file.value.edited  .seconds, _file.value.edited  .nanoseconds,
+            _file.value.updated .seconds, _file.value.updated .nanoseconds,
+        );
+    }
 
     return _success;
 }

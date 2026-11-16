@@ -56,15 +56,11 @@
 
 #elif CMN_SYS_OS_MAC
 
-    #define AT_FDCWD -2
-
     #define F_GETPATH 50
 
     #define O_RDONLY    0x00000000
     #define O_DIRECTORY 0x00100000
     #define O_CLOEXEC   0x01000000
-
-    #define AT_SYMLINK_NOFOLLOW 0x0020
 
     #define S_IFMT   0170000  /* type of file */
 
@@ -288,15 +284,15 @@ namespace cmn::syscall::uni::io
             // Set the parsed/shared info among each OS.
             _info = Info
             {
-                .type         = Type(_stat.st_mode   ),
+                .type         = Type(_stat.st_mode & 0xF000),
 
-                .length       = s64 (_stat.st_size   ),
-                .allocated    = s64 (_stat.st_blksize),
+                .length       = s64 (_stat.st_size         ),
+                .allocated    = s64 (_stat.st_blksize      ),
 
-                .linkCount    = s64 (_stat.st_nlink  ),
+                .linkCount    = s64 (_stat.st_nlink        ),
 
-                .id           = u64 (_stat.st_ino    ),
-                .filesystemID = u64 (_stat.st_dev    ),
+                .id           = u64 (_stat.st_ino          ),
+                .filesystemID = u64 (_stat.st_dev          ),
 
                 .created      = Time
                 {
