@@ -84,7 +84,7 @@ i32 main(const i32, const c08**)
     PRINT(cwd());
     // Note that `query` will not work with wine because it doesn't implement quite a few NT functions,
     // therefore, it's likely that wine will not be supported for the rest of the project.
-    PRINT(query());
+    PRINT(query()); // TODO: Returned type seems broken, file/directory is same.
 
     return 0;
 }

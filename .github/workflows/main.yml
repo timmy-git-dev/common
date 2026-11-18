@@ -24,7 +24,7 @@ jobs:
 
           # mac.
           - name: mac-arm-clg
-            os: macos-latest
+            os: macos-15
             script: build/mac.sh
             target: arm64-apple-darwin
           - name: mac-x64-clg
