@@ -18,9 +18,16 @@ $EXE = "$BIN/common.exe"
 
 $COMPILE_VERSION = "-std=c++23"
 
+# $FLAGS_BOTH = @(
+#     "-g3"
+#     "-O0"
+#     "-ffreestanding"
+# )
 $FLAGS_BOTH = @(
-    "-g3"
-    "-O0"
+    "-flto"
+    "-O3"
+    "-ffunction-sections"
+    "-fdata-sections"
     "-ffreestanding"
 )
 
