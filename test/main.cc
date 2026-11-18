@@ -14,14 +14,14 @@ bool cwd()
         _invalid.status.code == cmn::syscall::uni::io::Cwd::SHORT_CAPACITY && _invalid.value != 0 &&
         _correct.status.code == cmn::syscall::uni::io::Cwd::SUCCESS        && _correct.value != 0;
 
-    if (!_success)
-    {
+    // if (!_success)
+    // {
         PRINT
         (
             _invalid.status.code, _invalid.value,
             _correct.status.code, _correct.value
         );
-    }
+    // }
 
     return _success;
 }
@@ -43,8 +43,8 @@ bool query()
         _file.status.code == cmn::syscall::uni::io::Query::SUCCESS && _file.value.type == cmn::syscall::uni::io::Type::FILE;
 
 
-    if (!_success)
-    {
+    // if (!_success)
+    // {
         PRINT
         (
             _dir.status.code           ,
@@ -74,7 +74,7 @@ bool query()
             _file.value.edited  .seconds, _file.value.edited  .nanoseconds,
             _file.value.updated .seconds, _file.value.updated .nanoseconds,
         );
-    }
+    // }
 
     return _success;
 }
@@ -82,6 +82,8 @@ bool query()
 i32 main(const i32, const c08**)
 {
     PRINT(cwd());
+    // Note that `query` will not work with wine because it doesn't implement quite a few NT functions,
+    // therefore, it's likely that wine will not be supported for the rest of the project.
     PRINT(query());
 
     return 0;

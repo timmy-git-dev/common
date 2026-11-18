@@ -1,18 +1,10 @@
 #pragma once
 #include "syscall/win/type.hh"
 
-namespace cmn::syscall::win_
+namespace cmn::syscall::win
 {
-    extern PEB                    *PROCESS_ENV_BLOCK;
-
-    extern void                   *NTDLL;
-    extern IMAGE_EXPORT_DIRECTORY *EXPORT_DIRECTORY;
-    extern u32                    *EXPORT_NAMES;
-    extern u32                    *EXPORT_FUNCTIONS;
-    extern u16                    *EXPORT_ORDINALS;
-    extern u32                     EXPORT_COUNT;
-
-    PEB  *resolve_peb         ();
-    void *resolve_library     (const c08 *_libraryName);
-    void *resolve_proc_address(const char* _func, const s64 _funcLength);
+    /// Obtains the Process Environment Block from a specific address in memory.
+    const PEB  *get_peb();
+    /// Obtains the function address of a windows NT function from ntdll.dll.
+          void *get_nt_func(const c08 *_func, const s64 _length);
 }

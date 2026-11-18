@@ -25,7 +25,7 @@ namespace cmn::syscall::uni::terminal
         #elif CMN_SYS_OS_WIN
             if (processParameters == nullptr)
             {
-                processParameters = cmn::syscall::win_::resolve_peb()->ProcessParameters;
+                processParameters = cmn::syscall::win::get_peb()->ProcessParameters;
             }
 
             IO_STATUS_BLOCK _ioStatus { };

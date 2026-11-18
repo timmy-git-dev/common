@@ -9,27 +9,8 @@
     #include "syscall/win/type.hh"
 #endif
 
-
-
 namespace cmn::syscall::util::path
 {
-    // TODO: This is dumb af, make some proper copy, compare, etc. funcs somewhere else.
-    inline s64 memcmp(const void* _a, const void* _b, s64 _length)
-    {
-        const u08* _x = (const u08*)_a;
-        const u08* _y = (const u08*)_b;
-
-        for (s64 _i = 0; _i < _length; ++_i)
-        {
-            if (_x[_i] != _y[_i])
-            {
-                return _x[_i] - _y[_i];
-            }
-        }
-
-        return 0;
-    }
-
     // TODO: thread_local broken due to _tls_index, should fix cuz actually useful.
 
     #if CMN_SYS_OS_LIN || CMN_SYS_OS_MAC

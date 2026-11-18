@@ -83,6 +83,7 @@
 namespace cmn::syscall::uni::io
 {
     // Reusable buffer for internal path copying, mainly for windows UTF-8 <-> UTF-16 and POSIX <-> NT path resolution.
+    // TODO: This is not correct for multi-threaded access and should be made into some thread_local thing or something?
     static c08 pathBuffer[4096];
 
     cmn::error::Result<s64, Cwd> cwd(c08* _outputBuffer, const s64 _capacity)
@@ -110,7 +111,7 @@ namespace cmn::syscall::uni::io
                 return { _length, _error };
             }
 
-            // Copy over the cwd path.
+            // Copy over the cwd path, note that this returned path is already in the correct common format, so no conversion was needed.
             for (s64 _i = 0; _i < _length; ++_i)
             {
                 _outputBuffer[_i] = pathBuffer[_i];
@@ -118,7 +119,7 @@ namespace cmn::syscall::uni::io
 
         #elif CMN_SYS_OS_MAC
 
-            // Attempt to open the cwd path.
+            // Attempt to open the "current" path.
             c08 _cwd[]  = ".";
             i64 _status = mac::openat(AT_FDCWD, user_addr_t(_cwd), O_RDONLY | O_DIRECTORY | O_CLOEXEC, 0);
 
@@ -155,7 +156,7 @@ namespace cmn::syscall::uni::io
                 return { _length, _error };
             }
 
-            // Copy the buffer.
+            // Copy over the cwd path, note that this returned path is already in the correct common format, so no conversion was needed.
             for (s64 _i = 0; _i < _length; ++_i)
             {
                 _outputBuffer[_i] = pathBuffer[_i];
@@ -164,8 +165,9 @@ namespace cmn::syscall::uni::io
         #elif CMN_SYS_OS_WIN
 
             // Obtain the DOS-path from the peb.
-            UNICODE_STRING _cwd = cmn::syscall::win_::resolve_peb()->ProcessParameters->CurrentDirectory.DosPath;
-            _length = cmn::syscall::util::path::from_native_absolute(_cwd, pathBuffer); // Maybe implement capacities for path conversions.
+            // TODO: Add error-checking for when the PEB is invalid, i.e: fix how I actually obtain peb because this is really shit right now.
+            UNICODE_STRING _cwd = cmn::syscall::win::get_peb()->ProcessParameters->CurrentDirectory.DosPath;
+            _length = cmn::syscall::util::path::from_native_absolute(_cwd, pathBuffer); // TODO: Probably implement capacities for path conversions. + Errors?
 
             if (_capacity < _length)
             {
@@ -173,7 +175,7 @@ namespace cmn::syscall::uni::io
                 return { _length, _error };
             }
 
-            // Copy the buffer.
+            // Copy over the cwd path.
             for (s64 _i = 0; _i < _length; ++_i)
             {
                 _outputBuffer[_i] = pathBuffer[_i];
